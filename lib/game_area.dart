@@ -33,21 +33,23 @@ class _GameAreaState extends State<GameArea> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanStart: (_) => widget.controller.mousePressed(),
-      onPanEnd: (_) => widget.controller.mouseReleased(),
-      onPanUpdate: (event) =>
-          widget.controller.mouseMove(event.localPosition.dx, event.localPosition.dy),
-      child: MouseRegion(
-        onHover: (event) =>
+    return ClipRRect(
+      child: GestureDetector(
+        onPanStart: (_) => widget.controller.mousePressed(),
+        onPanEnd: (_) => widget.controller.mouseReleased(),
+        onPanUpdate: (event) =>
             widget.controller.mouseMove(event.localPosition.dx, event.localPosition.dy),
-        child: LayoutBuilder(builder: (context, constraints) {
-          return GameTicker(
-            controller: widget.controller,
-            width: constraints.maxWidth,
-            height: constraints.maxHeight,
-          );
-        }),
+        child: MouseRegion(
+          onHover: (event) =>
+              widget.controller.mouseMove(event.localPosition.dx, event.localPosition.dy),
+          child: LayoutBuilder(builder: (context, constraints) {
+            return GameTicker(
+              controller: widget.controller,
+              width: constraints.maxWidth,
+              height: constraints.maxHeight,
+            );
+          }),
+        ),
       ),
     );
   }
