@@ -1,5 +1,6 @@
 library tremble;
 
+export 'package:tremble/animation.dart';
 export 'package:tremble/extensions.dart';
 export 'package:tremble/game_area.dart';
 export 'package:tremble/screen_controller.dart';
