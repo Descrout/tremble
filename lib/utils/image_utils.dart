@@ -35,4 +35,18 @@ class ImageUtils {
       return null;
     }
   }
+
+  static Future<Image> generateFlipped(Image image, [Paint? paint]) {
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+
+    final p = paint ?? Paint();
+
+    canvas.drawImage(image, Offset.zero, paint ?? p);
+    canvas.scale(-1, 1);
+    canvas.drawImage(image, Offset(-image.width * 2, 0), paint ?? p);
+
+    final picture = recorder.endRecording();
+    return picture.toImage(image.width * 2, image.height);
+  }
 }

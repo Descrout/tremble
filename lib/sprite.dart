@@ -10,6 +10,7 @@ class Sprite {
     this.opacity = 1.0,
     this.scale = 1.0,
     this.rotation = 0,
+    this.flip = false,
   });
 
   Rect texture;
@@ -23,4 +24,15 @@ class Sprite {
   double opacity;
   double rotation;
   double scale;
+
+  bool flip;
+
+  RSTransform get tranform => RSTransform.fromComponents(
+        rotation: rotation,
+        scale: scale,
+        anchorX: texture.width * originX,
+        anchorY: texture.height * originY,
+        translateX: x,
+        translateY: y,
+      );
 }

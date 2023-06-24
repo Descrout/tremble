@@ -4,11 +4,13 @@ import 'package:tremble/sprite.dart';
 
 class AnimationData {
   AnimationData({
+    required this.key,
     required this.frames,
     required this.speed,
     required this.loop,
   });
 
+  final String key;
   final List<Rect> frames;
   final double speed;
   final bool loop;
@@ -16,8 +18,7 @@ class AnimationData {
 
 class Animation extends Sprite {
   Animation({
-    required this.animations,
-    required this.state,
+    required List<AnimationData> animations,
     required super.x,
     required super.y,
     int index = 0,
@@ -26,18 +27,21 @@ class Animation extends Sprite {
     super.opacity = 1.0,
     super.scale = 1.0,
     super.rotation = 0,
-  })  : _index = index,
+  })  : assert(animations.isNotEmpty, "you have to provide atleast 1 AnimationData"),
+        _index = index,
         _timer = index.toDouble(),
-        super(texture: animations[state]!.frames[index]);
+        _animations = Map.fromEntries(animations.map((e) => MapEntry(e.key, e))),
+        _state = animations.first.key,
+        super(texture: animations.first.frames[index]);
 
-  final Map<String, AnimationData> animations;
+  final Map<String, AnimationData> _animations;
 
   bool playing = true;
-  bool halted = false;
-  String state;
+  bool finished = false;
+  String _state;
   double _timer;
 
-  AnimationData get currentAnimData => animations[state]!;
+  AnimationData get currentAnimData => _animations[_state]!;
 
   int _index;
   int get index => _index;
@@ -48,7 +52,7 @@ class Animation extends Sprite {
 
   void update(double deltaTime) {
     if (!playing) return;
-    halted = false;
+    finished = false;
 
     if (_index < 0) {
       index = 0;
@@ -56,14 +60,14 @@ class Animation extends Sprite {
         index = currentAnimData.frames.length - 1;
       } else {
         index = 0;
-        halted = true;
+        finished = true;
       }
     } else if (_index >= currentAnimData.frames.length) {
       if (currentAnimData.loop) {
         index = 0;
       } else {
         index = currentAnimData.frames.length - 1;
-        halted = true;
+        finished = true;
       }
     } else {
       _timer += currentAnimData.speed * deltaTime;
@@ -74,13 +78,13 @@ class Animation extends Sprite {
   }
 
   void setAnimation(String state, {int? fromFrame}) {
-    if (this.state == state) return;
+    if (_state == state) return;
     resetAnimation(state, fromFrame: fromFrame);
   }
 
   void resetAnimation(String state, {int? fromFrame}) {
     playing = true;
-    this.state = state;
+    _state = state;
     if (fromFrame != null) {
       index = fromFrame;
     }

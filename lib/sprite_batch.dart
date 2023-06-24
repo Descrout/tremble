@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:tremble/tremble.dart';
 
 class SpriteBatch {
-  SpriteBatch({
+  SpriteBatch._({
     required this.image,
     required this.textures,
     required this.frames,
@@ -15,8 +15,22 @@ class SpriteBatch {
   final Image image;
   final Map<String, Rect> textures;
   final Map<String, List<Rect>> frames;
+  final Paint _emptyPaint = Paint();
 
-  static Future<SpriteBatch> fromGdxPacker(String path) async {
+  static Future<SpriteBatch> custom({
+    required Image image,
+    required Map<String, Rect> textures,
+    required Map<String, List<Rect>> frames,
+    bool flippable = false,
+  }) async {
+    return SpriteBatch._(
+      image: flippable ? await ImageUtils.generateFlipped(image) : image,
+      textures: textures,
+      frames: frames,
+    );
+  }
+
+  static Future<SpriteBatch> fromGdxPacker(String path, {bool flippable = false}) async {
     (int, int) getTupple(String data) {
       final split = data.split(', ');
       return (int.parse(split[0]), int.parse(split[1]));
@@ -72,8 +86,8 @@ class SpriteBatch {
     final image = await ImageUtils.loadImageFromAssets(pathSplit.join("/"));
     assert(image != null, "Batch image could not be loaded !");
 
-    return SpriteBatch(
-      image: image!,
+    return SpriteBatch._(
+      image: flippable ? await ImageUtils.generateFlipped(image!) : image!,
       textures: textures,
       frames: framesMap.map((key, value) => MapEntry(key, value.values.toList())),
     );
@@ -83,12 +97,12 @@ class SpriteBatch {
     return textures[key]!;
   }
 
-  MapEntry<String, AnimationData> getAnimation(
+  AnimationData getAnimation(
     String key, {
     required double speed,
     bool loop = true,
   }) =>
-      MapEntry(key, AnimationData(frames: frames[key]!, speed: speed, loop: loop));
+      AnimationData(key: key, frames: frames[key]!, speed: speed, loop: loop);
 
   void draw(Canvas canvas, List<Sprite> sprites, [Paint? paint]) {
     final transforms = <RSTransform>[];
@@ -96,18 +110,18 @@ class SpriteBatch {
     final colors = <Color>[];
 
     for (final sprite in sprites) {
-      rects.add(sprite.texture);
+      rects.add(sprite.flip
+          ? Rect.fromLTWH(
+              image.width - sprite.texture.right,
+              sprite.texture.top,
+              sprite.texture.width,
+              sprite.texture.height,
+            )
+          : sprite.texture);
 
       colors.add(Colors.white.withOpacity(sprite.opacity));
 
-      transforms.add(RSTransform.fromComponents(
-        rotation: sprite.rotation,
-        scale: 1.0,
-        anchorX: sprite.texture.width * sprite.originX,
-        anchorY: sprite.texture.height * sprite.originY,
-        translateX: sprite.x,
-        translateY: sprite.y,
-      ));
+      transforms.add(sprite.tranform);
     }
 
     canvas.drawAtlas(
@@ -117,7 +131,7 @@ class SpriteBatch {
       colors,
       BlendMode.srcIn,
       null,
-      paint ?? Paint(),
+      paint ?? _emptyPaint,
     );
   }
 

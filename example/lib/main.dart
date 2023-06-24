@@ -13,11 +13,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tremble Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+      home: FittedBox(
+        child: SizedBox(
+          width: 480,
+          height: 640,
+          child: GameArea(
+            controller: DemoController(),
+          ),
+        ),
       ),
-      home: GameArea(controller: DemoController()),
     );
   }
 }

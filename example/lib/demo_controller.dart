@@ -1,13 +1,8 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Animation;
 import 'package:flutter/services.dart';
-import 'package:tremble/screen_controller.dart';
+import 'package:tremble/tremble.dart';
 
 class DemoController extends ScreenController {
-  late double mX;
-  late double mY;
-
   double mouseX = 0;
   double mouseY = 0;
   bool mouseDown = false;
@@ -16,26 +11,61 @@ class DemoController extends ScreenController {
 
   final keys = <LogicalKeyboardKey>{};
 
+  double shootTimer = 0;
+
+  late final SpriteBatch spriteBatch;
+  late final Animation hero;
+
   @override
-  void setup(double width, double height) {
-    mX = width / 2;
-    mY = height / 2;
-
-    final maxSize = max(mX, mY);
-
-    for (double i = 0; i < pi * 2; i += 0.05) {
-      positions.add(Offset(mX + cos(i) * maxSize, mY + sin(i) * maxSize));
-    }
+  Future<void> preload(progress, done) async {
+    spriteBatch = await SpriteBatch.fromGdxPacker("assets/batches/sprites.atlas", flippable: true);
+    progress(1.0);
+    done();
   }
 
   @override
-  void resize(double width, double height) {}
+  void setup(double width, double height) {
+    hero = Animation(
+      animations: [
+        spriteBatch.getAnimation("hero-idle", speed: 10),
+        spriteBatch.getAnimation("hero-run", speed: 10),
+      ],
+      x: width / 2,
+      y: height - 26,
+    );
+  }
 
   @override
   void update(double deltaTime) {
-    if (mouseDown) {
-      mX += (mouseX - mX) * 0.05;
-      mY += (mouseY - mY) * 0.05;
+    double vx = 0;
+    if (keys.contains(LogicalKeyboardKey.arrowLeft)) vx -= 140;
+    if (keys.contains(LogicalKeyboardKey.arrowRight)) vx += 140;
+
+    if (vx == 0) {
+      hero.setAnimation("hero-idle");
+    } else {
+      hero.setAnimation("hero-run", fromFrame: 0);
+      hero.flip = vx < 0;
+      hero.x += vx * deltaTime;
+    }
+
+    hero.update(deltaTime);
+
+    if (shootTimer <= 0) {
+      if (keys.contains(LogicalKeyboardKey.space)) {
+        positions.add(Offset(hero.x, hero.y));
+      }
+      shootTimer = 10;
+    } else {
+      shootTimer -= deltaTime * 100;
+    }
+
+    for (int i = positions.length - 1; i >= 0; i--) {
+      if (positions[i].dy + 16 < 0) {
+        positions.removeAt(i);
+        continue;
+      }
+      positions[i] = Offset(positions[i].dx, positions[i].dy - 1000 * deltaTime);
     }
   }
 
@@ -43,15 +73,15 @@ class DemoController extends ScreenController {
   void draw(Canvas canvas, Size size) {
     canvas.drawColor(Colors.black, BlendMode.src);
 
-    final mouseOffset = Offset(mX, mY);
-    canvas.drawCircle(Offset(mouseX, mouseY), 30, Paint()..color = Colors.red);
+    final paint = Paint()..color = Colors.yellow;
 
-    final linePaint = Paint()
-      ..color = mouseDown ? Colors.red : Colors.blue
-      ..strokeWidth = keys.contains(LogicalKeyboardKey.space) ? 5 : 1;
+    canvas.drawCircle(Offset(mouseX, mouseY), 8, paint);
+
     for (final pos in positions) {
-      canvas.drawLine(pos, mouseOffset, linePaint);
+      canvas.drawRect(Rect.fromLTWH(pos.dx - 2, pos.dy - 10, 4, 8), paint);
     }
+
+    spriteBatch.draw(canvas, [hero]);
   }
 
   @override
@@ -81,5 +111,7 @@ class DemoController extends ScreenController {
   }
 
   @override
-  void dispose() {}
+  void dispose() {
+    spriteBatch.dispose();
+  }
 }
