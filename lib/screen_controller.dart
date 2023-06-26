@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tremble/types.dart';
+import 'package:tremble/utils/types.dart';
 
 abstract class ScreenController {
   Future<void> preload(UpdateCallback progress, VoidCallback done) async {

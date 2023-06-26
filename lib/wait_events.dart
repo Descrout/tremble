@@ -1,4 +1,4 @@
-import 'package:tremble/types.dart';
+import 'package:tremble/utils/types.dart';
 
 class ChainState {
   final double time;

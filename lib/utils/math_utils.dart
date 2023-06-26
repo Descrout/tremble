@@ -16,4 +16,6 @@ class MathUtils {
     if (val > max) return max;
     return val;
   }
+
+  int lcm(int a, int b) => (a * b) ~/ a.gcd(b);
 }
