@@ -1,5 +1,9 @@
 import 'package:flutter/rendering.dart';
 
+extension DoubleX on double {
+  double get fract => this - floor();
+}
+
 extension RectX on Rect {
   List<Rect> split({required int count, required Axis axis}) {
     const textures = <Rect>[];
