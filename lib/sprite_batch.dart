@@ -31,6 +31,57 @@ class SpriteBatch {
   }
 
   static Future<SpriteBatch> fromGdxPacker(String path, {bool flippable = false}) async {
+    Rect getRect(String data) {
+      final split = data.split(',');
+      return Rect.fromLTWH(
+        double.parse(split[0]),
+        double.parse(split[1]),
+        double.parse(split[2]),
+        double.parse(split[3]),
+      );
+    }
+
+    final atlas = await rootBundle.loadString(path);
+
+    final textures = <String, Rect>{};
+    final framesMap = <String, SplayTreeMap<int, Rect>>{};
+    final lines = atlas.split('\n');
+
+    int i = 3;
+
+    while (i < lines.length && lines[i] != "") {
+      final tempValues = <String, String>{};
+      final name = lines[i];
+      i++;
+      while (i < lines.length && lines[i].contains(":")) {
+        final splitted = lines[i].split(":");
+        tempValues[splitted[0]] = splitted[1];
+        i++;
+      }
+      if (tempValues.containsKey("index")) {
+        //animation
+        if (!framesMap.containsKey(name)) framesMap[name] = SplayTreeMap<int, Rect>();
+        framesMap[name]![int.parse(tempValues["index"]!)] = getRect(tempValues["bounds"]!);
+      } else {
+        //texture
+        textures[name] = getRect(tempValues["bounds"]!);
+      }
+    }
+
+    final pathSplit = path.split("/");
+    pathSplit.removeLast();
+    pathSplit.add(lines[0]);
+    final image = await ImageUtils.loadImageFromAssets(pathSplit.join("/"));
+    assert(image != null, "Batch image could not be loaded !");
+
+    return SpriteBatch._(
+      image: flippable ? await ImageUtils.generateFlipped(image!) : image!,
+      textures: textures,
+      frames: framesMap.map((key, value) => MapEntry(key, value.values.toList())),
+    );
+  }
+
+  static Future<SpriteBatch> fromOldGdxPacker(String path, {bool flippable = false}) async {
     (int, int) getTupple(String data) {
       final split = data.split(',');
       return (int.parse(split[0]), int.parse(split[1]));

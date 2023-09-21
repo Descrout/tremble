@@ -18,7 +18,8 @@ class DemoController extends ScreenController {
 
   @override
   Future<void> preload(progress, done) async {
-    spriteBatch = await SpriteBatch.fromGdxPacker("assets/batches/sprites.atlas", flippable: true);
+    spriteBatch =
+        await SpriteBatch.fromOldGdxPacker("assets/batches/sprites.atlas", flippable: true);
     progress(1.0);
     done();
   }
