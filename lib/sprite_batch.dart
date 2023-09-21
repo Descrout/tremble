@@ -32,7 +32,7 @@ class SpriteBatch {
 
   static Future<SpriteBatch> fromGdxPacker(String path, {bool flippable = false}) async {
     (int, int) getTupple(String data) {
-      final split = data.split(', ');
+      final split = data.split(',');
       return (int.parse(split[0]), int.parse(split[1]));
     }
 
@@ -42,7 +42,7 @@ class SpriteBatch {
       int? index;
 
       for (int i = 1; i < 7; i++) {
-        final [tag, data] = lines[idx + i].trim().split(': ');
+        final [tag, data] = lines[idx + i].trim().split(':');
         switch (tag) {
           case "xy":
             final pos = getTupple(data);
