@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tremble/game_ticker.dart';
@@ -52,22 +53,24 @@ class _GameAreaState extends State<GameArea> {
   Widget build(BuildContext context) {
     return loaded
         ? ClipRRect(
-            child: GestureDetector(
-              onPanStart: (_) => widget.controller.mousePressed(),
-              onPanEnd: (_) => widget.controller.mouseReleased(),
-              onPanUpdate: (event) =>
+            child: Listener(
+              onPointerDown: (event) =>
+                  widget.controller.mousePressed(event.pointer, event.buttons),
+              onPointerUp: (event) => widget.controller.mouseReleased(event.pointer),
+              onPointerHover: (event) =>
                   widget.controller.mouseMove(event.localPosition.dx, event.localPosition.dy),
-              child: MouseRegion(
-                onHover: (event) =>
-                    widget.controller.mouseMove(event.localPosition.dx, event.localPosition.dy),
-                child: LayoutBuilder(builder: (context, constraints) {
-                  return GameTicker(
-                    controller: widget.controller,
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
-                  );
-                }),
-              ),
+              onPointerMove: (event) =>
+                  widget.controller.mouseMove(event.localPosition.dx, event.localPosition.dy),
+              onPointerSignal: (event) {
+                if (event is PointerScrollEvent) widget.controller.mouseScroll(event.scrollDelta);
+              },
+              child: LayoutBuilder(builder: (context, constraints) {
+                return GameTicker(
+                  controller: widget.controller,
+                  width: constraints.maxWidth,
+                  height: constraints.maxHeight,
+                );
+              }),
             ),
           )
         : StreamBuilder(

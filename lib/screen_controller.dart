@@ -11,8 +11,9 @@ abstract class ScreenController {
   void resize(double width, double height) {}
 
   void mouseMove(double mouseX, double mouseY) {}
-  void mousePressed() {}
-  void mouseReleased() {}
+  void mousePressed(int pointerID, int button) {}
+  void mouseReleased(int pointerID) {}
+  void mouseScroll(Offset scrollOffset) {}
 
   void keyDown(LogicalKeyboardKey key) {}
   void keyUp(LogicalKeyboardKey key) {}

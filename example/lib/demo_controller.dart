@@ -92,12 +92,12 @@ class DemoController extends ScreenController {
   }
 
   @override
-  void mousePressed() {
+  void mousePressed(int pointerID, int button) {
     mouseDown = true;
   }
 
   @override
-  void mouseReleased() {
+  void mouseReleased(int pointerID) {
     mouseDown = false;
   }
 
