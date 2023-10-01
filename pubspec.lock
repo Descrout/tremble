@@ -128,14 +128,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
-  spine_core:
-    dependency: "direct main"
-    description:
-      name: spine_core
-      sha256: "6aa034e0c588b2b12543b25f17a72bca22c8ffa9b7b93c20a6b1e03e297d804f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.5"
   stack_trace:
     dependency: transitive
     description:
