@@ -13,6 +13,20 @@ class Sprite {
     this.flip = false,
   });
 
+  Sprite copy() {
+    return Sprite(
+      texture: Rect.fromLTWH(texture.left, texture.top, texture.width, texture.height),
+      x: x,
+      y: y,
+      originX: originX,
+      originY: originY,
+      opacity: opacity,
+      scale: scale,
+      rotation: rotation,
+      flip: flip,
+    );
+  }
+
   Rect texture;
 
   double x;

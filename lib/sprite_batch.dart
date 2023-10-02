@@ -155,7 +155,7 @@ class SpriteBatch {
   }) =>
       AnimationData(key: key, frames: frames[key]!, speed: speed, loop: loop);
 
-  void draw(Canvas canvas, List<Sprite> sprites, [Paint? paint]) {
+  void draw(Canvas canvas, Iterable<Sprite> sprites, [Paint? paint]) {
     final transforms = <RSTransform>[];
     final rects = <Rect>[];
     final colors = <Color>[];
