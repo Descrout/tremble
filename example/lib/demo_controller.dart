@@ -25,7 +25,7 @@ class DemoController extends ScreenController {
   }
 
   @override
-  void setup(double width, double height) {
+  void setup(BuildContext context, double width, double height) {
     hero = Animation(
       animations: [
         spriteBatch.getAnimation("hero-idle", speed: 10),

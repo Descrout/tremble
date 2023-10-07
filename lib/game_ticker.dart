@@ -28,7 +28,7 @@ class _GameTickerState extends State<GameTicker> with SingleTickerProviderStateM
 
   @override
   void initState() {
-    widget.controller.setup(widget.width, widget.height);
+    widget.controller.setup(context, widget.width, widget.height);
     widget.controller.update(0);
 
     ticker = createTicker(tick);
@@ -60,7 +60,7 @@ class _GameTickerState extends State<GameTicker> with SingleTickerProviderStateM
   void didUpdateWidget(covariant GameTicker oldWidget) {
     if (oldWidget.controller != widget.controller) {
       oldWidget.controller.dispose();
-      widget.controller.setup(widget.width, widget.height);
+      widget.controller.setup(context, widget.width, widget.height);
     }
     if (oldWidget.width != widget.width || oldWidget.height != widget.height) {
       widget.controller.resize(widget.width, widget.height);

@@ -7,7 +7,7 @@ abstract class ScreenController {
     done();
   }
 
-  void setup(double width, double height);
+  void setup(BuildContext context, double width, double height);
   void resize(double width, double height) {}
 
   void mouseMove(double mouseX, double mouseY) {}

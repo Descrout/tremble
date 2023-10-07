@@ -24,5 +24,5 @@ class StateMachine {
     exit[name] = onExit;
   }
 
-  void update(dt) => updates[_state]?.call(dt);
+  void update(double dt) => updates[_state]?.call(dt);
 }
