@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
 class Sprite {
   Sprite({
@@ -11,6 +11,7 @@ class Sprite {
     this.scale = 1.0,
     this.rotation = 0,
     this.flip = false,
+    this.tint = Colors.white,
   });
 
   Sprite copy() {
@@ -40,6 +41,8 @@ class Sprite {
   double scale;
 
   bool flip;
+
+  Color tint;
 
   RSTransform get tranform => RSTransform.fromComponents(
         rotation: rotation,

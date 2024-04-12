@@ -1,7 +1,6 @@
 import 'dart:collection';
 import 'dart:ui';
 
-import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:tremble/tremble.dart';
 
@@ -170,7 +169,7 @@ class SpriteBatch {
             )
           : sprite.texture);
 
-      colors.add(Colors.white.withOpacity(sprite.opacity));
+      colors.add(sprite.tint.withOpacity(sprite.opacity));
 
       transforms.add(sprite.tranform);
     }
