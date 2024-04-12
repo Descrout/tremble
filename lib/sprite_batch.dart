@@ -179,7 +179,7 @@ class SpriteBatch {
       transforms,
       rects,
       colors,
-      BlendMode.srcIn,
+      BlendMode.modulate,
       null,
       paint ?? _emptyPaint,
     );
