@@ -14,7 +14,9 @@ class SpriteBatch {
   final Image image;
   final Map<String, Rect> textures;
   final Map<String, List<Rect>> frames;
-  final Paint _emptyPaint = Paint();
+  static final Paint _emptyPaint = Paint()
+    ..filterQuality = FilterQuality.none
+    ..isAntiAlias = false;
 
   static Future<SpriteBatch> custom({
     required Image image,
@@ -24,7 +26,7 @@ class SpriteBatch {
     Paint? flipPaint,
   }) async {
     return SpriteBatch._(
-      image: flippable ? await ImageUtils.generateFlipped(image, flipPaint) : image,
+      image: flippable ? await ImageUtils.generateFlipped(image, flipPaint ?? _emptyPaint) : image,
       textures: textures,
       frames: frames,
     );
@@ -76,7 +78,8 @@ class SpriteBatch {
     assert(image != null, "Batch image could not be loaded !");
 
     return SpriteBatch._(
-      image: flippable ? await ImageUtils.generateFlipped(image!, flipPaint) : image!,
+      image:
+          flippable ? await ImageUtils.generateFlipped(image!, flipPaint ?? _emptyPaint) : image!,
       textures: textures,
       frames: framesMap.map((key, value) => MapEntry(key, value.values.toList())),
     );
@@ -140,7 +143,8 @@ class SpriteBatch {
     assert(image != null, "Batch image could not be loaded !");
 
     return SpriteBatch._(
-      image: flippable ? await ImageUtils.generateFlipped(image!, flipPaint) : image!,
+      image:
+          flippable ? await ImageUtils.generateFlipped(image!, flipPaint ?? _emptyPaint) : image!,
       textures: textures,
       frames: framesMap.map((key, value) => MapEntry(key, value.values.toList())),
     );
