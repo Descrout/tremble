@@ -21,15 +21,17 @@ class SpriteBatch {
     required Map<String, Rect> textures,
     required Map<String, List<Rect>> frames,
     bool flippable = false,
+    Paint? flipPaint,
   }) async {
     return SpriteBatch._(
-      image: flippable ? await ImageUtils.generateFlipped(image) : image,
+      image: flippable ? await ImageUtils.generateFlipped(image, flipPaint) : image,
       textures: textures,
       frames: frames,
     );
   }
 
-  static Future<SpriteBatch> fromGdxPacker(String path, {bool flippable = false}) async {
+  static Future<SpriteBatch> fromGdxPacker(String path,
+      {bool flippable = false, Paint? flipPaint}) async {
     Rect getRect(String data) {
       final split = data.split(',');
       return Rect.fromLTWH(
@@ -74,13 +76,14 @@ class SpriteBatch {
     assert(image != null, "Batch image could not be loaded !");
 
     return SpriteBatch._(
-      image: flippable ? await ImageUtils.generateFlipped(image!) : image!,
+      image: flippable ? await ImageUtils.generateFlipped(image!, flipPaint) : image!,
       textures: textures,
       frames: framesMap.map((key, value) => MapEntry(key, value.values.toList())),
     );
   }
 
-  static Future<SpriteBatch> fromOldGdxPacker(String path, {bool flippable = false}) async {
+  static Future<SpriteBatch> fromOldGdxPacker(String path,
+      {bool flippable = false, Paint? flipPaint}) async {
     (int, int) getTupple(String data) {
       final split = data.split(',');
       return (int.parse(split[0]), int.parse(split[1]));
@@ -137,7 +140,7 @@ class SpriteBatch {
     assert(image != null, "Batch image could not be loaded !");
 
     return SpriteBatch._(
-      image: flippable ? await ImageUtils.generateFlipped(image!) : image!,
+      image: flippable ? await ImageUtils.generateFlipped(image!, flipPaint) : image!,
       textures: textures,
       frames: framesMap.map((key, value) => MapEntry(key, value.values.toList())),
     );
