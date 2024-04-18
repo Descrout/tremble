@@ -86,7 +86,7 @@ class DemoController extends ScreenController {
   }
 
   @override
-  void mouseMove(double mouseX, double mouseY) {
+  void mouseMove(int pointerID, double mouseX, double mouseY) {
     this.mouseX = mouseX;
     this.mouseY = mouseY;
   }

@@ -57,10 +57,10 @@ class _GameAreaState extends State<GameArea> {
               onPointerDown: (event) =>
                   widget.controller.mousePressed(event.pointer, event.buttons),
               onPointerUp: (event) => widget.controller.mouseReleased(event.pointer),
-              onPointerHover: (event) =>
-                  widget.controller.mouseMove(event.localPosition.dx, event.localPosition.dy),
-              onPointerMove: (event) =>
-                  widget.controller.mouseMove(event.localPosition.dx, event.localPosition.dy),
+              onPointerHover: (event) => widget.controller
+                  .mouseMove(event.pointer, event.localPosition.dx, event.localPosition.dy),
+              onPointerMove: (event) => widget.controller
+                  .mouseMove(event.pointer, event.localPosition.dx, event.localPosition.dy),
               onPointerSignal: (event) {
                 if (event is PointerScrollEvent) widget.controller.mouseScroll(event.scrollDelta);
               },
