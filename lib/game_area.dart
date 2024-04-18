@@ -54,8 +54,8 @@ class _GameAreaState extends State<GameArea> {
     return loaded
         ? ClipRRect(
             child: Listener(
-              onPointerDown: (event) =>
-                  widget.controller.mousePressed(event.pointer, event.buttons),
+              onPointerDown: (event) => widget.controller.mousePressed(
+                  event.pointer, event.buttons, event.localPosition.dx, event.localPosition.dy),
               onPointerUp: (event) => widget.controller.mouseReleased(event.pointer),
               onPointerHover: (event) => widget.controller
                   .mouseMove(event.pointer, event.localPosition.dx, event.localPosition.dy),

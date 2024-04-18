@@ -92,8 +92,10 @@ class DemoController extends ScreenController {
   }
 
   @override
-  void mousePressed(int pointerID, int button) {
+  void mousePressed(int pointerID, int button, double mouseX, double mouseY) {
     mouseDown = true;
+    this.mouseX = mouseX;
+    this.mouseY = mouseY;
   }
 
   @override
