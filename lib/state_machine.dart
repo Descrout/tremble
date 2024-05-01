@@ -15,13 +15,13 @@ class StateMachine {
 
   void add({
     required String name,
-    required VoidCallback onEnter,
-    required UpdateCallback onUpdate,
-    required VoidCallback onExit,
+    VoidCallback? onEnter,
+    UpdateCallback? onUpdate,
+    VoidCallback? onExit,
   }) {
-    enter[name] = onEnter;
-    updates[name] = onUpdate;
-    exit[name] = onExit;
+    if (onEnter != null) enter[name] = onEnter;
+    if (onUpdate != null) updates[name] = onUpdate;
+    if (onExit != null) exit[name] = onExit;
   }
 
   void update(double dt) => updates[_state]?.call(dt);
