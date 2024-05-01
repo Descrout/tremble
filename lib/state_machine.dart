@@ -13,8 +13,8 @@ class StateMachine {
     enter[_state]?.call();
   }
 
-  void add({
-    required String name,
+  void add(
+    String name, {
     VoidCallback? onEnter,
     UpdateCallback? onUpdate,
     VoidCallback? onExit,
