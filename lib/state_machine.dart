@@ -6,8 +6,11 @@ class StateMachine {
   final updates = <String, UpdateCallback>{};
 
   String _state = "";
+  String previousState = "";
+
   String get state => _state;
   set state(String name) {
+    previousState = _state;
     exit[_state]?.call();
     _state = name;
     enter[_state]?.call();
