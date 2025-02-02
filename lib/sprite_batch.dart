@@ -176,7 +176,7 @@ class SpriteBatch {
             )
           : sprite.texture);
 
-      colors.add(sprite.tint.withOpacity(sprite.opacity));
+      colors.add(sprite.tint.withAlpha(sprite.opacity));
 
       transforms.add(sprite.tranform);
     }

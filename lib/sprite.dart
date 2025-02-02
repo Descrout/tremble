@@ -7,7 +7,7 @@ class Sprite {
     required this.y,
     this.originX = 0.5,
     this.originY = 0.5,
-    this.opacity = 1.0,
+    this.opacity = 255,
     this.scale = 1.0,
     this.rotation = 0,
     this.flip = false,
@@ -36,7 +36,7 @@ class Sprite {
   double originX;
   double originY;
 
-  double opacity;
+  int opacity;
   double rotation;
   double scale;
 

@@ -24,7 +24,7 @@ class Animation extends Sprite {
     int index = 0,
     super.originX = 0.5,
     super.originY = 0.5,
-    super.opacity = 1.0,
+    super.opacity = 255,
     super.scale = 1.0,
     super.rotation = 0,
   })  : assert(animations.isNotEmpty, "you have to provide atleast 1 AnimationData"),
