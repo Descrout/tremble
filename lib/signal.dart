@@ -8,11 +8,11 @@ class Signal<T> {
   void clear() => _subs.clear();
 
   void listen(SubscriptionCallback<T> callback) => _subs.add(callback);
+  void unlisten(SubscriptionCallback<T> callback) => _subs.remove(callback);
 
   void dispatch(T args) {
     for (int i = _subs.length - 1; i >= 0; i--) {
-      final callback = _subs[i];
-      final keep = callback(args);
+      final keep = _subs[i](args);
       if (keep != true) _subs.removeAt(i);
     }
   }

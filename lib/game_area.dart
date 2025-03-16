@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:tremble/game_ticker.dart';
 import 'package:tremble/screen_controller.dart';
 
@@ -76,8 +76,7 @@ class _GameAreaState extends State<GameArea> {
         : StreamBuilder(
             stream: preloadController.stream,
             builder: (context, snapshot) {
-              return widget.loadingBuilder?.call(context, snapshot.data ?? 0.0) ??
-                  const Center(child: CircularProgressIndicator());
+              return widget.loadingBuilder?.call(context, snapshot.data ?? 0.0) ?? const SizedBox();
             });
   }
 

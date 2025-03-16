@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/widgets.dart';
 import 'package:tremble/game_listener.dart';
 import 'package:tremble/game_painter.dart';
 import 'package:tremble/screen_controller.dart';
