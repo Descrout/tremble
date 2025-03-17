@@ -26,18 +26,19 @@ class _SignalBuilderState<T> extends State<SignalBuilder<T>> {
 
     if (result == false) {
       return false;
-    } else if (result == true) {
-      stateValue = value;
-      setState(() {});
+    } else if (result == null && widget.onSignal != null) {
+      return true;
     }
 
+    stateValue = value;
+    setState(() {});
     return true;
   }
 
   @override
   void initState() {
-    widget.signal.listen(onSignal);
     super.initState();
+    widget.signal.listen(onSignal);
   }
 
   @override
