@@ -15,7 +15,7 @@ class SignalBuilder<T> extends StatefulWidget {
   final Widget Function(BuildContext context, T? value) builder;
 
   @override
-  State<SignalBuilder> createState() => _SignalBuilderState();
+  State<SignalBuilder<T>> createState() => _SignalBuilderState<T>();
 }
 
 class _SignalBuilderState<T> extends State<SignalBuilder<T>> {
