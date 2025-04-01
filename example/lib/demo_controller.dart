@@ -38,10 +38,20 @@ class DemoController extends ScreenController {
 
   @override
   void update(double deltaTime) {
+    // X Velocity
     double vx = 0;
+
+    // Move the hero with keyboard
     if (keys.contains(LogicalKeyboardKey.arrowLeft)) vx -= 140;
     if (keys.contains(LogicalKeyboardKey.arrowRight)) vx += 140;
 
+    // Move the hero with mouse
+    final deltaX = hero.x - mouseX;
+    if (deltaX.abs() > 32) {
+      vx -= 140 * deltaX.sign;
+    }
+
+    // Set hero animation based on velocity
     if (vx == 0) {
       hero.setAnimation("hero-idle");
     } else {
@@ -52,8 +62,9 @@ class DemoController extends ScreenController {
 
     hero.update(deltaTime);
 
+    // Shooting timer
     if (shootTimer <= 0) {
-      if (keys.contains(LogicalKeyboardKey.space)) {
+      if (keys.contains(LogicalKeyboardKey.space) || mouseDown) {
         positions.add(Offset(hero.x, hero.y));
       }
       shootTimer = 10;
@@ -61,6 +72,7 @@ class DemoController extends ScreenController {
       shootTimer -= deltaTime * 100;
     }
 
+    // Move the bullets to top and if they are out of screen remove them
     for (int i = positions.length - 1; i >= 0; i--) {
       if (positions[i].dy + 16 < 0) {
         positions.removeAt(i);
