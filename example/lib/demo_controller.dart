@@ -16,6 +16,8 @@ class DemoController extends ScreenController {
   late final SpriteBatch spriteBatch;
   late final Animation hero;
 
+  final isMouseControlled = ValueNotifier<bool>(true);
+
   @override
   Future<void> preload(progress, done) async {
     spriteBatch =
@@ -41,14 +43,15 @@ class DemoController extends ScreenController {
     // X Velocity
     double vx = 0;
 
-    // Move the hero with keyboard
-    if (keys.contains(LogicalKeyboardKey.arrowLeft)) vx -= 140;
-    if (keys.contains(LogicalKeyboardKey.arrowRight)) vx += 140;
-
-    // Move the hero with mouse
-    final deltaX = hero.x - mouseX;
-    if (deltaX.abs() > 16) {
-      vx -= 140 * deltaX.sign;
+    // Control the hero with mouse or keyboard
+    if (isMouseControlled.value) {
+      final deltaX = mouseX - hero.x;
+      if (deltaX.abs() > 16) {
+        vx += 140 * deltaX.sign;
+      }
+    } else {
+      if (keys.contains(LogicalKeyboardKey.arrowLeft)) vx -= 140;
+      if (keys.contains(LogicalKeyboardKey.arrowRight)) vx += 140;
     }
 
     // Set hero animation based on velocity
@@ -64,7 +67,8 @@ class DemoController extends ScreenController {
 
     // Shooting timer
     if (shootTimer <= 0) {
-      if (keys.contains(LogicalKeyboardKey.space) || mouseDown) {
+      if ((!isMouseControlled.value && keys.contains(LogicalKeyboardKey.space)) ||
+          (isMouseControlled.value && mouseDown)) {
         positions.add(Offset(hero.x, hero.y));
       }
       shootTimer = 10;
@@ -84,7 +88,7 @@ class DemoController extends ScreenController {
 
   @override
   void draw(Canvas canvas, Size size) {
-    canvas.drawColor(Colors.black, BlendMode.src);
+    canvas.drawColor(const Color.fromARGB(255, 41, 41, 41), BlendMode.src);
 
     final paint = Paint()..color = Colors.yellow;
 
@@ -128,5 +132,6 @@ class DemoController extends ScreenController {
   @override
   void dispose() {
     spriteBatch.dispose();
+    isMouseControlled.dispose();
   }
 }
