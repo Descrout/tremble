@@ -2,8 +2,6 @@ name: tremble
 description: A Simple Flutter game engine.
 homepage: https://github.com/Descrout/tremble.git
 
-publish_to: 'none'
-
 version: 1.0.0
 
 environment:
