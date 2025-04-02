@@ -11,6 +11,7 @@ FittedBox(
 		width: 480,
 		height: 640,
 		child: GameArea(controller: DemoController()),
+    )
 )
 ```
 
