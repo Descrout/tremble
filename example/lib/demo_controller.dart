@@ -47,7 +47,7 @@ class DemoController extends ScreenController {
 
     // Move the hero with mouse
     final deltaX = hero.x - mouseX;
-    if (deltaX.abs() > 32) {
+    if (deltaX.abs() > 16) {
       vx -= 140 * deltaX.sign;
     }
 

@@ -59,7 +59,6 @@ class _GameTickerState extends State<GameTicker> with SingleTickerProviderStateM
   @override
   void didUpdateWidget(covariant GameTicker oldWidget) {
     if (oldWidget.controller != widget.controller) {
-      oldWidget.controller.dispose();
       widget.controller.setup(context, widget.width, widget.height);
     }
     if (oldWidget.width != widget.width || oldWidget.height != widget.height) {
@@ -70,7 +69,6 @@ class _GameTickerState extends State<GameTicker> with SingleTickerProviderStateM
 
   @override
   void dispose() {
-    widget.controller.dispose();
     listener.dispose();
     ticker?.dispose();
     super.dispose();

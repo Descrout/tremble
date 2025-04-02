@@ -21,20 +21,35 @@ class GameArea extends StatefulWidget {
 }
 
 class _GameAreaState extends State<GameArea> {
-  final preloadController = StreamController<double>();
+  StreamController<double>? preloadStream;
   bool loaded = false;
 
   @override
   void initState() {
-    widget.controller.preload(preloadController.sink.add, onDone);
+    preloadStream = StreamController<double>();
+    widget.controller.preload(preloadStream!.sink.add, onDone);
     super.initState();
   }
 
   void onDone() {
     ServicesBinding.instance.keyboard.addHandler(_onKey);
     loaded = true;
-    preloadController.close();
+    preloadStream?.close();
+    preloadStream = null;
     setState(() {});
+  }
+
+  @override
+  void didUpdateWidget(covariant GameArea oldWidget) {
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.dispose();
+      loaded = false;
+      preloadStream?.close();
+      preloadStream = StreamController<double>();
+      widget.controller.preload(preloadStream!.sink.add, onDone);
+    }
+
+    super.didUpdateWidget(oldWidget);
   }
 
   bool _onKey(KeyEvent event) {
@@ -74,7 +89,7 @@ class _GameAreaState extends State<GameArea> {
             ),
           )
         : StreamBuilder(
-            stream: preloadController.stream,
+            stream: preloadStream!.stream,
             builder: (context, snapshot) {
               return widget.loadingBuilder?.call(context, snapshot.data ?? 0.0) ?? const SizedBox();
             });
@@ -82,8 +97,10 @@ class _GameAreaState extends State<GameArea> {
 
   @override
   void dispose() {
+    widget.controller.dispose();
     ServicesBinding.instance.keyboard.removeHandler(_onKey);
-    preloadController.close();
+    preloadStream?.close();
+    preloadStream = null;
     super.dispose();
   }
 }
