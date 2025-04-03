@@ -10,8 +10,8 @@ class ImageUtils {
       final codec = await instantiateImageCodec(bytes);
       var frame = await codec.getNextFrame();
       return frame.image;
-    } catch (_) {
-      debugPrint("loadImageFromBytes error : $_");
+    } catch (err) {
+      debugPrint("loadImageFromBytes error : $err");
       return null;
     }
   }
@@ -20,8 +20,8 @@ class ImageUtils {
     try {
       final ByteData data = await rootBundle.load(imageAssetPath);
       return loadImageFromBytes(data.buffer.asUint8List());
-    } catch (_) {
-      debugPrint("loadImageFromAssets error : $_");
+    } catch (err) {
+      debugPrint("loadImageFromAssets error : $err");
       return null;
     }
   }
@@ -30,8 +30,8 @@ class ImageUtils {
     try {
       final file = File(path);
       return loadImageFromBytes(await file.readAsBytes());
-    } catch (_) {
-      debugPrint("loadImageFromPath error : $_");
+    } catch (err) {
+      debugPrint("loadImageFromPath error : $err");
       return null;
     }
   }
