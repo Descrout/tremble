@@ -1,17 +1,5 @@
 import 'package:tremble/utils/types.dart';
 
-class ChainState {
-  final double time;
-  final TimeUpdateCallback? onUpdate;
-  final VoidCallback onEnd;
-
-  ChainState({
-    required this.time,
-    required this.onEnd,
-    this.onUpdate,
-  });
-}
-
 class WaitEvents {
   final _updates = <UpdateSubscriptionCallback>[];
 
@@ -59,6 +47,7 @@ class WaitEvents {
     tempCallback(double deltaTime) {
       time -= deltaTime;
       if (time < 0) {
+        onUpdate(deltaTime, 0);
         onEnd?.call();
         return false;
       }
@@ -69,20 +58,7 @@ class WaitEvents {
     _updates.add(tempCallback);
   }
 
-  void chain(List<ChainState> states) {
-    double time = 0;
-    for (int i = 0; i < states.length; i++) {
-      final state = states[i];
-      time += state.time;
-      if (state.onUpdate != null) {
-        waitAndDo(time: time, onUpdate: state.onUpdate!, onEnd: state.onEnd);
-      } else {
-        wait(time: time, onEnd: state.onEnd);
-      }
-    }
-  }
-
-  void update(dt) {
+  void update(double dt) {
     for (int i = _updates.length - 1; i >= 0; i--) {
       if (_updates[i](dt) != true) _updates.removeAt(i);
     }
