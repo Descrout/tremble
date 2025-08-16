@@ -1,4 +1,5 @@
 import 'package:tremble/utils/types.dart';
+import 'package:tremble/wait_chain_builder.dart';
 
 class WaitEvents {
   final _updates = <UpdateSubscriptionCallback>[];
@@ -7,6 +8,8 @@ class WaitEvents {
   int get length => _updates.length;
 
   clear() => _updates.clear();
+
+  WaitChainBuilder chain() => WaitChainBuilder(this);
 
   void wait({
     required double time,
