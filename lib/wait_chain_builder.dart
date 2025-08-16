@@ -27,8 +27,8 @@ class WaitChainBuilder {
     return this;
   }
 
-  WaitChainBuilder blockUntil(void Function(VoidCallback continueFn) fn) {
-    _chain.add(_ChainData.blockUntil(fn));
+  WaitChainBuilder blockUntil(void Function(VoidCallback fn) continueFn) {
+    _chain.add(_ChainData.blockUntil(continueFn));
     return this;
   }
 
@@ -47,8 +47,8 @@ class WaitChainBuilder {
               fn();
               onEnd();
             });
-      case _BlockUntil(fn: final fn):
-        return () => fn(onEnd);
+      case _BlockUntil(continueFn: final continueFn):
+        return () => continueFn(onEnd);
       case _Wait(time: final time):
         return () => _waitEvents.wait(time: time, onEnd: onEnd);
       case _WaitUntil(onUpdate: final onUpdate):
@@ -71,7 +71,7 @@ sealed class _ChainData {
   factory _ChainData.waitUntil(UpdateSubscriptionCallback onUpdate) = _WaitUntil;
   factory _ChainData.waitAndDo(double time, TimeUpdateCallback onUpdate) = _WaitAndDo;
 
-  factory _ChainData.blockUntil(void Function(VoidCallback continueFn) fn) = _BlockUntil;
+  factory _ChainData.blockUntil(void Function(VoidCallback fn) continueFn) = _BlockUntil;
 
   factory _ChainData.run(VoidCallback fn) = _Run;
 }
@@ -98,6 +98,6 @@ class _Run extends _ChainData {
 }
 
 class _BlockUntil extends _ChainData {
-  final void Function(VoidCallback continueFn) fn;
-  _BlockUntil(this.fn);
+  final void Function(VoidCallback fn) continueFn;
+  _BlockUntil(this.continueFn);
 }

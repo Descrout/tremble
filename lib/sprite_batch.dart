@@ -1,4 +1,6 @@
 import 'dart:collection';
+import 'dart:math' as math;
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/services.dart';
@@ -161,32 +163,65 @@ class SpriteBatch {
   }) =>
       AnimationData(key: key, frames: frames[key]!, speed: speed, loop: loop);
 
-  void draw(Canvas canvas, Iterable<Sprite> sprites, [Paint? paint]) {
-    final transforms = <RSTransform>[];
-    final rects = <Rect>[];
-    final colors = <Color>[];
+  // Reusable buffers
+  Float32List _rects = Float32List(0);
+  Float32List _transforms = Float32List(0);
+  Int32List _colors = Int32List(0);
 
-    for (final sprite in sprites) {
-      rects.add(sprite.flip
+  void _ensureCapacity(int count) {
+    final needed = count * 4;
+    if (_rects.length < needed) {
+      final newSize = math.max(needed, (_rects.length * 1.5).round());
+      _rects = Float32List(newSize);
+      _transforms = Float32List(newSize);
+      _colors = Int32List(newSize ~/ 4);
+    }
+  }
+
+  void draw(Canvas canvas, List<Sprite> sprites,
+      [Paint? paint, BlendMode blendMode = BlendMode.modulate]) {
+    final count = sprites.length;
+    _ensureCapacity(count);
+
+    var i = 0;
+    for (int j = 0; j < count; j++) {
+      final sprite = sprites[j];
+      // --- rect (left, top, right, bottom)
+      final rect = sprite.flip
           ? Rect.fromLTWH(
               image.width - sprite.texture.right,
               sprite.texture.top,
               sprite.texture.width,
               sprite.texture.height,
             )
-          : sprite.texture);
+          : sprite.texture;
 
-      colors.add(sprite.tint.withAlpha(sprite.opacity));
+      final ri = i * 4;
+      _rects[ri + 0] = rect.left;
+      _rects[ri + 1] = rect.top;
+      _rects[ri + 2] = rect.right;
+      _rects[ri + 3] = rect.bottom;
 
-      transforms.add(sprite.tranform);
+      // --- transform (scos, ssin, tx, ty)
+      final t = sprite.tranform;
+      final ti = i * 4;
+      _transforms[ti + 0] = t.scos;
+      _transforms[ti + 1] = t.ssin;
+      _transforms[ti + 2] = t.tx;
+      _transforms[ti + 3] = t.ty;
+
+      // --- color (as ARGB int)
+      _colors[i] = sprite.tint.withAlpha(sprite.opacity).toARGB32();
+
+      i++;
     }
 
-    canvas.drawAtlas(
+    canvas.drawRawAtlas(
       image,
-      transforms,
-      rects,
-      colors,
-      BlendMode.modulate,
+      Float32List.sublistView(_transforms, 0, count * 4),
+      Float32List.sublistView(_rects, 0, count * 4),
+      Int32List.sublistView(_colors, 0, count),
+      blendMode,
       null,
       paint ?? _emptyPaint,
     );
