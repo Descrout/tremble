@@ -12,6 +12,11 @@ class WaitChainBuilder {
     return this;
   }
 
+  WaitChainBuilder periodic(double time, PeriodicCallback onTick) {
+    _chain.add(_ChainData.periodic(time, onTick));
+    return this;
+  }
+
   WaitChainBuilder waitUntil(UpdateSubscriptionCallback onUpdate) {
     _chain.add(_ChainData.waitUntil(onUpdate));
     return this;
@@ -51,6 +56,8 @@ class WaitChainBuilder {
         return () => continueFn(onEnd);
       case _Wait(time: final time):
         return () => _waitEvents.wait(time: time, onEnd: onEnd);
+      case _Periodic(time: final time, onTick: final onTick):
+        return () => _waitEvents.periodic(time: time, onTick: onTick, onEnd: onEnd);
       case _WaitUntil(onUpdate: final onUpdate):
         return () => _waitEvents.waitUntil(onUpdate: onUpdate, onEnd: onEnd);
       case _WaitAndDo(time: final time, onUpdate: final onUpdate):
@@ -68,6 +75,7 @@ sealed class _ChainData {
   _ChainData();
 
   factory _ChainData.wait(double time) = _Wait;
+  factory _ChainData.periodic(double time, PeriodicCallback onTick) = _Periodic;
   factory _ChainData.waitUntil(UpdateSubscriptionCallback onUpdate) = _WaitUntil;
   factory _ChainData.waitAndDo(double time, TimeUpdateCallback onUpdate) = _WaitAndDo;
 
@@ -79,6 +87,12 @@ sealed class _ChainData {
 class _Wait extends _ChainData {
   final double time;
   _Wait(this.time);
+}
+
+class _Periodic extends _ChainData {
+  final double time;
+  final PeriodicCallback onTick;
+  _Periodic(this.time, this.onTick);
 }
 
 class _WaitUntil extends _ChainData {

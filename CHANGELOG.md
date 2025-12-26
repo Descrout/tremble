@@ -1,3 +1,7 @@
+## 1.0.4
+
+* Added ``periodic`` function to the both ``WaitChainBuilder`` and ``WaitEvents``.
+
 ## 1.0.3
 
 * Added ``blockUntil`` function to the ``WaitChainBuilder``.

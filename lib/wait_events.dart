@@ -27,6 +27,32 @@ class WaitEvents {
     _updates.add(tempCallback);
   }
 
+  void periodic({
+    required double time,
+    required PeriodicCallback onTick,
+    VoidCallback? onEnd,
+  }) {
+    int phase = 0;
+    double currentTime = 0;
+    tempCallback(double deltaTime) {
+      currentTime += deltaTime;
+      if (currentTime >= time) {
+        final result = onTick(phase);
+        if (result) {
+          currentTime = 0;
+          phase++;
+          return true;
+        }
+
+        onEnd?.call();
+        return false;
+      }
+      return true;
+    }
+
+    _updates.add(tempCallback);
+  }
+
   void waitUntil({
     required UpdateSubscriptionCallback onUpdate,
     required VoidCallback onEnd,
