@@ -10,9 +10,15 @@ class StateMachine {
 
   String get state => _state;
   set state(String name) {
+    if (name == _state) return;
     previousState = _state;
     exit[_state]?.call();
     _state = name;
+    enter[_state]?.call();
+  }
+
+  void resetState() {
+    exit[_state]?.call();
     enter[_state]?.call();
   }
 

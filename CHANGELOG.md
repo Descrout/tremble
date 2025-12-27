@@ -1,3 +1,8 @@
+## 1.0.5
+
+* ``Statemachine:`` The bug that caused the previous state to be lost when assigning the current state to itself has been resolved.
+* ``Statemachine:`` ``reset`` function added.
+
 ## 1.0.4
 
 * Added ``periodic`` function to the both ``WaitChainBuilder`` and ``WaitEvents``.
