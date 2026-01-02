@@ -1,15 +1,16 @@
 import 'package:tremble/utils/types.dart';
 
-class StateMachine {
-  final enter = <String, VoidCallback>{};
-  final exit = <String, VoidCallback>{};
-  final updates = <String, UpdateCallback>{};
+class StateMachine<T> {
+  final enter = <T, VoidCallback>{};
+  final exit = <T, VoidCallback>{};
+  final updates = <T, UpdateCallback>{};
 
-  String _state = "";
-  String previousState = "";
+  T? _state;
+  T? previousState;
 
-  String get state => _state;
-  set state(String name) {
+  T? get state => _state;
+
+  set state(T? name) {
     if (name == _state) return;
     previousState = _state;
     exit[_state]?.call();
@@ -23,7 +24,7 @@ class StateMachine {
   }
 
   void add(
-    String name, {
+    T name, {
     VoidCallback? onEnter,
     UpdateCallback? onUpdate,
     VoidCallback? onExit,
