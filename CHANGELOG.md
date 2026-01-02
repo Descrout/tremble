@@ -1,3 +1,7 @@
+## 1.0.6
+
+* Generic ``StateMachine`` implemented.
+
 ## 1.0.5
 
 * ``Statemachine:`` The bug that caused the previous state to be lost when assigning the current state to itself has been resolved.
