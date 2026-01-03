@@ -4,3 +4,4 @@ typedef PeriodicCallback = bool Function(int phase);
 typedef UpdateCallback = void Function(double deltaTime);
 typedef UpdateSubscriptionCallback = bool Function(double deltaTime);
 typedef TimeUpdateCallback = void Function(double deltaTime, double remainingTime);
+typedef StateChangeCallback<T> = void Function(T? from, T? to);

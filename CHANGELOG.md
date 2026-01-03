@@ -1,3 +1,9 @@
+## 1.0.7
+
+* ``ColorUtils`` introduced.
+* ``onBeforeStateChange`` and ``onAfterStateChange`` callbacks added to ``StateMachine``.
+* ``resetState`` function renamed to ``restartState``.
+
 ## 1.0.6
 
 * Generic ``StateMachine`` implemented.

@@ -1,6 +1,6 @@
 import 'dart:math';
 
-class MathUtils {
+abstract class MathUtils {
   static Random _rnd = Random();
 
   static int randInt(int min, int max) {

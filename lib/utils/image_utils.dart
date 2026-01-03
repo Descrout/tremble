@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-class ImageUtils {
+abstract class ImageUtils {
   static Future<Image?> loadImageFromBytes(Uint8List bytes) async {
     try {
       final codec = await instantiateImageCodec(bytes);

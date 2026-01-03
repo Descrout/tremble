@@ -7,6 +7,7 @@ export 'package:tremble/signal.dart';
 export 'package:tremble/sprite.dart';
 export 'package:tremble/sprite_batch.dart';
 export 'package:tremble/state_machine.dart';
+export 'package:tremble/utils/color_utils.dart';
 export 'package:tremble/utils/extensions.dart';
 export 'package:tremble/utils/helpers.dart';
 export 'package:tremble/utils/image_utils.dart';

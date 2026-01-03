@@ -55,11 +55,11 @@ class WaitEvents {
 
   void waitUntil({
     required UpdateSubscriptionCallback onUpdate,
-    required VoidCallback onEnd,
+    VoidCallback? onEnd,
   }) {
     tempCallback(double deltaTime) {
       if (onUpdate(deltaTime) != true) {
-        onEnd.call();
+        onEnd?.call();
         return false;
       }
       return true;
@@ -89,7 +89,12 @@ class WaitEvents {
 
   void update(double dt) {
     for (int i = _updates.length - 1; i >= 0; i--) {
-      if (_updates[i](dt) != true) _updates.removeAt(i);
+      if (_updates[i](dt) != true) {
+        if (_updates.isEmpty) {
+          return;
+        }
+        _updates.removeAt(i);
+      }
     }
   }
 }
