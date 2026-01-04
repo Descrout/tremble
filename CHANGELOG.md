@@ -1,3 +1,7 @@
+## 1.0.8
+
+* ``WaitEvents`` clear bug fixed.
+
 ## 1.0.7
 
 * ``ColorUtils`` introduced.

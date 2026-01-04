@@ -7,7 +7,11 @@ class WaitEvents {
   bool get hasEvent => _updates.isNotEmpty;
   int get length => _updates.length;
 
-  clear() => _updates.clear();
+  bool _clearRequest = false;
+  void clear() {
+    _clearRequest = true;
+    _updates.clear();
+  }
 
   WaitChainBuilder chain() => WaitChainBuilder(this);
 
@@ -88,13 +92,17 @@ class WaitEvents {
   }
 
   void update(double dt) {
+    if (_clearRequest) {
+      _clearRequest = false;
+    }
+
     for (int i = _updates.length - 1; i >= 0; i--) {
-      if (_updates[i](dt) != true) {
-        if (_updates.isEmpty) {
-          return;
-        }
-        _updates.removeAt(i);
+      final result = _updates[i](dt);
+      if (_clearRequest) {
+        _clearRequest = false;
+        return;
       }
+      if (!result) _updates.removeAt(i);
     }
   }
 }
