@@ -19,6 +19,10 @@ abstract class MathUtils {
     return _rnd.nextBool();
   }
 
+  static bool flipCoinWith(double prob) {
+    return _rnd.nextDouble() < prob;
+  }
+
   static void shuffle<T>(List<T> arr) {
     arr.shuffle(_rnd);
   }

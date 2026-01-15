@@ -1,3 +1,8 @@
+## 1.0.9
+
+* ``reset`` function added to the ``StateMachine``.
+* You can set the initial state of ``StateMachine`` now.
+
 ## 1.0.8
 
 * ``WaitEvents`` clear bug fixed.

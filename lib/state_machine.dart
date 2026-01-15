@@ -14,6 +14,8 @@ class StateMachine<T> {
   T? _state;
   T? previousState;
 
+  StateMachine([T? initial]) : _state = initial;
+
   T? get state => _state;
   set state(T? name) {
     if (name == _state) return;
@@ -30,6 +32,11 @@ class StateMachine<T> {
     _exits[_state]?.call();
     _enters[_state]?.call();
     if (triggerStateChange) onAfterStateChange?.call(_state, _state);
+  }
+
+  void reset() {
+    _state = null;
+    previousState = null;
   }
 
   void add(
