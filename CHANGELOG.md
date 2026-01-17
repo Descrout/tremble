@@ -1,3 +1,9 @@
+## 1.0.10
+
+* ``Parametrics`` class added with bunch of 1d nonlinear functions. (Tweening)
+* ``Vector2`` class added.
+* ``SecondOrderDynamics`` class added.
+
 ## 1.0.9
 
 * ``reset`` function added to the ``StateMachine``.

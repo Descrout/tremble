@@ -12,5 +12,7 @@ export 'package:tremble/utils/extensions.dart';
 export 'package:tremble/utils/helpers.dart';
 export 'package:tremble/utils/image_utils.dart';
 export 'package:tremble/utils/math_utils.dart';
+export 'package:tremble/utils/second_order_dynamics.dart';
 export 'package:tremble/utils/types.dart';
+export 'package:tremble/utils/vector2.dart';
 export 'package:tremble/wait_events.dart';
