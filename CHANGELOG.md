@@ -1,3 +1,7 @@
+## 1.0.11
+
+* ``Tween`` class introduced.
+
 ## 1.0.10
 
 * ``Parametrics`` class added with bunch of 1d nonlinear functions. (Tweening)
