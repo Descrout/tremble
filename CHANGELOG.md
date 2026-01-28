@@ -1,3 +1,7 @@
+## 1.0.12
+
+* ``normalizeAngle`` and ``lerpAngle`` added to ``MathUtils`` class.
+
 ## 1.0.11
 
 * ``Tween`` class introduced.

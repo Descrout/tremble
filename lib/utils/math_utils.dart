@@ -56,4 +56,15 @@ abstract class MathUtils {
 
   @pragma('vm:prefer-inline')
   static int lcm(int a, int b) => (a * b) ~/ a.gcd(b);
+
+  static double normalizeAngle(double a) {
+    a = (a + pi) % (2 * pi);
+    if (a < 0) a += 2 * pi;
+    return a - pi;
+  }
+
+  static double lerpAngle(double from, double to, double t) {
+    final diff = normalizeAngle(to - from);
+    return from + diff * t;
+  }
 }
