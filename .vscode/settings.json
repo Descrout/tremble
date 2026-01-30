@@ -9,5 +9,6 @@
     "editor.codeActionsOnSave": {
         "source.fixAll": "explicit",
         "source.organizeImports": "explicit"
-    }
+    },
+    "cmake.sourceDirectory": "C:/Users/PC/Desktop/Projects/tremble/linux"
 }

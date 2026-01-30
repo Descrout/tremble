@@ -17,6 +17,10 @@ abstract class MathUtils {
     return arr[_rnd.nextInt(arr.length)];
   }
 
+  static T randTake<T>(List<T> arr) {
+    return arr.removeAt(_rnd.nextInt(arr.length));
+  }
+
   static bool flipCoin() {
     return _rnd.nextBool();
   }
