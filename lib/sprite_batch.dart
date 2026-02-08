@@ -25,17 +25,52 @@ class SpriteBatch {
     required Map<String, Rect> textures,
     required Map<String, List<Rect>> frames,
     bool flippable = false,
-    Paint? flipPaint,
+    bool maskable = false,
+    bool disposeOriginal = false,
   }) async {
+    final newImage = await transformSheetImage(
+      image,
+      flippable: flippable,
+      maskable: maskable,
+      disposeOriginal: disposeOriginal,
+    );
+
     return SpriteBatch._(
-      image: flippable ? await ImageUtils.generateFlipped(image, flipPaint ?? _emptyPaint) : image,
+      image: newImage,
       textures: textures,
       frames: frames,
     );
   }
 
+  static Future<Image> transformSheetImage(
+    Image image, {
+    required bool flippable,
+    required bool maskable,
+    bool disposeOriginal = false,
+  }) async {
+    Image transformed = image;
+
+    if (maskable) {
+      final newImage = await ImageUtils.generateMasked(transformed);
+      if (transformed != image || disposeOriginal) {
+        transformed.dispose();
+      }
+      transformed = newImage;
+    }
+
+    if (flippable) {
+      final newImage = await ImageUtils.generateFlipped(transformed);
+      if (transformed != image || disposeOriginal) {
+        transformed.dispose();
+      }
+      transformed = newImage;
+    }
+
+    return transformed;
+  }
+
   static Future<SpriteBatch> fromGdxPacker(String path,
-      {bool flippable = false, Paint? flipPaint}) async {
+      {bool flippable = false, bool maskable = false}) async {
     Rect getRect(String data) {
       final split = data.split(',');
       return Rect.fromLTWH(
@@ -76,19 +111,25 @@ class SpriteBatch {
     final pathSplit = path.split("/");
     pathSplit.removeLast();
     pathSplit.add(lines[0]);
+
     final image = await ImageUtils.loadImageFromAssets(pathSplit.join("/"));
     assert(image != null, "Batch image could not be loaded !");
+    final newImage = await transformSheetImage(
+      image!,
+      flippable: flippable,
+      maskable: maskable,
+      disposeOriginal: true,
+    );
 
     return SpriteBatch._(
-      image:
-          flippable ? await ImageUtils.generateFlipped(image!, flipPaint ?? _emptyPaint) : image!,
+      image: newImage,
       textures: textures,
       frames: framesMap.map((key, value) => MapEntry(key, value.values.toList())),
     );
   }
 
   static Future<SpriteBatch> fromOldGdxPacker(String path,
-      {bool flippable = false, Paint? flipPaint}) async {
+      {bool flippable = false, bool maskable = false}) async {
     (int, int) getTupple(String data) {
       final split = data.split(',');
       return (int.parse(split[0]), int.parse(split[1]));
@@ -143,10 +184,15 @@ class SpriteBatch {
 
     final image = await ImageUtils.loadImageFromAssets(pathSplit.join("/"));
     assert(image != null, "Batch image could not be loaded !");
+    final newImage = await transformSheetImage(
+      image!,
+      flippable: flippable,
+      maskable: maskable,
+      disposeOriginal: true,
+    );
 
     return SpriteBatch._(
-      image:
-          flippable ? await ImageUtils.generateFlipped(image!, flipPaint ?? _emptyPaint) : image!,
+      image: newImage,
       textures: textures,
       frames: framesMap.map((key, value) => MapEntry(key, value.values.toList())),
     );
@@ -154,6 +200,24 @@ class SpriteBatch {
 
   Rect getTexture(String key) {
     return textures[key]!;
+  }
+
+  Rect _spriteRect(Sprite sprite) {
+    final rect = sprite.texture;
+    if (!sprite.flip && !sprite.mask) return rect;
+
+    double x = rect.left;
+    double y = rect.top;
+
+    if (sprite.flip) x = image.width - rect.right;
+    if (sprite.mask) y += image.height * 0.5;
+
+    return Rect.fromLTWH(
+      x,
+      y,
+      rect.width,
+      rect.height,
+    );
   }
 
   AnimationData getAnimation(
@@ -187,14 +251,7 @@ class SpriteBatch {
     for (int j = 0; j < count; j++) {
       final sprite = sprites[j];
       // --- rect (left, top, right, bottom)
-      final rect = sprite.flip
-          ? Rect.fromLTWH(
-              image.width - sprite.texture.right,
-              sprite.texture.top,
-              sprite.texture.width,
-              sprite.texture.height,
-            )
-          : sprite.texture;
+      final rect = _spriteRect(sprite);
 
       final ri = i * 4;
       _rects[ri + 0] = rect.left;

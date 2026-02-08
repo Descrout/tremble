@@ -11,6 +11,7 @@ class Sprite {
     this.scale = 1.0,
     this.rotation = 0,
     this.flip = false,
+    this.mask = false,
     this.tint = Colors.white,
   });
 
@@ -25,6 +26,7 @@ class Sprite {
       scale: scale,
       rotation: rotation,
       flip: flip,
+      mask: mask,
     );
   }
 
@@ -40,9 +42,10 @@ class Sprite {
   double rotation;
   double scale;
 
-  bool flip;
-
   Color tint;
+
+  bool flip;
+  bool mask;
 
   RSTransform get tranform => RSTransform.fromComponents(
         rotation: rotation,

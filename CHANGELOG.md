@@ -1,3 +1,8 @@
+## 1.0.14
+
+* ``saveImage`` and ``generateMasked`` functions added to ``ImageUtils``.
+* A boolean ``mask`` field added to ``Sprite`` class.
+
 ## 1.0.13
 
 * ``randTake`` added to MathUtils.

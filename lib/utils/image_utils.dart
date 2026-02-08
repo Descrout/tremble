@@ -36,11 +36,11 @@ abstract class ImageUtils {
     }
   }
 
-  static Future<Image> generateFlipped(Image image, [Paint? paint]) {
+  static Future<Image> generateFlipped(Image image) {
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
 
-    final p = paint ?? Paint();
+    final p = Paint();
 
     canvas.drawImage(image, Offset.zero, p);
     canvas.scale(-1, 1);
@@ -48,5 +48,46 @@ abstract class ImageUtils {
 
     final picture = recorder.endRecording();
     return picture.toImage(image.width * 2, image.height);
+  }
+
+  static Future<Image> generateMasked(Image image) async {
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+
+    final width = image.width.toDouble();
+    final height = image.height.toDouble();
+
+    canvas.drawImage(image, Offset.zero, Paint());
+
+    canvas.drawRect(
+      Rect.fromLTWH(0, height, width, height),
+      Paint()..color = const Color(0xFFFFFFFF),
+    );
+
+    canvas.drawImage(
+      image,
+      Offset(0, height),
+      Paint()..blendMode = BlendMode.dstIn,
+    );
+
+    final picture = recorder.endRecording();
+    return await picture.toImage(image.width, image.height * 2);
+  }
+
+  static Future<File?> saveImage(Image image, String path) async {
+    try {
+      final byteData = await image.toByteData(format: ImageByteFormat.png);
+
+      if (byteData == null) {
+        throw Exception("Failed to convert image to bytes");
+      }
+
+      final pngBytes = byteData.buffer.asUint8List();
+
+      return await File(path).writeAsBytes(pngBytes);
+    } catch (err) {
+      debugPrint("saveImage error : $err");
+      return null;
+    }
   }
 }
