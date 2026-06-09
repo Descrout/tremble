@@ -1,6 +1,23 @@
 import 'package:flutter/material.dart';
 
 class Sprite {
+  Rect texture;
+
+  double x;
+  double y;
+
+  double originX;
+  double originY;
+
+  int opacity;
+  double rotation;
+  double scale;
+
+  Color tint;
+
+  bool flip;
+  bool mask;
+
   Sprite({
     required this.texture,
     required this.x,
@@ -29,23 +46,6 @@ class Sprite {
       mask: mask,
     );
   }
-
-  Rect texture;
-
-  double x;
-  double y;
-
-  double originX;
-  double originY;
-
-  int opacity;
-  double rotation;
-  double scale;
-
-  Color tint;
-
-  bool flip;
-  bool mask;
 
   RSTransform get tranform => RSTransform.fromComponents(
         rotation: rotation,

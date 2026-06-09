@@ -38,8 +38,9 @@ class _GameTickerState extends State<GameTicker> with SingleTickerProviderStateM
   }
 
   void tick(Duration elapsed) {
-    final elapsedMS = elapsed.inMilliseconds;
-    final dt = (elapsedMS - beforeMS) / 1000;
+    final elapsedMS = elapsed.inMicroseconds;
+    final dt = (elapsedMS - beforeMS) / 1e6;
+
     beforeMS = elapsedMS;
     widget.controller.update(dt);
     listener.update();

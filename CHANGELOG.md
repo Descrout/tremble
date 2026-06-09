@@ -1,3 +1,7 @@
+## 1.0.15
+
+* Documentation added.
+
 ## 1.0.14
 
 * ``saveImage`` and ``generateMasked`` functions added to ``ImageUtils``.

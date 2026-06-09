@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tremble — Documentation</title>
+  <style>
+    :root {
+      --bg: #0f0f11;
+      --surface: #18181b;
+      --border: #27272a;
+      --text: #e4e4e7;
+      --text-secondary: #a1a1aa;
+      --accent: #a78bfa;
+      --accent-dim: #7c3aed;
+      --code-bg: #1c1c1f;
+      --inline-code: #f5a524;
+      --nav-width: 260px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      display: flex;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--nav-width);
+      height: 100vh;
+      overflow-y: auto;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 1rem;
+    }
+    nav h1 {
+      font-size: 1.3rem;
+      margin-bottom: .1rem;
+    }
+    nav .version {
+      font-size: .75rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+    nav a {
+      display: block;
+      color: var(--text-secondary);
+      font-size: .85rem;
+      padding: .3rem .5rem;
+      border-radius: 4px;
+      transition: background .15s, color .15s;
+    }
+    nav a:hover {
+      background: var(--code-bg);
+      color: var(--text);
+      text-decoration: none;
+    }
+    nav .section {
+      margin-top: 1rem;
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-secondary);
+      padding: 0 .5rem;
+    }
+    nav a.sub { padding-left: 1.4rem; font-size: .8rem; }
+
+    main {
+      margin-left: var(--nav-width);
+      padding: 3rem 3rem 5rem;
+      max-width: 880px;
+      width: 100%;
+    }
+    h2 {
+      font-size: 1.7rem;
+      margin: 2.5rem 0 .75rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: .4rem;
+    }
+    h3 {
+      font-size: 1.15rem;
+      margin: 1.8rem 0 .6rem;
+    }
+    h4 {
+      font-size: 1rem;
+      margin: 1.2rem 0 .4rem;
+      color: var(--text);
+    }
+    p, li { color: var(--text-secondary); }
+    ul, ol { padding-left: 1.5rem; margin: .4rem 0 1rem; }
+    li { margin-bottom: .2rem; }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .9rem 1rem;
+      overflow-x: auto;
+      font-size: .82rem;
+      margin: .5rem 0 1.2rem;
+      position: relative;
+    }
+    pre .lang-tag {
+      position: absolute;
+      top: .4rem;
+      right: .7rem;
+      font-size: .65rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      opacity: .5;
+    }
+    code { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+    :not(pre) > code {
+      background: var(--code-bg);
+      color: var(--inline-code);
+      padding: .15em .45em;
+      border-radius: 4px;
+      font-size: .85em;
+    }
+
+    /* syntax highlighting */
+    .kw  { color: #c792ea; }
+    .ty  { color: #ffcb6b; }
+    .str { color: #c3e88d; }
+    .cm  { color: #546e7a; font-style: italic; }
+    .nu  { color: #f78c6c; }
+    .fn  { color: #82aaff; }
+    .pr  { color: #89ddff; }
+    .op  { color: #89ddff; }
+    .bo  { color: #ff5370; }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      margin-bottom: .25rem;
+    }
+    .ref-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .25rem 1.5rem;
+      margin: .5rem 0 1rem;
+    }
+    .ref-grid code {
+      font-size: .82rem;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+    .info {
+      background: var(--code-bg);
+      border-left: 3px solid var(--accent);
+      padding: .75rem 1rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+      font-size: .9rem;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <h1>Tremble</h1>
+  <div class="version">v1.0.15</div>
+
+  <div class="section">Guide</div>
+  <a href="#overview">Overview</a>
+  <a href="#setup">Setup</a>
+  <a href="#gamearea">GameArea</a>
+  <a class="sub" href="#screencontroller">ScreenController</a>
+  <a class="sub" href="#preload">Preload</a>
+  <a href="#input">Input</a>
+  <a class="sub" href="#keyboard">Keyboard</a>
+  <a class="sub" href="#mouse">Mouse</a>
+
+  <div class="section">Rendering</div>
+  <a href="#spritebatch">SpriteBatch</a>
+  <a class="sub" href="#sprite">Sprite</a>
+  <a class="sub" href="#animation">Animation</a>
+
+  <div class="section">Tooling</div>
+  <a href="#signals">Signals</a>
+  <a href="#wait-events">Wait Events</a>
+  <a class="sub" href="#waitchain">WaitChain</a>
+  <a href="#statemachine">State Machine</a>
+
+  <div class="section">Utilities</div>
+  <a href="#vector2">Vector2</a>
+  <a href="#tween">Tween</a>
+  <a href="#secondorder">2nd Order Dynamics</a>
+  <a href="#colorutils">ColorUtils</a>
+  <a href="#mathutils">MathUtils</a>
+  <a href="#imageutils">ImageUtils</a>
+  <a href="#extensions">Extensions</a>
+
+  <div class="section">Reference</div>
+  <a href="#ref-parametrics">Parametrics</a>
+  <a href="#ref-vector2">Vector2 API</a>
+  <a href="#ref-secondorder">2OD Presets</a>
+  <a href="#ref-waitchain">WaitChain API</a>
+  <a href="#ref-statemachine">StateMachine API</a>
+  <a href="#ref-types">Types</a>
+</nav>
+
+<main>
+
+<!-- ─── Hero ─── -->
+<div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;align-items:center">
+  <a href="https://pub.dev/packages/tremble" style="display:inline-flex;align-items:center;gap:.35rem;background:var(--accent-dim);color:#fff;padding:.25rem .75rem;border-radius:99px;font-size:.8rem;font-weight:500">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    pub.dev
+  </a>
+  <a href="https://github.com/Descrout/tremble" style="display:inline-flex;align-items:center;gap:.35rem;background:var(--border);color:var(--text);padding:.25rem .75rem;border-radius:99px;font-size:.8rem;font-weight:500">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+    GitHub
+  </a>
+  <a href="https://pub.dev/packages/tecs" style="display:inline-flex;align-items:center;gap:.35rem;background:var(--border);color:var(--text);padding:.25rem .75rem;border-radius:99px;font-size:.8rem;font-weight:500">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    TECS ECS
+  </a>
+</div>
+
+<h2 id="overview">Overview</h2>
+<p>Tremble is a lightweight Flutter game engine that follows the simple <em>setup → update → draw</em> pattern found in frameworks like p5.js, Processing, Raylib, and LÖVE. No complex architecture — just write a controller and draw to the canvas.</p>
+
+<div style="margin:2rem 0;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+  <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.2rem">
+      <span style="font-size:1.1rem;font-weight:600">Lunapulse</span>
+      <span style="background:var(--accent-dim);color:#fff;font-size:.65rem;padding:.1rem .5rem;border-radius:99px;font-weight:600">Showcase</span>
+    </div>
+    <p style="color:var(--text-secondary);font-size:.9rem;margin:0">
+      A game built with Tremble + <a href="https://pub.dev/packages/tecs">TECS</a>.
+      <a href="https://descrout.itch.io/lunapulse" style="margin-left:.3rem">Play it on itch.io →</a>
+    </p>
+  </div>
+  <div style="display:flex;gap:.5rem;padding:.75rem 1.5rem;overflow-x:auto">
+    <a href="https://img.itch.zone/aW1hZ2UvNDU0MTI0Ny8yNzA3MDE4NS5wbmc=/347x500/M88bCi.png" target="_blank">
+      <img src="https://img.itch.zone/aW1hZ2UvNDU0MTI0Ny8yNzA3MDE4NS5wbmc=/347x500/M88bCi.png" style="height:220px;border-radius:8px;border:1px solid var(--border)">
+    </a>
+    <a href="https://img.itch.zone/aW1hZ2UvNDU0MTI0Ny8yNzA3MDE4Ny5wbmc=/347x500/INUuMZ.png" target="_blank">
+      <img src="https://img.itch.zone/aW1hZ2UvNDU0MTI0Ny8yNzA3MDE4Ny5wbmc=/347x500/INUuMZ.png" style="height:220px;border-radius:8px;border:1px solid var(--border)">
+    </a>
+    <a href="https://img.itch.zone/aW1hZ2UvNDU0MTI0Ny8yNzA3MDE4Ni5wbmc=/347x500/7FrClX.png" target="_blank">
+      <img src="https://img.itch.zone/aW1hZ2UvNDU0MTI0Ny8yNzA3MDE4Ni5wbmc=/347x500/7FrClX.png" style="height:220px;border-radius:8px;border:1px solid var(--border)">
+    </a>
+    <a href="https://www.youtube.com/watch?v=xgViUCobzJ0" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:.4rem;min-width:180px;background:var(--code-bg);border-radius:8px;border:1px solid var(--border);color:var(--text);font-size:.85rem;font-weight:500;text-decoration:none;transition:background .15s">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="#ff4545"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.488 3.45.029 5.804 0 12c.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0C23.512 20.55 23.971 18.196 24 12c-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 4-8 4z"/></svg>
+      Watch Trailer
+    </a>
+  </div>
+</div>
+
+<h2 id="setup">Setup</h2>
+
+<h3 id="gamearea">GameArea</h3>
+<p>The root widget. Wrap it with <code>SizedBox</code> + <code>FittedBox</code> for a fixed-resolution letterbox canvas.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">FittedBox</span>(
+  <span class="kw">child</span>: <span class="ty">SizedBox</span>(
+    width: <span class="nu">480</span>,
+    height: <span class="nu">640</span>,
+    <span class="kw">child</span>: <span class="ty">GameArea</span>(controller: <span class="ty">DemoController</span>()),
+  ),
+)</pre>
+
+<h3 id="screencontroller">ScreenController</h3>
+<pre><span class="lang-tag">Dart</span><span class="kw">class</span> <span class="ty">DemoController</span> <span class="kw">extends</span> <span class="ty">ScreenController</span> {
+  <span class="kw">void</span> <span class="fn">setup</span>(<span class="ty">BuildContext</span> context, <span class="kw">double</span> width, <span class="kw">double</span> height) { }
+  <span class="kw">void</span> <span class="fn">update</span>(<span class="kw">double</span> deltaTime) { }
+  <span class="kw">void</span> <span class="fn">draw</span>(<span class="ty">Canvas</span> canvas, <span class="ty">Size</span> size) { }
+  <span class="kw">void</span> <span class="fn">dispose</span>() { }
+}</pre>
+
+<h3 id="preload">Preload</h3>
+<p>Load assets before the first frame. Report progress via the callback and call <code>done()</code>:</p>
+<pre><span class="lang-tag">Dart</span><span class="ty">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">preload</span>(progress, done) <span class="kw">async</span> {
+  <span class="fn">progress</span>(<span class="nu">0.5</span>);
+  <span class="cm">// await loadAssets();</span>
+  <span class="fn">progress</span>(<span class="nu">1.0</span>);
+  <span class="fn">done</span>();
+}</pre>
+<p>Show a loading UI with <code>loadingBuilder</code>:</p>
+<pre><span class="lang-tag">Dart</span><span class="ty">GameArea</span>(
+  controller: <span class="ty">DemoController</span>(),
+  loadingBuilder: (context, progress) <span class="op">=></span>
+    <span class="ty">Center</span>(child: <span class="ty">LinearProgressIndicator</span>(value: progress)),
+)</pre>
+
+<h2 id="input">Input</h2>
+
+<h3 id="keyboard">Keyboard</h3>
+<pre><span class="lang-tag">Dart</span><span class="kw">void</span> <span class="fn">keyDown</span>(<span class="ty">LogicalKeyboardKey</span> key) { }
+<span class="kw">void</span> <span class="fn">keyUp</span>(<span class="ty">LogicalKeyboardKey</span> key) { }</pre>
+<p>Hold detection via a <code>Set</code>:</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> keys = <span class="pr">&lt;<span class="ty">LogicalKeyboardKey</span>&gt;</span>{};
+
+<span class="kw">void</span> <span class="fn">update</span>(<span class="kw">double</span> dt) {
+  <span class="kw">if</span> (<span class="fn">keys.contains</span>(<span class="ty">LogicalKeyboardKey</span>.space)) { <span class="cm">/* held */</span> }
+}
+<span class="kw">void</span> <span class="fn">keyDown</span>(<span class="ty">LogicalKeyboardKey</span> k) { <span class="fn">keys.add</span>(k); }
+<span class="kw">void</span> <span class="fn">keyUp</span>(<span class="ty">LogicalKeyboardKey</span> k)   { <span class="fn">keys.remove</span>(k); }</pre>
+
+<h3 id="mouse">Mouse</h3>
+<pre><span class="lang-tag">Dart</span><span class="kw">void</span> <span class="fn">mouseMove</span>(<span class="kw">int</span> id, <span class="kw">double</span> x, <span class="kw">double</span> y) { }
+<span class="kw">void</span> <span class="fn">mousePressed</span>(<span class="kw">int</span> id, <span class="kw">int</span> button, <span class="kw">double</span> x, <span class="kw">double</span> y) { }
+<span class="kw">void</span> <span class="fn">mouseReleased</span>(<span class="kw">int</span> id) { }
+<span class="kw">void</span> <span class="fn">mouseScroll</span>(<span class="ty">Offset</span> scroll) { }</pre>
+
+<hr>
+
+<h2>Rendering</h2>
+
+<div class="info">
+  Tremble gives you a raw Flutter <code>Canvas</code> object in the <code>draw()</code> method.
+  This means <strong>everything</strong> Flutter's canvas API supports works here —
+  shapes (<code>drawRect</code>, <code>drawCircle</code>, <code>drawLine</code>, <code>drawPath</code>, etc.),
+  images, text (<code>drawParagraph</code>), gradients, and custom clipping.
+  Sprite/Animation helpers are optional conveniences, not limitations.
+</div>
+
+<h3 id="spritebatch">SpriteBatch</h3>
+<p>Loads a GDX texture atlas and renders all sprites in a single draw call. Supports flipping and masking without canvas transforms.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> batch = <span class="kw">await</span> <span class="ty">SpriteBatch</span>.<span class="fn">fromOldGdxPacker</span>(
+  <span class="str">"assets/batches/sprites.atlas"</span>,
+  flippable: <span class="bo">true</span>,
+);
+<span class="cm">// Newer: SpriteBatch.fromGdxPacker(...)</span>
+<span class="cm">// Custom: SpriteBatch.custom(image: ..., textures: ..., frames: ...)</span>
+
+<span class="kw">final</span> rect = <span class="fn">batch.getTexture</span>(<span class="str">"table"</span>);
+<span class="kw">final</span> anim = <span class="fn">batch.getAnimation</span>(<span class="str">"hero-idle"</span>, speed: <span class="nu">10</span>);
+
+<span class="fn">batch.draw</span>(canvas, [hero, table]);</pre>
+
+<h3 id="sprite">Sprite</h3>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> s = <span class="ty">Sprite</span>(
+  texture: <span class="fn">batch.getTexture</span>(<span class="str">"table"</span>),
+  x: <span class="nu">100</span>, y: <span class="nu">100</span>,
+);
+s.originX = <span class="nu">0.5</span>;  s.originY = <span class="nu">0.5</span>;
+s.opacity = <span class="nu">255</span>;  s.scale = <span class="nu">1.0</span>;
+s.rotation = <span class="nu">0</span>;   s.flip = <span class="bo">false</span>;
+s.tint = <span class="ty">Colors</span>.white;
+s.mask = <span class="bo">false</span>;</pre>
+
+<h3 id="animation">Animation</h3>
+<p>Extends <code>Sprite</code> with frame-based animation, multiple states, and looping.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> hero = <span class="ty">Animation</span>(
+  animations: [
+    <span class="fn">batch.getAnimation</span>(<span class="str">"hero-idle"</span>, speed: <span class="nu">10</span>),
+    <span class="fn">batch.getAnimation</span>(<span class="str">"hero-run"</span>,  speed: <span class="nu">10</span>),
+  ],
+  x: <span class="nu">200</span>, y: <span class="nu">300</span>,
+);
+
+<span class="fn">hero.update</span>(deltaTime);
+<span class="fn">hero.setAnimation</span>(<span class="str">"hero-run"</span>, fromFrame: <span class="nu">0</span>);
+hero.playing = <span class="bo">false</span>;
+hero.finished;   <span class="cm">// true when a non-looping animation ends</span></pre>
+
+<hr>
+
+<h2>Tooling</h2>
+
+<h3 id="signals">Signals</h3>
+<p>A lightweight pub-sub system (inspired by Godot signals). Callbacks return <code>true</code> to keep listening or <code>false</code> to unsubscribe.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> sig = <span class="ty">Signal</span>&lt;<span class="kw">int</span>&gt;();
+
+<span class="fn">sig.listen</span>((v) { <span class="fn">print</span>(v); <span class="kw">return</span> <span class="bo">true</span>; });
+<span class="fn">sig.dispatch</span>(<span class="nu">42</span>);
+
+<span class="fn">sig.unlisten</span>(myFn);
+<span class="fn">sig.clear</span>();
+sig.length;</pre>
+
+<h4>SignalBuilder</h4>
+<pre><span class="lang-tag">Dart</span><span class="ty">SignalBuilder</span>&lt;<span class="kw">int</span>&gt;(
+  signal: sig,
+  builder: (ctx, val) <span class="op">=></span> <span class="ty">Text</span>(<span class="str">"$val"</span>),
+)</pre>
+
+<h4>SignalsBuilder</h4>
+<p>Listens to multiple signals and rebuilds when any fires.</p>
+
+<h3 id="wait-events">Wait Events</h3>
+<p>Timer utilities driven by your game loop. Call <code>wait.update(dt)</code> each frame.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> wait = <span class="ty">WaitEvents</span>();
+
+<span class="fn">wait.wait</span>(time: <span class="nu">1.5</span>, onEnd: () { });
+<span class="fn">wait.waitAndDo</span>(time: <span class="nu">2</span>, onUpdate: (dt, t) { }, onEnd: () { });
+<span class="fn">wait.waitUntil</span>(onUpdate: (dt) <span class="op">=></span> alive, onEnd: () { });
+<span class="fn">wait.periodic</span>(time: <span class="nu">1</span>, onTick: (p) { <span class="kw">return</span> <span class="bo">true</span>; });
+
+<span class="fn">wait.update</span>(deltaTime);
+<span class="fn">wait.clear</span>();
+wait.hasEvent;
+wait.length;</pre>
+
+<h3 id="waitchain">WaitChain</h3>
+<p>Chain timed actions, animations, dialogs, and callbacks into a single sequential pipeline. Each step waits for the previous one to finish before starting.</p>
+
+<pre><span class="lang-tag">Dart</span><span class="fn">wait.chain</span>()
+  <span class="cm">// 1. Snap the camera</span>
+  .<span class="fn">run</span>(() <span class="op">=></span> camera.setPosition(<span class="nu">0</span>, <span class="nu">0</span>))
+
+  <span class="cm">// 2. Smoothly zoom in over time</span>
+  .<span class="fn">waitAndDo</span>(<span class="nu">1.5</span>, (dt, remaining) {
+    zoom = <span class="ty">MathUtils</span>.<span class="fn">lerp</span>(<span class="nu">1.0</span>, <span class="nu">2.0</span>, <span class="nu">1.0</span> <span class="op">-</span> remaining <span class="op">/</span> <span class="nu">1.5</span>);
+  })
+
+  <span class="cm">// 3. Pan left until reaching a threshold</span>
+  .<span class="fn">waitUntil</span>((dt) {
+    camera.x <span class="op">-=</span> <span class="nu">40</span> <span class="op">*</span> dt;
+    <span class="kw">return</span> camera.x <span class="op"><</span> <span class="op">-</span><span class="nu">200</span>;
+  })
+
+  <span class="cm">// 4. Pause for dramatic effect</span>
+  .<span class="fn">wait</span>(<span class="nu">1.0</span>)
+
+  <span class="cm">// 5. Spawn entities and swap textures</span>
+  .<span class="fn">run</span>(() {
+    <span class="fn">world.spawn</span>(<span class="str">"debris"</span>, x: <span class="nu">120</span>, y: <span class="nu">300</span>);
+    <span class="fn">world.spawn</span>(<span class="str">"shockwave"</span>, x: <span class="nu">120</span>, y: <span class="nu">300</span>);
+    bossSprite.setTexture(<span class="str">"boss_rage"</span>);
+  })
+
+  <span class="cm">// 6. Wait for a dialog to finish (external callback)</span>
+  .<span class="fn">blockUntil</span>((continueFn) {
+    dialog.<span class="fn">show</span>(<span class="str">"You activated my trap card!"</span>, onEnd: continueFn);
+  })
+
+  <span class="cm">// 7. Shake the camera briefly</span>
+  .<span class="fn">waitAndDo</span>(<span class="nu">0.4</span>, (dt, t) {
+    camera.shake(<span class="nu">4.0</span> <span class="op">*</span> (t <span class="op">/</span> <span class="nu">0.4</span>));
+  })
+
+  .<span class="fn">build</span>();</pre>
+
+<p>The chain is driven by the same <code>wait.update(dt)</code> call — no extra plumbing needed.</p>
+
+<h3 id="statemachine">State Machine</h3>
+<p>Generic typed FSM with enter / update / draw / exit hooks.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> fsm = <span class="ty">StateMachine</span>&lt;<span class="ty">String</span>&gt;();
+
+<span class="fn">fsm.add</span>(<span class="str">"walking"</span>,
+  onEnter:  () { },
+  onUpdate: (dt) { },
+  onExit:   () { },
+  onDraw:   (c, s) { },
+);
+
+fsm.state = <span class="str">"walking"</span>;
+fsm.previousState;
+<span class="fn">fsm.restartState</span>();
+<span class="fn">fsm.reset</span>();
+
+fsm.onBeforeStateChange = (from, to) { };
+fsm.onAfterStateChange  = (from, to) { };</pre>
+
+<hr>
+
+<h2>Utilities</h2>
+
+<h3 id="vector2">Vector2</h3>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> v = <span class="ty">Vector2</span>(<span class="nu">3</span>, <span class="nu">4</span>);
+v.magnitude;             <span class="cm">// 5</span>
+<span class="fn">v.normalized</span>();
+<span class="fn">v.distanceTo</span>(other);
+<span class="fn">v.dot</span>(other);
+<span class="fn">v.rotated</span>(angle);
+<span class="fn">v.reflected</span>(normal);
+
+v <span class="op">+</span> other;   v <span class="op">-</span> other;
+v <span class="op">*</span> other;   v <span class="op">/</span> other;    <span class="cm">// Vector2 or scalar</span>
+<span class="op">-</span>v;</pre>
+
+<h3 id="tween">Tween</h3>
+<p>Interpolates a <code>double</code> with a parametric curve.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> t = <span class="ty">Tween</span>(<span class="nu">0</span>, <span class="nu">100</span>, time: <span class="nu">2</span>, curve: <span class="ty">Parametrics</span>.smoothStop2);
+
+<span class="fn">t.forward</span>();
+<span class="fn">t.backward</span>(startFrom: <span class="nu">1</span>);
+<span class="fn">t.stop</span>(stopAt: <span class="nu">0.5</span>);
+t.value;          <span class="cm">// current interpolated value</span>
+t.isTweening;
+<span class="fn">t.changeTime</span>(<span class="nu">3</span>);
+
+<span class="fn">t.update</span>(deltaTime);</pre>
+
+<h3 id="secondorder">Second Order Dynamics</h3>
+<p>Spring-based smooth motion for cameras, UI, and character follow.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> cam = <span class="ty">SecondOrderDynamics</span>.<span class="fn">cameraSmooth</span>(<span class="ty">Vector2</span>.<span class="fn">zero</span>());
+<span class="kw">final</span> pos  = <span class="fn">cam.update</span>(deltaTime, target);
+<span class="kw">final</span> pos2 = <span class="fn">cam.update</span>(deltaTime, target2);</pre>
+
+<h3 id="colorutils">ColorUtils</h3>
+<pre><span class="lang-tag">Dart</span><span class="ty">ColorUtils</span>.<span class="fn">randomColor</span>(<span class="ty">ColorMood</span>.bright);
+<span class="ty">ColorUtils</span>.<span class="fn">randomColor</span>(<span class="ty">ColorMood</span>.pastel);
+<span class="ty">ColorUtils</span>.<span class="fn">randomColor</span>(<span class="ty">ColorMood</span>.dark);
+<span class="ty">ColorUtils</span>.<span class="fn">randomHSV</span>(mood, opacity: <span class="nu">0.8</span>);</pre>
+
+<h3 id="mathutils">MathUtils</h3>
+<pre><span class="lang-tag">Dart</span><span class="ty">MathUtils</span>.<span class="fn">randInt</span>(<span class="nu">1</span>, <span class="nu">10</span>);
+<span class="ty">MathUtils</span>.<span class="fn">randDouble</span>(<span class="nu">0</span>, <span class="nu">1</span>);
+<span class="ty">MathUtils</span>.<span class="fn">randPick</span>(list);
+<span class="ty">MathUtils</span>.<span class="fn">randTake</span>(list);
+<span class="ty">MathUtils</span>.<span class="fn">flipCoin</span>();
+<span class="ty">MathUtils</span>.<span class="fn">flipCoinWith</span>(<span class="nu">0.7</span>);
+<span class="ty">MathUtils</span>.<span class="fn">shuffle</span>(list);
+<span class="ty">MathUtils</span>.<span class="fn">seedRandom</span>(<span class="nu">42</span>);
+
+<span class="ty">MathUtils</span>.<span class="fn">lerp</span>(<span class="nu">0</span>, <span class="nu">10</span>, <span class="nu">0.5</span>);
+<span class="ty">MathUtils</span>.<span class="fn">inverseLerp</span>(<span class="nu">0</span>, <span class="nu">10</span>, <span class="nu">5</span>);
+<span class="ty">MathUtils</span>.<span class="fn">remap</span>(<span class="nu">5</span>, <span class="nu">0</span>, <span class="nu">10</span>, <span class="nu">100</span>, <span class="nu">200</span>);
+<span class="ty">MathUtils</span>.<span class="fn">constrain</span>(<span class="nu">15</span>, <span class="nu">0</span>, <span class="nu">10</span>);
+<span class="ty">MathUtils</span>.<span class="fn">lcm</span>(<span class="nu">12</span>, <span class="nu">18</span>);
+<span class="ty">MathUtils</span>.<span class="fn">normalizeAngle</span>(a);
+<span class="ty">MathUtils</span>.<span class="fn">lerpAngle</span>(from, to, t);</pre>
+
+<h3 id="imageutils">ImageUtils</h3>
+<pre><span class="lang-tag">Dart</span><span class="ty">ImageUtils</span>.<span class="fn">loadImageFromBytes</span>(bytes);
+<span class="ty">ImageUtils</span>.<span class="fn">loadImageFromAssets</span>(<span class="str">"img.png"</span>);
+<span class="ty">ImageUtils</span>.<span class="fn">loadImageFromPath</span>(<span class="str">"/path/img.png"</span>);
+<span class="ty">ImageUtils</span>.<span class="fn">generateFlipped</span>(image);
+<span class="ty">ImageUtils</span>.<span class="fn">generateMasked</span>(image);
+<span class="ty">ImageUtils</span>.<span class="fn">saveImage</span>(image, <span class="str">"out.png"</span>);</pre>
+
+<h3 id="extensions">Extensions</h3>
+<pre><span class="lang-tag">Dart</span><span class="fn">rect.split</span>(count: <span class="nu">4</span>, axis: <span class="ty">Axis</span>.vertical);
+<span class="fn">rect.grid</span>(<span class="nu">4</span>, <span class="nu">3</span>);
+
+(<span class="nu">3.14</span>).fract;   <span class="cm">// 0.14</span></pre>
+
+<hr>
+
+<h2>Reference</h2>
+
+<h3 id="ref-parametrics">Parametrics</h3>
+<p>All easing functions — type <code>ParametricFunc</code> = <code>double Function(double t)</code>, where <code>t</code> is in <code>[0, 1]</code>.</p>
+
+<h4>Linear</h4>
+<div class="ref-grid"><code>Parametrics.linear</code></div>
+
+<h4>Smooth Start (ease-in)</h4>
+<div class="ref-grid">
+  <code>smoothStart2</code> <code>smoothStart3</code> <code>smoothStart4</code>
+</div>
+
+<h4>Smooth Stop (ease-out)</h4>
+<div class="ref-grid">
+  <code>smoothStop2</code> <code>smoothStop3</code> <code>smoothStop4</code>
+</div>
+
+<h4>Smooth Step (ease-in-out)</h4>
+<div class="ref-grid">
+  <code>smoothStep2</code> <code>smoothStep3</code> <code>smoothStep4</code>
+</div>
+
+<h4>Special</h4>
+<div class="ref-grid">
+  <code>arch2</code> <span style="color:var(--text-secondary);font-size:.85rem"><code>t·(1−t)</code> parabola</span>
+  <code>bellcurve6</code> <span style="color:var(--text-secondary);font-size:.85rem">smoothStart3 × smoothStop3</span>
+</div>
+
+<h4>Elastic (overshoot)</h4>
+<div class="ref-grid">
+  <code>elasticStart(t, [s])</code>
+  <code>elasticStop(t, [s])</code>
+  <code>elasticStep(t, [s])</code>
+</div>
+
+<h4>Utility</h4>
+<div class="ref-grid">
+  <code>mix(f1, f2, t, blend)</code> <span style="color:var(--text-secondary);font-size:.85rem">blend two curves</span>
+</div>
+
+<h3 id="ref-vector2">Vector2 API</h3>
+
+<h4>Constructors</h4>
+<div class="ref-grid">
+  <code>Vector2(x, y)</code>
+  <code>Vector2.zero()</code>
+  <code>Vector2.one()</code>
+  <code>Vector2.fromAngle(rad, [mag])</code>
+  <code>Vector2.copy(other)</code>
+  <code>Vector2.fromJson(map)</code>
+</div>
+
+<h4>Properties</h4>
+<div class="ref-grid">
+  <code>.x</code> <code>.y</code>
+  <code>.magnitude</code>
+  <code>.magnitudeSquared</code>
+  <code>.angle</code>
+  <code>.isZero</code>
+</div>
+
+<h4>Instance Methods</h4>
+<div class="ref-grid">
+  <code>normalized()</code> <code>normalize()</code>
+  <code>clamped(max)</code> <code>clamp(max)</code>
+  <code>distanceTo(v)</code> <code>distanceSquaredTo(v)</code>
+  <code>dot(v)</code> <code>cross(v)</code>
+  <code>rotated(a)</code> <code>rotate(a)</code>
+  <code>lerp(v, t)</code>
+  <code>reflected(n)</code> <code>reflect(n)</code>
+  <code>clone()</code>
+  <code>set(x, y)</code> <code>setFrom(v)</code>
+  <code>toJson()</code>
+</div>
+
+<h4>Operators</h4>
+<div class="ref-grid">
+  <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>unary -</code>
+  <code>==</code> <code>hashCode</code>
+</div>
+
+<h4>Static Methods</h4>
+<div class="ref-grid">
+  <code>.add(a, b)</code> <code>.subtract(a, b)</code>
+  <code>.multiply(a, b)</code> <code>.divide(a, b)</code>
+  <code>.scale(v, s)</code>
+  <code>.dotBetween(a, b)</code> <code>.crossBetween(a, b)</code>
+  <code>.distance(a, b)</code> <code>.distanceSquared(a, b)</code>
+  <code>.lerpBetween(a, b, t)</code>
+  <code>.min(a, b)</code> <code>.max(a, b)</code>
+  <code>.clampMagnitude(v, max)</code>
+  <code>.angleBetween(a, b)</code>
+  <code>.reflectBetween(d, n)</code>
+</div>
+
+<h3 id="ref-secondorder">Second Order Dynamics Presets</h3>
+
+<div class="ref-grid">
+  <div><strong>Camera</strong></div> <div></div>
+  <code>cameraSmooth</code> <span style="color:var(--text-secondary);font-size:.85rem">2.5f, 1.0z, 1.0r</span>
+  <code>cameraLively</code> <span style="color:var(--text-secondary);font-size:.85rem">3.0f, 0.8z, 1.0r</span>
+  <code>cameraCinematic</code> <span style="color:var(--text-secondary);font-size:.85rem">1.5f, 1.2z, 0.8r</span>
+  <code>cameraImpact</code> <span style="color:var(--text-secondary);font-size:.85rem">6.0f, 0.6z, 0.0r</span>
+
+  <div style="margin-top:.5rem"><strong>Follow</strong></div> <div></div>
+  <code>followSmooth</code> <span style="color:var(--text-secondary);font-size:.85rem">3.5f, 0.9z, 1.2r</span>
+  <code>followCartoon</code> <span style="color:var(--text-secondary);font-size:.85rem">4.5f, 0.6z, 1.0r</span>
+
+  <div style="margin-top:.5rem"><strong>UI</strong></div> <div></div>
+  <code>uiButton</code> <span style="color:var(--text-secondary);font-size:.85rem">6.0f, 0.7z, 0.0r</span>
+  <code>uiMenu</code> <span style="color:var(--text-secondary);font-size:.85rem">4.0f, 0.9z, 0.0r</span>
+  <code>uiNotification</code> <span style="color:var(--text-secondary);font-size:.85rem">7.0f, 0.5z, 0.0r</span>
+
+  <div style="margin-top:.5rem"><strong>Aim</strong></div> <div></div>
+  <code>aimStable</code> <span style="color:var(--text-secondary);font-size:.85rem">8.0f, 1.0z, 2.0r</span>
+  <code>aimElastic</code> <span style="color:var(--text-secondary);font-size:.85rem">7.0f, 0.7z, 1.5r</span>
+
+  <div style="margin-top:.5rem"><strong>Recoil</strong></div> <div></div>
+  <code>recoil</code> <span style="color:var(--text-secondary);font-size:.85rem">10.0f, 0.5z, 0.0r</span>
+
+  <div style="margin-top:.5rem"><strong>Spring</strong></div> <div></div>
+  <code>springLoose</code> <span style="color:var(--text-secondary);font-size:.85rem">2.0f, 0.3z, 0.0r</span>
+  <code>springStable</code> <span style="color:var(--text-secondary);font-size:.85rem">3.0f, 0.5z, 0.0r</span>
+
+  <div style="margin-top:.5rem"><strong>Default</strong></div> <div></div>
+  <code>defaultPreset</code> <span style="color:var(--text-secondary);font-size:.85rem">3.5f, 0.85z, 1.0r</span>
+</div>
+
+<p>Raw constructor: <code>SecondOrderDynamics(f, z, r, initial)</code> — frequency, damping, response.</p>
+
+<h3 id="ref-waitchain">WaitChainBuilder API</h3>
+<p>Each call returns the builder for fluent chaining. Finish with <code>.build()</code>.</p>
+<div class="ref-grid">
+  <code>.wait(seconds)</code> <span style="color:var(--text-secondary);font-size:.85rem">pause for duration</span>
+  <code>.waitAndDo(seconds, onUpdate)</code> <span style="color:var(--text-secondary);font-size:.85rem">per-frame while waiting</span>
+  <code>.waitUntil(onUpdate)</code> <span style="color:var(--text-secondary);font-size:.85rem">wait for condition (return false to stop)</span>
+  <code>.periodic(seconds, onTick)</code> <span style="color:var(--text-secondary);font-size:.85rem">repeat on interval until false</span>
+  <code>.run(fn)</code> <span style="color:var(--text-secondary);font-size:.85rem">execute immediately</span>
+  <code>.blockUntil(continueFn)</code> <span style="color:var(--text-secondary);font-size:.85rem">pause chain until continueFn() is called</span>
+  <code>.build()</code> <span style="color:var(--text-secondary);font-size:.85rem">start executing the chain</span>
+</div>
+
+<h3 id="ref-statemachine">StateMachine API</h3>
+<div class="ref-grid">
+  <code>.add(name, {onEnter, onUpdate, onDraw, onExit})</code> <span style="color:var(--text-secondary);font-size:.85rem">register a state</span>
+  <code>.state = name</code> <span style="color:var(--text-secondary);font-size:.85rem">change state (triggers exit → enter)</span>
+  <code>.state</code> <span style="color:var(--text-secondary);font-size:.85rem">current state</span>
+  <code>.previousState</code> <span style="color:var(--text-secondary);font-size:.85rem">previous state (null if none)</span>
+  <code>.restartState()</code> <span style="color:var(--text-secondary);font-size:.85rem">re-fire exit + enter on current state</span>
+  <code>.reset()</code> <span style="color:var(--text-secondary);font-size:.85rem">clear state and history</span>
+  <code>.update(dt)</code> <span style="color:var(--text-secondary);font-size:.85rem">call per-frame</span>
+  <code>.draw(canvas, size)</code> <span style="color:var(--text-secondary);font-size:.85rem">optional per-state draw</span>
+  <code>.onBeforeStateChange</code> <span style="color:var(--text-secondary);font-size:.85rem">callback(from, to)</span>
+  <code>.onAfterStateChange</code> <span style="color:var(--text-secondary);font-size:.85rem">callback(from, to)</span>
+</div>
+
+<h3 id="ref-types">Types</h3>
+<pre><span class="lang-tag">Dart</span><span class="kw">typedef</span> <span class="ty">SubscriptionCallback</span>&lt;T&gt;     = <span class="pr">bool?</span> <span class="ty">Function</span>(T);
+<span class="kw">typedef</span> <span class="ty">VoidCallback</span>                = <span class="kw">void</span> <span class="ty">Function</span>();
+<span class="kw">typedef</span> <span class="ty">PeriodicCallback</span>            = <span class="pr">bool</span> <span class="ty">Function</span>(<span class="kw">int</span> phase);
+<span class="kw">typedef</span> <span class="ty">UpdateCallback</span>              = <span class="kw">void</span> <span class="ty">Function</span>(<span class="kw">double</span> dt);
+<span class="kw">typedef</span> <span class="ty">UpdateSubscriptionCallback</span>  = <span class="pr">bool</span> <span class="ty">Function</span>(<span class="kw">double</span> dt);
+<span class="kw">typedef</span> <span class="ty">TimeUpdateCallback</span>          = <span class="kw">void</span> <span class="ty">Function</span>(<span class="kw">double</span> dt, <span class="kw">double</span> remaining);
+<span class="kw">typedef</span> <span class="ty">StateChangeCallback</span>&lt;T&gt;      = <span class="kw">void</span> <span class="ty">Function</span>(<span class="pr">T?</span> from, <span class="pr">T?</span> to);</pre>
+
+<hr>
+
+<p style="text-align:center;color:var(--text-secondary);margin-top:3rem">
+  Tremble &mdash; MIT License &mdash; <a href="https://github.com/Descrout/tremble.git">GitHub</a>
+</p>
+
+</main>
+
+</body>
+</html>
