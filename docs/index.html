@@ -163,9 +163,54 @@
       font-size: .9rem;
       color: var(--text-secondary);
     }
+
+    #menu-toggle { display: none; }
+    .hamburger {
+      display: none;
+      position: fixed;
+      top: .75rem;
+      left: .75rem;
+      z-index: 100;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .4rem .55rem;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+    .nav-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 49;
+    }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      nav {
+        display: none;
+        z-index: 50;
+        width: 260px;
+      }
+      .hamburger { display: block; }
+      main {
+        margin-left: 0;
+        padding: 1.25rem 1rem 3rem;
+        max-width: 100%;
+      }
+      #menu-toggle:checked ~ nav,
+      #menu-toggle:checked ~ .nav-overlay { display: block; }
+    }
   </style>
 </head>
 <body>
+
+<input type="checkbox" id="menu-toggle">
+<label for="menu-toggle" class="hamburger" aria-label="Toggle navigation">☰</label>
+<label for="menu-toggle" class="nav-overlay"></label>
 
 <nav>
   <h1>Tremble</h1>
