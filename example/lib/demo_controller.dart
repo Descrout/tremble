@@ -7,7 +7,7 @@ class DemoController extends ScreenController {
   double mouseY = 0;
   bool mouseDown = false;
 
-  final positions = <Vector2>[];
+  final positions = <Vec2>[];
 
   final keys = <LogicalKeyboardKey>{};
 
@@ -33,7 +33,7 @@ class DemoController extends ScreenController {
         spriteBatch.getAnimation("hero-idle", speed: 10),
         spriteBatch.getAnimation("hero-run", speed: 10),
       ],
-      position: Vector2(width / 2, height - 26),
+      position: Vec2(width / 2, height - 26),
     );
   }
 

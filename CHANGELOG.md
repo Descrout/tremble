@@ -1,3 +1,8 @@
+## 1.0.16
+
+* ``Camera`` added.
+* ``Vector2`` improved and renamed to ``Vec2``.
+
 ## 1.0.15
 
 * Documentation added.

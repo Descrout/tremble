@@ -18,5 +18,5 @@ export 'package:tremble/utils/image_utils.dart';
 export 'package:tremble/utils/math_utils.dart';
 export 'package:tremble/utils/parametrics.dart';
 export 'package:tremble/utils/types.dart';
-export 'package:tremble/vector2.dart';
+export 'package:tremble/vec2.dart';
 export 'package:tremble/wait_events.dart';

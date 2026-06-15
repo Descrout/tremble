@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tremble/vector2.dart';
+import 'package:tremble/vec2.dart';
 
 class Camera {
   static int _idCounter = 0;
@@ -7,14 +7,14 @@ class Camera {
 
   static int? _lastCameraStarted;
 
-  Vector2 position;
+  Vec2 position;
   double zoom;
 
   Camera({
     this.zoom = 1,
     double x = 0,
     double y = 0,
-  })  : position = Vector2(x, y),
+  })  : position = Vec2(x, y),
         id = _idCounter++;
 
   void start(Canvas canvas) {

@@ -1,7 +1,7 @@
-import 'package:tremble/vector2.dart';
+import 'package:tremble/vec2.dart';
 
 class Circle {
-  Vector2 position;
+  Vec2 position;
   double radius;
 
   Circle({
@@ -18,7 +18,7 @@ class Circle {
   double get bottom => position.y + radius;
 
   Circle copyWith({
-    Vector2? position,
+    Vec2? position,
     double? radius,
   }) {
     return Circle(

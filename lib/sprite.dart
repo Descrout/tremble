@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:tremble/vector2.dart';
+import 'package:tremble/vec2.dart';
 
 class Sprite {
   Rect texture;
 
-  Vector2 position;
+  Vec2 position;
 
   double originX;
   double originY;
