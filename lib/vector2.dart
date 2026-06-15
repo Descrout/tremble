@@ -156,6 +156,30 @@ class Vector2 {
 
   Vector2 operator -() => Vector2(-x, -y);
 
+  double operator [](int index) {
+    switch (index) {
+      case 0:
+        return x;
+      case 1:
+        return y;
+      default:
+        throw RangeError.index(index, [x, y], 'index');
+    }
+  }
+
+  void operator []=(int index, double value) {
+    switch (index) {
+      case 0:
+        x = value;
+        break;
+      case 1:
+        y = value;
+        break;
+      default:
+        throw RangeError.index(index, [x, y], 'index');
+    }
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;

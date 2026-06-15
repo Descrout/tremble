@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tremble/vector2.dart';
 
 class Sprite {
   Rect texture;
 
-  double x;
-  double y;
+  Vector2 position;
 
   double originX;
   double originY;
@@ -20,8 +20,7 @@ class Sprite {
 
   Sprite({
     required this.texture,
-    required this.x,
-    required this.y,
+    required this.position,
     this.originX = 0.5,
     this.originY = 0.5,
     this.opacity = 255,
@@ -35,8 +34,7 @@ class Sprite {
   Sprite copy() {
     return Sprite(
       texture: Rect.fromLTWH(texture.left, texture.top, texture.width, texture.height),
-      x: x,
-      y: y,
+      position: position.clone(),
       originX: originX,
       originY: originY,
       opacity: opacity,
@@ -52,7 +50,7 @@ class Sprite {
         scale: scale,
         anchorX: texture.width * originX,
         anchorY: texture.height * originY,
-        translateX: x,
-        translateY: y,
+        translateX: position.x,
+        translateY: position.y,
       );
 }

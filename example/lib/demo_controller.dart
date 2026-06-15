@@ -7,7 +7,7 @@ class DemoController extends ScreenController {
   double mouseY = 0;
   bool mouseDown = false;
 
-  final positions = <Offset>[];
+  final positions = <Vector2>[];
 
   final keys = <LogicalKeyboardKey>{};
 
@@ -33,8 +33,7 @@ class DemoController extends ScreenController {
         spriteBatch.getAnimation("hero-idle", speed: 10),
         spriteBatch.getAnimation("hero-run", speed: 10),
       ],
-      x: width / 2,
-      y: height - 26,
+      position: Vector2(width / 2, height - 26),
     );
   }
 
@@ -45,7 +44,7 @@ class DemoController extends ScreenController {
 
     // Control the hero with mouse or keyboard
     if (isMouseControlled.value) {
-      final deltaX = mouseX - hero.x;
+      final deltaX = mouseX - hero.position.x;
       if (deltaX.abs() > 16) {
         vx += 140 * deltaX.sign;
       }
@@ -60,7 +59,7 @@ class DemoController extends ScreenController {
     } else {
       hero.setAnimation("hero-run", fromFrame: 0);
       hero.flip = vx < 0;
-      hero.x += vx * deltaTime;
+      hero.position.x += vx * deltaTime;
     }
 
     hero.update(deltaTime);
@@ -69,7 +68,7 @@ class DemoController extends ScreenController {
     if (shootTimer <= 0) {
       if ((!isMouseControlled.value && keys.contains(LogicalKeyboardKey.space)) ||
           (isMouseControlled.value && mouseDown)) {
-        positions.add(Offset(hero.x, hero.y));
+        positions.add(hero.position.clone());
       }
       shootTimer = 10;
     } else {
@@ -78,11 +77,11 @@ class DemoController extends ScreenController {
 
     // Move the bullets to top and if they are out of screen remove them
     for (int i = positions.length - 1; i >= 0; i--) {
-      if (positions[i].dy + 16 < 0) {
+      if (positions[i].y + 16 < 0) {
         positions.removeAt(i);
         continue;
       }
-      positions[i] = Offset(positions[i].dx, positions[i].dy - 1000 * deltaTime);
+      positions[i].y -= 1000 * deltaTime;
     }
   }
 
@@ -95,7 +94,7 @@ class DemoController extends ScreenController {
     canvas.drawCircle(Offset(mouseX, mouseY), 8, paint);
 
     for (final pos in positions) {
-      canvas.drawRect(Rect.fromLTWH(pos.dx - 2, pos.dy - 10, 4, 8), paint);
+      canvas.drawRect(Rect.fromLTWH(pos.x - 2, pos.y - 10, 4, 8), paint);
     }
 
     spriteBatch.draw(canvas, [hero]);

@@ -19,8 +19,7 @@ class AnimationData {
 class Animation extends Sprite {
   Animation({
     required List<AnimationData> animations,
-    required super.x,
-    required super.y,
+    required super.position,
     int index = 0,
     super.originX = 0.5,
     super.originY = 0.5,
