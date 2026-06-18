@@ -2,6 +2,9 @@
 
 * ``Camera`` added.
 * ``Vector2`` improved and renamed to ``Vec2``.
+* ``AABB``, ``Circle``, ``Line`` classes added.
+* ``CollisionDetector`` added.
+* Example updated.
 
 ## 1.0.15
 
