@@ -9,6 +9,8 @@ class Circle {
     required this.radius,
   });
 
+  double get radSq => radius * radius;
+
   double get x => position.x;
   double get y => position.y;
 
