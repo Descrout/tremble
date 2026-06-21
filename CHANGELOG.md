@@ -1,5 +1,6 @@
 ## 1.0.16
 
+* ``SpriteBatch`` performance increased.
 * ``Camera`` added.
 * ``Vector2`` improved and renamed to ``Vec2``.
 * ``AABB``, ``Circle``, ``Line`` classes added.

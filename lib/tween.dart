@@ -8,6 +8,7 @@ class Tween {
 
   double t;
   double get value => from + (to - from) * parametric(t);
+  double get ratio => parametric(t);
   bool get isTweening => _state != TweenState.halt;
 
   ParametricFunc parametric;

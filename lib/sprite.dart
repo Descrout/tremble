@@ -44,13 +44,4 @@ class Sprite {
       mask: mask,
     );
   }
-
-  RSTransform get tranform => RSTransform.fromComponents(
-        rotation: rotation,
-        scale: scale,
-        anchorX: texture.width * originX,
-        anchorY: texture.height * originY,
-        translateX: position.x,
-        translateY: position.y,
-      );
 }

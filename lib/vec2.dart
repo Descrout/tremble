@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 class Vec2 {
   double x;
@@ -31,6 +32,8 @@ class Vec2 {
   double get angle => atan2(y, x);
 
   bool get isZero => x == 0 && y == 0;
+
+  Offset offset({double dx = 0, double dy = 0}) => Offset(x + dx, y + dy);
 
   // Instance methods
   Vec2 normalized() {
@@ -189,52 +192,44 @@ class Vec2 {
   @override
   int get hashCode => Object.hash(x, y);
 
-  // Static methods
-  static Vec2 add(Vec2 a, Vec2 b) {
-    return Vec2(a.x + b.x, a.y + b.y);
+  void set(double newX, double newY) {
+    x = newX;
+    y = newY;
   }
 
-  static Vec2 subtract(Vec2 a, Vec2 b) {
-    return Vec2(a.x - b.x, a.y - b.y);
+  void setFrom(Vec2 other) {
+    x = other.x;
+    y = other.y;
   }
 
-  static Vec2 multiply(Vec2 a, Vec2 b) {
-    return Vec2(a.x * b.x, a.y * b.y);
+  void add(Vec2 other) {
+    x += other.x;
+    y += other.y;
   }
 
-  static Vec2 divide(Vec2 a, Vec2 b) {
-    return Vec2(a.x / b.x, a.y / b.y);
+  void sub(Vec2 other) {
+    x -= other.x;
+    y -= other.y;
   }
 
-  static Vec2 scale(Vec2 v, double scalar) {
-    return Vec2(v.x * scalar, v.y * scalar);
+  void mult(Vec2 other) {
+    x *= other.x;
+    y *= other.y;
   }
 
-  static double dotBetween(Vec2 a, Vec2 b) {
-    return a.x * b.x + a.y * b.y;
+  void divide(Vec2 other) {
+    x /= other.x;
+    y /= other.y;
   }
 
-  static double crossBetween(Vec2 a, Vec2 b) {
-    return a.x * b.y - a.y * b.x;
+  void scale(double scalar) {
+    x *= scalar;
+    y *= scalar;
   }
 
-  static double distance(Vec2 a, Vec2 b) {
-    final dx = a.x - b.x;
-    final dy = a.y - b.y;
-    return sqrt(dx * dx + dy * dy);
-  }
-
-  static double distanceSquared(Vec2 a, Vec2 b) {
-    final dx = a.x - b.x;
-    final dy = a.y - b.y;
-    return dx * dx + dy * dy;
-  }
-
-  static Vec2 lerpBetween(Vec2 a, Vec2 b, double t) {
-    return Vec2(
-      a.x + (b.x - a.x) * t,
-      a.y + (b.y - a.y) * t,
-    );
+  void setMag(double mag) {
+    normalize();
+    scale(mag);
   }
 
   static Vec2 min(Vec2 a, Vec2 b) {
@@ -251,42 +246,22 @@ class Vec2 {
     );
   }
 
-  static Vec2 clampMagnitude(Vec2 v, double maxLength) {
-    final mag = v.magnitude;
-    if (mag > maxLength) {
-      final scale = maxLength / mag;
-      return Vec2(v.x * scale, v.y * scale);
-    }
-    return Vec2.copy(v);
-  }
-
   static double angleBetween(Vec2 a, Vec2 b) {
-    final dotProduct = dotBetween(a, b);
+    final dotProduct = a.dot(b);
     final magnitudes = a.magnitude * b.magnitude;
     if (magnitudes == 0) return 0;
     return acos((dotProduct / magnitudes).clamp(-1.0, 1.0));
   }
 
   static Vec2 reflectBetween(Vec2 direction, Vec2 normal) {
-    final d = 2 * dotBetween(direction, normal);
+    final d = 2 * direction.dot(normal);
     return Vec2(
       direction.x - d * normal.x,
       direction.y - d * normal.y,
     );
   }
 
-  // Utility
   Vec2 clone() => Vec2(x, y);
-
-  void set(double newX, double newY) {
-    x = newX;
-    y = newY;
-  }
-
-  void setFrom(Vec2 other) {
-    x = other.x;
-    y = other.y;
-  }
 
   @override
   String toString() => 'Vec2($x, $y)';

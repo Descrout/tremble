@@ -260,12 +260,24 @@ class SpriteBatch {
       _rects[ri + 3] = rect.bottom;
 
       // --- transform (scos, ssin, tx, ty)
-      final t = sprite.tranform;
+      double scos = sprite.scale;
+      double ssin = 0;
+      if (sprite.rotation != 0) {
+        scos = math.cos(sprite.rotation) * sprite.scale;
+        ssin = math.sin(sprite.rotation) * sprite.scale;
+      }
+
+      final anchorX = rect.width * sprite.originX;
+      final anchorY = rect.height * sprite.originY;
+
+      final tx = sprite.position.x + -scos * anchorX + ssin * anchorY;
+      final ty = sprite.position.y + -ssin * anchorX - scos * anchorY;
+
       final ti = i * 4;
-      _transforms[ti + 0] = t.scos;
-      _transforms[ti + 1] = t.ssin;
-      _transforms[ti + 2] = t.tx;
-      _transforms[ti + 3] = t.ty;
+      _transforms[ti + 0] = scos;
+      _transforms[ti + 1] = ssin;
+      _transforms[ti + 2] = tx;
+      _transforms[ti + 3] = ty;
 
       // --- color (as ARGB int)
       _colors[i] = sprite.tint.withAlpha(sprite.opacity).toARGB32();

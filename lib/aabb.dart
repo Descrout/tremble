@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:tremble/vec2.dart';
 
 class AABB {
@@ -18,6 +20,7 @@ class AABB {
   double get top => position.y;
   double get right => position.x + width;
   double get bottom => position.y + height;
+  Rect get rect => Rect.fromLTWH(position.x, position.y, width, height);
 
   AABB copyWith({
     Vec2? position,
