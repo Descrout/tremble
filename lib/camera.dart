@@ -40,18 +40,24 @@ class Camera {
     _lastCameraStarted = null;
   }
 
+  bool shaking = false;
   void shake(
-      {required WaitEvents wait, double time = 0.1, double amount = 8, bool slowlyHalt = false}) {
+      {required WaitEvents wait, double time = 0.1, double amount = 2, bool slowlyHalt = false}) {
+    if (shaking) return;
+    shaking = true;
+    final beforePos = position.clone();
     wait.waitAndDo(
       time: time,
       onUpdate: (deltaTime, remaining) {
         final ratio = slowlyHalt ? (remaining / time) : 1;
         final amt = amount * ratio;
-        final dx = MathUtils.randDouble(-amt, amt);
-        final dy = MathUtils.randDouble(-amt, amt);
-        position.set(dx, dy);
+        position.x += MathUtils.randDouble(-amt, amt);
+        position.y += MathUtils.randDouble(-amt, amt);
       },
-      onEnd: () => reset(),
+      onEnd: () {
+        position.setFrom(beforePos);
+        shaking = false;
+      },
     );
   }
 }

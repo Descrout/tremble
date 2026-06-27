@@ -1,4 +1,6 @@
 import 'package:flutter/rendering.dart';
+import 'package:tremble/aabb.dart';
+import 'package:tremble/tremble.dart';
 
 extension DoubleX on double {
   double get fract => this - floor();
@@ -45,4 +47,6 @@ extension RectX on Rect {
 
     return textures;
   }
+
+  AABB get aabb => AABB(position: Vec2(left, top), width: width, height: height);
 }

@@ -31,6 +31,19 @@ class Sprite {
     this.tint = Colors.white,
   });
 
+  void setFrom(Sprite other) {
+    texture = other.texture;
+    position.setFrom(other.position);
+    originX = other.originX;
+    originY = other.originY;
+    opacity = other.opacity;
+    rotation = other.rotation;
+    scale = other.scale;
+    tint = other.tint;
+    flip = other.flip;
+    mask = other.mask;
+  }
+
   Sprite copy() {
     return Sprite(
       texture: Rect.fromLTWH(texture.left, texture.top, texture.width, texture.height),
