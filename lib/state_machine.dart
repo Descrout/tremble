@@ -16,8 +16,8 @@ class StateMachine<T> {
 
   StateMachine([T? initial]) : _state = initial;
 
-  T? get state => _state;
-  set state(T? name) {
+  T? get value => _state;
+  set value(T? name) {
     if (name == _state) return;
     previousState = _state;
     _state = name;
@@ -27,19 +27,27 @@ class StateMachine<T> {
     onAfterStateChange?.call(previousState, _state);
   }
 
-  void restartState({bool triggerStateChange = false}) {
+  void restart({bool triggerStateChange = false}) {
     if (triggerStateChange) onBeforeStateChange?.call(_state, _state);
     _exits[_state]?.call();
     _enters[_state]?.call();
     if (triggerStateChange) onAfterStateChange?.call(_state, _state);
   }
 
-  void reset() {
-    _state = null;
+  void reset([T? state]) {
+    _state = state;
     previousState = null;
   }
 
-  void add(
+  void clear([T? state]) {
+    reset(state);
+    _enters.clear();
+    _exits.clear();
+    _updates.clear();
+    _draws.clear();
+  }
+
+  void register(
     T name, {
     VoidCallback? onEnter,
     UpdateCallback? onUpdate,
@@ -52,6 +60,6 @@ class StateMachine<T> {
     if (onExit != null) _exits[name] = onExit;
   }
 
-  void update(double dt) => _updates[_state]?.call(dt);
+  void update(double deltaTime) => _updates[_state]?.call(deltaTime);
   void draw(Canvas canvas, Size size) => _draws[_state]?.call(canvas, size);
 }

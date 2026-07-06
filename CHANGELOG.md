@@ -1,3 +1,8 @@
+## 1.0.17
+
+* ``StateMachine`` updated.
+* ``Animation`` updated.
+
 ## 1.0.16
 
 * ``SpriteBatch`` performance increased.

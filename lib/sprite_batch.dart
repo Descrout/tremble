@@ -110,7 +110,7 @@ class SpriteBatch {
 
     final pathSplit = path.split("/");
     pathSplit.removeLast();
-    pathSplit.add(lines[0]);
+    pathSplit.add(lines[0].trim());
 
     final image = await ImageUtils.loadImageFromAssets(pathSplit.join("/"));
     assert(image != null, "Batch image could not be loaded !");
@@ -221,11 +221,11 @@ class SpriteBatch {
   }
 
   AnimationData getAnimation(
-    String key, {
+    String name, {
     required double speed,
     bool loop = true,
   }) =>
-      AnimationData(key: key, frames: frames[key]!, speed: speed, loop: loop);
+      AnimationData(name: name, frames: frames[name]!, speed: speed, loop: loop);
 
   // Reusable buffers
   Float32List _rects = Float32List(0);
