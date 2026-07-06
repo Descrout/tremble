@@ -85,7 +85,7 @@ class SpriteBatch {
 
     final textures = <String, Rect>{};
     final framesMap = <String, SplayTreeMap<int, Rect>>{};
-    final lines = atlas.split('\n');
+    final lines = atlas.split(RegExp(r'\r?\n')).map((e) => e.trim()).toList();
 
     int i = 3;
 
@@ -110,7 +110,7 @@ class SpriteBatch {
 
     final pathSplit = path.split("/");
     pathSplit.removeLast();
-    pathSplit.add(lines[0].trim());
+    pathSplit.add(lines[0]);
 
     final image = await ImageUtils.loadImageFromAssets(pathSplit.join("/"));
     assert(image != null, "Batch image could not be loaded !");
@@ -166,7 +166,7 @@ class SpriteBatch {
 
     final textures = <String, Rect>{};
     final framesMap = <String, SplayTreeMap<int, Rect>>{};
-    final lines = atlas.split('\n');
+    final lines = atlas.split(RegExp(r'\r?\n')).map((e) => e.trim()).toList();
 
     for (int i = 6; i < lines.length - 1; i += 7) {
       final info = getInfo(lines, i);

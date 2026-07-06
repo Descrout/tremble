@@ -1,3 +1,7 @@
+## 1.0.18
+
+* ``\n`` windows split bug fixed.
+
 ## 1.0.17
 
 * ``StateMachine`` updated.
