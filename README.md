@@ -22,6 +22,9 @@ class MyController extends ScreenController {
   void setup(BuildContext context, double width, double height) {}
 
   @override
+  void resize(double width, double height) {}
+
+  @override
   void update(double deltaTime) {}
 
   @override
@@ -34,12 +37,14 @@ class MyController extends ScreenController {
 
 ## Features
 
-| Area        | Includes |
-|-------------|----------|
-| **Rendering** | Raw `Canvas` access, `SpriteBatch` (GDX atlases), `Sprite`, `Animation` |
-| **Input** | Keyboard, mouse, resize, multi-touch |
-| **Tooling** | `Signal` (pub-sub), `WaitEvents` / `WaitChainBuilder`, `StateMachine` |
-| **Utilities** | `Vector2`, `Tween`, `SecondOrderDynamics`, `ColorUtils`, `MathUtils`, `ImageUtils` |
+| Area          | Includes |
+|---------------|----------|
+| **Rendering** | Raw `Canvas` access, `SpriteBatch` (GDX atlases + custom), `Sprite`, `Animation` |
+| **Input**     | Keyboard, mouse, resize, scroll |
+| **Camera**    | `Camera` with zoom, shake, nesting |
+| **Tooling**   | `Signal` / `SignalBuilder`, `WaitEvents` / `WaitChainBuilder`, `StateMachine` |
+| **Collision** | `CollisionDetector`, `AABB`, `Circle`, `Line` |
+| **Utilities** | `Vec2`, `Tween`, `SecondOrderDynamics`, `ColorUtils`, `MathUtils`, `ImageUtils`, `Extensions`, `Helpers` |
 
 ## Packages
 

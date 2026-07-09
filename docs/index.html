@@ -214,12 +214,12 @@
 
 <nav>
   <h1>Tremble</h1>
-  <div class="version">v1.0.15</div>
+  <div class="version">v1.0.18</div>
 
   <div class="section">Guide</div>
   <a href="#overview">Overview</a>
   <a href="#setup">Setup</a>
-  <a href="#gamearea">GameArea</a>
+  <a class="sub" href="#gamearea">GameArea</a>
   <a class="sub" href="#screencontroller">ScreenController</a>
   <a class="sub" href="#preload">Preload</a>
   <a href="#input">Input</a>
@@ -231,24 +231,34 @@
   <a class="sub" href="#sprite">Sprite</a>
   <a class="sub" href="#animation">Animation</a>
 
+  <div class="section">Camera</div>
+  <a href="#camera">Camera</a>
+
   <div class="section">Tooling</div>
   <a href="#signals">Signals</a>
   <a href="#wait-events">Wait Events</a>
   <a class="sub" href="#waitchain">WaitChain</a>
   <a href="#statemachine">State Machine</a>
 
+  <div class="section">Collision</div>
+  <a href="#aabb">AABB</a>
+  <a class="sub" href="#circle">Circle</a>
+  <a class="sub" href="#line">Line</a>
+  <a class="sub" href="#collisiondetector">CollisionDetector</a>
+
   <div class="section">Utilities</div>
-  <a href="#vector2">Vector2</a>
+  <a href="#vec2">Vec2</a>
   <a href="#tween">Tween</a>
   <a href="#secondorder">2nd Order Dynamics</a>
   <a href="#colorutils">ColorUtils</a>
   <a href="#mathutils">MathUtils</a>
   <a href="#imageutils">ImageUtils</a>
   <a href="#extensions">Extensions</a>
+  <a href="#helpers">Helpers</a>
 
   <div class="section">Reference</div>
   <a href="#ref-parametrics">Parametrics</a>
-  <a href="#ref-vector2">Vector2 API</a>
+  <a href="#ref-vec2">Vec2 API</a>
   <a href="#ref-secondorder">2OD Presets</a>
   <a href="#ref-waitchain">WaitChain API</a>
   <a href="#ref-statemachine">StateMachine API</a>
@@ -319,6 +329,7 @@
 <h3 id="screencontroller">ScreenController</h3>
 <pre><span class="lang-tag">Dart</span><span class="kw">class</span> <span class="ty">DemoController</span> <span class="kw">extends</span> <span class="ty">ScreenController</span> {
   <span class="kw">void</span> <span class="fn">setup</span>(<span class="ty">BuildContext</span> context, <span class="kw">double</span> width, <span class="kw">double</span> height) { }
+  <span class="kw">void</span> <span class="fn">resize</span>(<span class="kw">double</span> width, <span class="kw">double</span> height) { }
   <span class="kw">void</span> <span class="fn">update</span>(<span class="kw">double</span> deltaTime) { }
   <span class="kw">void</span> <span class="fn">draw</span>(<span class="ty">Canvas</span> canvas, <span class="ty">Size</span> size) { }
   <span class="kw">void</span> <span class="fn">dispose</span>() { }
@@ -376,25 +387,30 @@
 <pre><span class="lang-tag">Dart</span><span class="kw">final</span> batch = <span class="kw">await</span> <span class="ty">SpriteBatch</span>.<span class="fn">fromOldGdxPacker</span>(
   <span class="str">"assets/batches/sprites.atlas"</span>,
   flippable: <span class="bo">true</span>,
+  maskable: <span class="bo">false</span>,
 );
-<span class="cm">// Newer: SpriteBatch.fromGdxPacker(...)</span>
+<span class="cm">// Newer format: SpriteBatch.fromGdxPacker(...)</span>
 <span class="cm">// Custom: SpriteBatch.custom(image: ..., textures: ..., frames: ...)</span>
 
 <span class="kw">final</span> rect = <span class="fn">batch.getTexture</span>(<span class="str">"table"</span>);
 <span class="kw">final</span> anim = <span class="fn">batch.getAnimation</span>(<span class="str">"hero-idle"</span>, speed: <span class="nu">10</span>);
 
-<span class="fn">batch.draw</span>(canvas, [hero, table]);</pre>
+<span class="fn">batch.draw</span>(canvas, [hero, table]);
+<span class="fn">batch.dispose</span>(); <span class="cm">// when done</span></pre>
 
 <h3 id="sprite">Sprite</h3>
 <pre><span class="lang-tag">Dart</span><span class="kw">final</span> s = <span class="ty">Sprite</span>(
   texture: <span class="fn">batch.getTexture</span>(<span class="str">"table"</span>),
-  x: <span class="nu">100</span>, y: <span class="nu">100</span>,
+  position: <span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">100</span>),
 );
 s.originX = <span class="nu">0.5</span>;  s.originY = <span class="nu">0.5</span>;
 s.opacity = <span class="nu">255</span>;  s.scale = <span class="nu">1.0</span>;
 s.rotation = <span class="nu">0</span>;   s.flip = <span class="bo">false</span>;
 s.tint = <span class="ty">Colors</span>.white;
-s.mask = <span class="bo">false</span>;</pre>
+s.mask = <span class="bo">false</span>;
+
+<span class="kw">final</span> copy = <span class="fn">s.copy</span>();
+<span class="fn">s.setFrom</span>(copy);</pre>
 
 <h3 id="animation">Animation</h3>
 <p>Extends <code>Sprite</code> with frame-based animation, multiple states, and looping.</p>
@@ -403,13 +419,45 @@ s.mask = <span class="bo">false</span>;</pre>
     <span class="fn">batch.getAnimation</span>(<span class="str">"hero-idle"</span>, speed: <span class="nu">10</span>),
     <span class="fn">batch.getAnimation</span>(<span class="str">"hero-run"</span>,  speed: <span class="nu">10</span>),
   ],
-  x: <span class="nu">200</span>, y: <span class="nu">300</span>,
+  position: <span class="ty">Vec2</span>(<span class="nu">200</span>, <span class="nu">300</span>),
 );
 
 <span class="fn">hero.update</span>(deltaTime);
 <span class="fn">hero.setAnimation</span>(<span class="str">"hero-run"</span>, fromFrame: <span class="nu">0</span>);
-hero.playing = <span class="bo">false</span>;
-hero.finished;   <span class="cm">// true when a non-looping animation ends</span></pre>
+<span class="fn">hero.resetAnimation</span>(<span class="str">"hero-run"</span>, fromFrame: <span class="nu">0</span>);
+hero.paused = <span class="bo">false</span>;
+hero.finished;   <span class="cm">// true when a non-looping animation ends</span>
+hero.index;      <span class="cm">// current frame index</span></pre>
+
+<p><code>AnimationData</code> is returned by <code>batch.getAnimation()</code>:</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">class</span> <span class="ty">AnimationData</span> {
+  <span class="kw">final</span> <span class="ty">String</span> name;
+  <span class="kw">final</span> <span class="ty">List</span>&lt;<span class="ty">Rect</span>&gt; frames;
+  <span class="kw">final</span> <span class="kw">double</span> speed;
+  <span class="kw">final</span> <span class="kw">bool</span> loop;
+}</pre>
+
+<hr>
+
+<h2 id="camera">Camera</h2>
+<p>Viewport transform with zoom, shake, and nesting support.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> cam = <span class="ty">Camera</span>(zoom: <span class="nu">2</span>, x: <span class="nu">100</span>, y: <span class="nu">50</span>);
+
+<span class="kw">void</span> <span class="fn">draw</span>(<span class="ty">Canvas</span> canvas, <span class="ty">Size</span> size) {
+  <span class="fn">cam.start</span>(canvas);
+  <span class="cm">// draw world-space content here</span>
+  <span class="fn">cam.stop</span>(canvas);
+}
+
+<span class="cm">// Shake</span>
+<span class="fn">cam.shake</span>(
+  wait: waitEvents,
+  time: <span class="nu">0.3</span>,
+  amount: <span class="nu">4</span>,
+  slowlyHalt: <span class="bo">true</span>,
+);
+
+<span class="fn">cam.reset</span>(); <span class="cm">// position → (0,0), zoom → 1</span></pre>
 
 <hr>
 
@@ -429,8 +477,10 @@ sig.length;</pre>
 <h4>SignalBuilder</h4>
 <pre><span class="lang-tag">Dart</span><span class="ty">SignalBuilder</span>&lt;<span class="kw">int</span>&gt;(
   signal: sig,
+  onSignal: (v) { <span class="fn">print</span>(v); <span class="kw">return</span> <span class="bo">true</span>; },
   builder: (ctx, val) <span class="op">=></span> <span class="ty">Text</span>(<span class="str">"$val"</span>),
 )</pre>
+<p><code>onSignal</code> return values: <code>true</code> rebuilds, <code>false</code> unsubscribes, <code>null</code> keeps listening without rebuild.</p>
 
 <h4>SignalsBuilder</h4>
 <p>Listens to multiple signals and rebuilds when any fires.</p>
@@ -440,9 +490,9 @@ sig.length;</pre>
 <pre><span class="lang-tag">Dart</span><span class="kw">final</span> wait = <span class="ty">WaitEvents</span>();
 
 <span class="fn">wait.wait</span>(time: <span class="nu">1.5</span>, onEnd: () { });
-<span class="fn">wait.waitAndDo</span>(time: <span class="nu">2</span>, onUpdate: (dt, t) { }, onEnd: () { });
+<span class="fn">wait.waitAndDo</span>(time: <span class="nu">2</span>, onUpdate: (dt, remaining) { }, onEnd: () { });
 <span class="fn">wait.waitUntil</span>(onUpdate: (dt) <span class="op">=></span> alive, onEnd: () { });
-<span class="fn">wait.periodic</span>(time: <span class="nu">1</span>, onTick: (p) { <span class="kw">return</span> <span class="bo">true</span>; });
+<span class="fn">wait.periodic</span>(time: <span class="nu">1</span>, onTick: (phase) { <span class="kw">return</span> <span class="bo">true</span>; }, onEnd: () { });
 
 <span class="fn">wait.update</span>(deltaTime);
 <span class="fn">wait.clear</span>();
@@ -474,7 +524,7 @@ wait.length;</pre>
   .<span class="fn">run</span>(() {
     <span class="fn">world.spawn</span>(<span class="str">"debris"</span>, x: <span class="nu">120</span>, y: <span class="nu">300</span>);
     <span class="fn">world.spawn</span>(<span class="str">"shockwave"</span>, x: <span class="nu">120</span>, y: <span class="nu">300</span>);
-    bossSprite.setTexture(<span class="str">"boss_rage"</span>);
+    bossSprite.texture = <span class="fn">batch.getTexture</span>(<span class="str">"boss_rage"</span>);
   })
 
   <span class="cm">// 6. Wait for a dialog to finish (external callback)</span>
@@ -495,54 +545,105 @@ wait.length;</pre>
 <p>Generic typed FSM with enter / update / draw / exit hooks.</p>
 <pre><span class="lang-tag">Dart</span><span class="kw">final</span> fsm = <span class="ty">StateMachine</span>&lt;<span class="ty">String</span>&gt;();
 
-<span class="fn">fsm.add</span>(<span class="str">"walking"</span>,
+<span class="fn">fsm.register</span>(<span class="str">"walking"</span>,
   onEnter:  () { },
   onUpdate: (dt) { },
   onExit:   () { },
   onDraw:   (c, s) { },
 );
 
-fsm.state = <span class="str">"walking"</span>;
+fsm.value = <span class="str">"walking"</span>;
 fsm.previousState;
-<span class="fn">fsm.restartState</span>();
+<span class="fn">fsm.restart</span>();
+<span class="fn">fsm.restart</span>(triggerStateChange: <span class="bo">true</span>);
 <span class="fn">fsm.reset</span>();
+<span class="fn">fsm.clear</span>();
 
 fsm.onBeforeStateChange = (from, to) { };
 fsm.onAfterStateChange  = (from, to) { };</pre>
 
 <hr>
 
+<h2>Collision</h2>
+<p>Import these via their own files: <code>package:tremble/collision_detector.dart</code>, <code>package:tremble/aabb.dart</code>, <code>package:tremble/circle.dart</code>, <code>package:tremble/line.dart</code>. <code>Circle</code> is also exported from the main library.</p>
+
+<h3 id="aabb">AABB</h3>
+<p>Axis-aligned bounding box.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> box = <span class="ty">AABB</span>(
+  position: <span class="ty">Vec2</span>(<span class="nu">10</span>, <span class="nu">20</span>),
+  width: <span class="nu">50</span>,
+  height: <span class="nu">80</span>,
+);
+
+box.x; box.y; box.left; box.top; box.right; box.bottom;
+box.rect;  <span class="cm">// → Rect</span>
+<span class="fn">box.copyWith</span>(width: <span class="nu">100</span>);</pre>
+
+<h3 id="circle">Circle</h3>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> circle = <span class="ty">Circle</span>(
+  position: <span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">100</span>),
+  radius: <span class="nu">30</span>,
+);
+circle.x; circle.y; circle.radSq;
+<span class="fn">circle.copyWith</span>(radius: <span class="nu">40</span>);</pre>
+
+<h3 id="line">Line</h3>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> line = <span class="ty">Line</span>(
+  p1: <span class="ty">Vec2</span>(<span class="nu">0</span>, <span class="nu">0</span>),
+  p2: <span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">50</span>),
+);
+line.aabb; <span class="cm">// bounding AABB</span></pre>
+
+<h3 id="collisiondetector">CollisionDetector</h3>
+<pre><span class="lang-tag">Dart</span><span class="ty">CollisionDetector</span>.<span class="fn">circleToCircle</span>(a, b);
+<span class="ty">CollisionDetector</span>.<span class="fn">pointToCircle</span>(point, circle);
+<span class="ty">CollisionDetector</span>.<span class="fn">rectToRect</span>(boxA, boxB);
+<span class="ty">CollisionDetector</span>.<span class="fn">circleToRect</span>(circle, box);
+<span class="ty">CollisionDetector</span>.<span class="fn">pointToRect</span>(point, box);
+<span class="ty">CollisionDetector</span>.<span class="fn">pointToLine</span>(point, line);
+<span class="ty">CollisionDetector</span>.<span class="fn">lineToLine</span>(lineA, lineB);
+<span class="ty">CollisionDetector</span>.<span class="fn">lineToRect</span>(line, box);
+<span class="ty">CollisionDetector</span>.<span class="fn">lineToCircle</span>(line, circle);</pre>
+
+<hr>
+
 <h2>Utilities</h2>
 
-<h3 id="vector2">Vector2</h3>
-<pre><span class="lang-tag">Dart</span><span class="kw">final</span> v = <span class="ty">Vector2</span>(<span class="nu">3</span>, <span class="nu">4</span>);
+<h3 id="vec2">Vec2</h3>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> v = <span class="ty">Vec2</span>(<span class="nu">3</span>, <span class="nu">4</span>);
 v.magnitude;             <span class="cm">// 5</span>
 <span class="fn">v.normalized</span>();
 <span class="fn">v.distanceTo</span>(other);
 <span class="fn">v.dot</span>(other);
 <span class="fn">v.rotated</span>(angle);
 <span class="fn">v.reflected</span>(normal);
+<span class="fn">v.offset</span>(dx: <span class="nu">5</span>);   <span class="cm">// → Offset</span>
 
 v <span class="op">+</span> other;   v <span class="op">-</span> other;
-v <span class="op">*</span> other;   v <span class="op">/</span> other;    <span class="cm">// Vector2 or scalar</span>
-<span class="op">-</span>v;</pre>
+v <span class="op">*</span> other;   v <span class="op">/</span> other;    <span class="cm">// Vec2 or scalar</span>
+<span class="op">-</span>v;
+
+v[<span class="nu">0</span>]; v[<span class="nu">1</span>];             <span class="cm">// index access</span>
+v.<span class="fn">add</span>(other); v.<span class="fn">sub</span>(other);
+v.<span class="fn">scale</span>(<span class="nu">2</span>);  v.<span class="fn">setMag</span>(<span class="nu">10</span>);</pre>
 
 <h3 id="tween">Tween</h3>
 <p>Interpolates a <code>double</code> with a parametric curve.</p>
 <pre><span class="lang-tag">Dart</span><span class="kw">final</span> t = <span class="ty">Tween</span>(<span class="nu">0</span>, <span class="nu">100</span>, time: <span class="nu">2</span>, curve: <span class="ty">Parametrics</span>.smoothStop2);
 
-<span class="fn">t.forward</span>();
+<span class="fn">t.forward</span>(startFrom: <span class="nu">0</span>);
 <span class="fn">t.backward</span>(startFrom: <span class="nu">1</span>);
 <span class="fn">t.stop</span>(stopAt: <span class="nu">0.5</span>);
 t.value;          <span class="cm">// current interpolated value</span>
+t.ratio;          <span class="cm">// current parametric t [0-1]</span>
 t.isTweening;
+t.lastDirection;  <span class="cm">// last direction if halted</span>
 <span class="fn">t.changeTime</span>(<span class="nu">3</span>);
-
 <span class="fn">t.update</span>(deltaTime);</pre>
 
 <h3 id="secondorder">Second Order Dynamics</h3>
 <p>Spring-based smooth motion for cameras, UI, and character follow.</p>
-<pre><span class="lang-tag">Dart</span><span class="kw">final</span> cam = <span class="ty">SecondOrderDynamics</span>.<span class="fn">cameraSmooth</span>(<span class="ty">Vector2</span>.<span class="fn">zero</span>());
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> cam = <span class="ty">SecondOrderDynamics</span>.<span class="fn">cameraSmooth</span>(<span class="ty">Vec2</span>.<span class="fn">zero</span>());
 <span class="kw">final</span> pos  = <span class="fn">cam.update</span>(deltaTime, target);
 <span class="kw">final</span> pos2 = <span class="fn">cam.update</span>(deltaTime, target2);</pre>
 
@@ -581,8 +682,12 @@ t.isTweening;
 <h3 id="extensions">Extensions</h3>
 <pre><span class="lang-tag">Dart</span><span class="fn">rect.split</span>(count: <span class="nu">4</span>, axis: <span class="ty">Axis</span>.vertical);
 <span class="fn">rect.grid</span>(<span class="nu">4</span>, <span class="nu">3</span>);
+rect.aabb;    <span class="cm">// → AABB</span>
 
 (<span class="nu">3.14</span>).fract;   <span class="cm">// 0.14</span></pre>
+
+<h3 id="helpers">Helpers</h3>
+<pre><span class="lang-tag">Dart</span><span class="ty">Helpers</span>.<span class="fn">indexMapToList</span>(indexedMap); <span class="cm">// Map&lt;int, T&gt; → List&lt;T&gt;</span></pre>
 
 <hr>
 
@@ -627,16 +732,16 @@ t.isTweening;
   <code>mix(f1, f2, t, blend)</code> <span style="color:var(--text-secondary);font-size:.85rem">blend two curves</span>
 </div>
 
-<h3 id="ref-vector2">Vector2 API</h3>
+<h3 id="ref-vec2">Vec2 API</h3>
 
 <h4>Constructors</h4>
 <div class="ref-grid">
-  <code>Vector2(x, y)</code>
-  <code>Vector2.zero()</code>
-  <code>Vector2.one()</code>
-  <code>Vector2.fromAngle(rad, [mag])</code>
-  <code>Vector2.copy(other)</code>
-  <code>Vector2.fromJson(map)</code>
+  <code>Vec2(x, y)</code>
+  <code>Vec2.zero()</code>
+  <code>Vec2.one()</code>
+  <code>Vec2.fromAngle(rad, [mag])</code>
+  <code>Vec2.copy(other)</code>
+  <code>Vec2.fromJson(map)</code>
 </div>
 
 <h4>Properties</h4>
@@ -648,36 +753,41 @@ t.isTweening;
   <code>.isZero</code>
 </div>
 
-<h4>Instance Methods</h4>
+<h4>Instance Methods — immutable</h4>
 <div class="ref-grid">
-  <code>normalized()</code> <code>normalize()</code>
-  <code>clamped(max)</code> <code>clamp(max)</code>
+  <code>normalized()</code>
+  <code>clamped(max)</code>
   <code>distanceTo(v)</code> <code>distanceSquaredTo(v)</code>
   <code>dot(v)</code> <code>cross(v)</code>
-  <code>rotated(a)</code> <code>rotate(a)</code>
+  <code>rotated(a)</code>
   <code>lerp(v, t)</code>
-  <code>reflected(n)</code> <code>reflect(n)</code>
+  <code>reflected(n)</code>
   <code>clone()</code>
+  <code>offset({dx, dy})</code>
+</div>
+
+<h4>Instance Methods — mutable</h4>
+<div class="ref-grid">
+  <code>normalize()</code>
+  <code>clamp(max)</code>
+  <code>rotate(a)</code>
+  <code>reflect(n)</code>
   <code>set(x, y)</code> <code>setFrom(v)</code>
+  <code>add(v)</code> <code>sub(v)</code> <code>mult(v)</code> <code>divide(v)</code>
+  <code>scale(s)</code> <code>setMag(mag)</code>
   <code>toJson()</code>
 </div>
 
 <h4>Operators</h4>
 <div class="ref-grid">
   <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>unary -</code>
+  <code>[]</code> <code>[]=</code>
   <code>==</code> <code>hashCode</code>
 </div>
 
 <h4>Static Methods</h4>
 <div class="ref-grid">
-  <code>.add(a, b)</code> <code>.subtract(a, b)</code>
-  <code>.multiply(a, b)</code> <code>.divide(a, b)</code>
-  <code>.scale(v, s)</code>
-  <code>.dotBetween(a, b)</code> <code>.crossBetween(a, b)</code>
-  <code>.distance(a, b)</code> <code>.distanceSquared(a, b)</code>
-  <code>.lerpBetween(a, b, t)</code>
   <code>.min(a, b)</code> <code>.max(a, b)</code>
-  <code>.clampMagnitude(v, max)</code>
   <code>.angleBetween(a, b)</code>
   <code>.reflectBetween(d, n)</code>
 </div>
@@ -731,12 +841,13 @@ t.isTweening;
 
 <h3 id="ref-statemachine">StateMachine API</h3>
 <div class="ref-grid">
-  <code>.add(name, {onEnter, onUpdate, onDraw, onExit})</code> <span style="color:var(--text-secondary);font-size:.85rem">register a state</span>
-  <code>.state = name</code> <span style="color:var(--text-secondary);font-size:.85rem">change state (triggers exit → enter)</span>
-  <code>.state</code> <span style="color:var(--text-secondary);font-size:.85rem">current state</span>
+  <code>.register(name, {onEnter, onUpdate, onDraw, onExit})</code> <span style="color:var(--text-secondary);font-size:.85rem">register a state</span>
+  <code>.value = name</code> <span style="color:var(--text-secondary);font-size:.85rem">change state (triggers exit → enter)</span>
+  <code>.value</code> <span style="color:var(--text-secondary);font-size:.85rem">current state</span>
   <code>.previousState</code> <span style="color:var(--text-secondary);font-size:.85rem">previous state (null if none)</span>
-  <code>.restartState()</code> <span style="color:var(--text-secondary);font-size:.85rem">re-fire exit + enter on current state</span>
-  <code>.reset()</code> <span style="color:var(--text-secondary);font-size:.85rem">clear state and history</span>
+  <code>.restart({triggerStateChange})</code> <span style="color:var(--text-secondary);font-size:.85rem">re-fire exit + enter on current state</span>
+  <code>.reset([state])</code> <span style="color:var(--text-secondary);font-size:.85rem">clear state and history</span>
+  <code>.clear([state])</code> <span style="color:var(--text-secondary);font-size:.85rem">reset + remove all registered states</span>
   <code>.update(dt)</code> <span style="color:var(--text-secondary);font-size:.85rem">call per-frame</span>
   <code>.draw(canvas, size)</code> <span style="color:var(--text-secondary);font-size:.85rem">optional per-state draw</span>
   <code>.onBeforeStateChange</code> <span style="color:var(--text-secondary);font-size:.85rem">callback(from, to)</span>
@@ -746,9 +857,9 @@ t.isTweening;
 <h3 id="ref-types">Types</h3>
 <pre><span class="lang-tag">Dart</span><span class="kw">typedef</span> <span class="ty">SubscriptionCallback</span>&lt;T&gt;     = <span class="pr">bool?</span> <span class="ty">Function</span>(T);
 <span class="kw">typedef</span> <span class="ty">VoidCallback</span>                = <span class="kw">void</span> <span class="ty">Function</span>();
-<span class="kw">typedef</span> <span class="ty">PeriodicCallback</span>            = <span class="pr">bool</span> <span class="ty">Function</span>(<span class="kw">int</span> phase);
+<span class="kw">typedef</span> <span class="ty">PeriodicCallback</span>            = <span class="kw">bool</span> <span class="ty">Function</span>(<span class="kw">int</span> phase);
 <span class="kw">typedef</span> <span class="ty">UpdateCallback</span>              = <span class="kw">void</span> <span class="ty">Function</span>(<span class="kw">double</span> dt);
-<span class="kw">typedef</span> <span class="ty">UpdateSubscriptionCallback</span>  = <span class="pr">bool</span> <span class="ty">Function</span>(<span class="kw">double</span> dt);
+<span class="kw">typedef</span> <span class="ty">UpdateSubscriptionCallback</span>  = <span class="kw">bool</span> <span class="ty">Function</span>(<span class="kw">double</span> dt);
 <span class="kw">typedef</span> <span class="ty">TimeUpdateCallback</span>          = <span class="kw">void</span> <span class="ty">Function</span>(<span class="kw">double</span> dt, <span class="kw">double</span> remaining);
 <span class="kw">typedef</span> <span class="ty">StateChangeCallback</span>&lt;T&gt;      = <span class="kw">void</span> <span class="ty">Function</span>(<span class="pr">T?</span> from, <span class="pr">T?</span> to);</pre>
 
