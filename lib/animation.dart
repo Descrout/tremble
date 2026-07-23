@@ -52,7 +52,11 @@ class Animation extends Sprite {
   }
 
   void update(double deltaTime) {
-    if (paused) return;
+    if (paused) {
+      texture = currentAnimation.frames[_index];
+      return;
+    }
+
     _finished = false;
 
     if (_index < 0) {

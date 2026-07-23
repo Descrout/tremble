@@ -45,6 +45,8 @@ class StateMachine<T> {
     _exits.clear();
     _updates.clear();
     _draws.clear();
+    onBeforeStateChange = null;
+    onAfterStateChange = null;
   }
 
   void register(

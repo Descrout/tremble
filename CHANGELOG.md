@@ -1,3 +1,7 @@
+## 1.0.19
+
+* ``StateMachine`` now clears the ``onBeforeStateChange`` and ``onAfterStateChange`` upon calling ``clear()``
+
 ## 1.0.18
 
 * ``\n`` windows split bug fixed.
