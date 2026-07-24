@@ -3,6 +3,7 @@ library tremble;
 export 'package:tremble/animation.dart';
 export 'package:tremble/camera.dart';
 export 'package:tremble/circle.dart';
+export 'package:tremble/collision_detector.dart';
 export 'package:tremble/game_area.dart';
 export 'package:tremble/screen_controller.dart';
 export 'package:tremble/second_order_dynamics.dart';
