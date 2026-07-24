@@ -10,6 +10,7 @@ export 'package:tremble/signal.dart';
 export 'package:tremble/sprite.dart';
 export 'package:tremble/sprite_batch.dart';
 export 'package:tremble/state_machine.dart';
+export 'package:tremble/tex_area.dart';
 export 'package:tremble/tween.dart';
 export 'package:tremble/utils/color_utils.dart';
 export 'package:tremble/utils/extensions.dart';

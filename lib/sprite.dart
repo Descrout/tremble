@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tremble/tex_area.dart';
 import 'package:tremble/vec2.dart';
 
 class Sprite {
-  Rect texture;
+  TexArea texture;
 
   Vec2 position;
 
@@ -46,7 +47,7 @@ class Sprite {
 
   Sprite copy() {
     return Sprite(
-      texture: Rect.fromLTWH(texture.left, texture.top, texture.width, texture.height),
+      texture: texture.copy(),
       position: position.clone(),
       originX: originX,
       originY: originY,

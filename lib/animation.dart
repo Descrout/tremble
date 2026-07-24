@@ -1,6 +1,5 @@
-import 'dart:ui';
-
 import 'package:tremble/sprite.dart';
+import 'package:tremble/tex_area.dart';
 
 class AnimationData {
   AnimationData({
@@ -11,7 +10,7 @@ class AnimationData {
   });
 
   final String name;
-  final List<Rect> frames;
+  final List<TexArea> frames;
   final double speed;
   final bool loop;
 }

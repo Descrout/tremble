@@ -1,5 +1,6 @@
 ## 1.0.19
 
+* Multiple page texture atlas support added to ``SpriteBatch``.
 * ``Signal`` improvements.
 * ``StateMachine`` now clears the ``onBeforeStateChange`` and ``onAfterStateChange`` upon calling ``clear()``
 
