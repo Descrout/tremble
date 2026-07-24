@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:tremble/signal.dart';
 import 'package:tremble/utils/types.dart';
 
 class SignalBuilder<T> extends StatefulWidget {
-  const SignalBuilder({super.key, required this.builder, required this.signal, this.onSignal});
+  const SignalBuilder({
+    super.key,
+    required this.builder,
+    required this.signal,
+    this.onSignal,
+  });
 
   final Signal<T> signal;
 
-  /// If you return true it will rebuild the widget
-  /// If you return false it won't rebuild the widget, and it will stop listening to the signal
-  /// If you return null it won't rebuild the widget, but it will still listen to the signal
+  /// Return values:
+  ///
+  /// true  -> rebuild and keep listening
+  /// false -> stop listening
+  /// null  -> keep listening without rebuilding
   final SubscriptionCallback<T>? onSignal;
 
   final Widget Function(BuildContext context, T? value) builder;
@@ -21,29 +29,44 @@ class SignalBuilder<T> extends StatefulWidget {
 class _SignalBuilderState<T> extends State<SignalBuilder<T>> {
   T? stateValue;
 
-  bool? onSignal(T value) {
+  bool? _onSignal(T value) {
+    if (!mounted) return false;
+
     final result = widget.onSignal?.call(value);
 
     if (result == false) {
       return false;
-    } else if (result == null && widget.onSignal != null) {
+    }
+
+    if (result == null && widget.onSignal != null) {
       return true;
     }
 
     stateValue = value;
     setState(() {});
+
     return true;
   }
 
   @override
   void initState() {
     super.initState();
-    widget.signal.listen(onSignal);
+    widget.signal.listen(_onSignal);
+  }
+
+  @override
+  void didUpdateWidget(covariant SignalBuilder<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.signal != widget.signal) {
+      oldWidget.signal.unlisten(_onSignal);
+      widget.signal.listen(_onSignal);
+    }
   }
 
   @override
   void dispose() {
-    widget.signal.unlisten(onSignal);
+    widget.signal.unlisten(_onSignal);
     stateValue = null;
     super.dispose();
   }
@@ -55,7 +78,12 @@ class _SignalBuilderState<T> extends State<SignalBuilder<T>> {
 }
 
 class SignalsBuilder extends StatefulWidget {
-  const SignalsBuilder({super.key, required this.builder, required this.signals, this.onSignal});
+  const SignalsBuilder({
+    super.key,
+    required this.builder,
+    required this.signals,
+    this.onSignal,
+  });
 
   final List<Signal> signals;
   final VoidCallback? onSignal;
@@ -66,26 +94,49 @@ class SignalsBuilder extends StatefulWidget {
 }
 
 class _SignalsBuilderState extends State<SignalsBuilder> {
-  bool? onSignal(value) {
-    widget.onSignal?.call();
-    setState(() {});
-    return true;
+  bool? _onSignal(dynamic value) {
+    if (!mounted) return true;
+
+    if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    } else {
+      setState(() {});
+    }
+    return null;
   }
 
   @override
   void initState() {
+    super.initState();
+
     for (final signal in widget.signals) {
-      signal.listen(onSignal);
+      signal.listen(_onSignal);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant SignalsBuilder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    for (final signal in oldWidget.signals) {
+      signal.unlisten(_onSignal);
     }
 
-    super.initState();
+    for (final signal in widget.signals) {
+      signal.listen(_onSignal);
+    }
   }
 
   @override
   void dispose() {
     for (final signal in widget.signals) {
-      signal.unlisten(onSignal);
+      signal.unlisten(_onSignal);
     }
+
     super.dispose();
   }
 

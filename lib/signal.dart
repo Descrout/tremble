@@ -1,19 +1,37 @@
+import 'dart:collection';
+
 import 'package:tremble/utils/types.dart';
 
 class Signal<T> {
-  final _subs = <SubscriptionCallback<T>>[];
+  final LinkedHashSet<SubscriptionCallback<T>> _subs = LinkedHashSet();
 
   int get length => _subs.length;
 
+  bool get hasListeners => _subs.isNotEmpty;
+
   void clear() => _subs.clear();
 
-  void listen(SubscriptionCallback<T> callback) => _subs.add(callback);
-  void unlisten(SubscriptionCallback<T> callback) => _subs.remove(callback);
+  void listen(SubscriptionCallback<T> callback) {
+    _subs.add(callback);
+  }
+
+  void unlisten(SubscriptionCallback<T> callback) {
+    _subs.remove(callback);
+  }
 
   void dispatch(T args) {
-    for (int i = _subs.length - 1; i >= 0; i--) {
-      final keep = _subs[i](args);
-      if (keep != true) _subs.removeAt(i);
+    final callbacks = List<SubscriptionCallback<T>>.of(_subs);
+
+    for (final callback in callbacks) {
+      if (!_subs.contains(callback)) {
+        continue;
+      }
+
+      final keepListening = callback(args);
+
+      if (keepListening != true) {
+        _subs.remove(callback);
+      }
     }
   }
 }
