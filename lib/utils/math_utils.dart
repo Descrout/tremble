@@ -52,6 +52,30 @@ abstract class MathUtils {
     return lerp(c, d, paramteric(inverseLerp(a, b, v)));
   }
 
+  static double moveTowards(
+    double current,
+    double target,
+    double maxDelta,
+  ) {
+    final delta = target - current;
+
+    if (delta.abs() <= maxDelta) {
+      return target;
+    }
+
+    return current + delta.sign * maxDelta;
+  }
+
+  static double damp(
+    double current,
+    double target,
+    double lambda,
+    double deltaTime,
+  ) {
+    final t = 1 - exp(-lambda * deltaTime);
+    return lerp(current, target, t);
+  }
+
   static double constrain(double val, double min, double max) {
     if (val < min) return min;
     if (val > max) return max;

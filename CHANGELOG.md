@@ -1,3 +1,7 @@
+## 1.0.21
+
+* ``moveTowards`` and ``damp`` functions added to ``MathUtils``.
+
 ## 1.0.20
 
 * ``SpriteBatch`` getAnimation function now gets single textures if it doesn't find any animation frames.
