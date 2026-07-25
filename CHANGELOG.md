@@ -1,6 +1,7 @@
 ## 1.0.21
 
 * ``moveTowards`` and ``damp`` functions added to ``MathUtils``.
+* ``Spring1D`` and ``Spring2D`` added.
 
 ## 1.0.20
 
