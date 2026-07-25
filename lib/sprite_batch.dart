@@ -281,7 +281,7 @@ class SpriteBatch {
   }) =>
       AnimationData(
         name: name,
-        frames: _frames[name]!,
+        frames: _frames[name] ?? [_textures[name]!],
         speed: speed,
         loop: loop,
       );

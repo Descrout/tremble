@@ -1,3 +1,7 @@
+## 1.0.20
+
+* ``SpriteBatch`` getAnimation function now gets single textures if it doesn't find any animation frames.
+
 ## 1.0.19
 
 * Multiple page texture atlas support added to ``SpriteBatch``.
