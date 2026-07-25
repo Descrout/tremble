@@ -1,5 +1,6 @@
 ## 1.0.21
 
+* ``AnimationData`` ``loop`` replaced with bunch of animation modes, see ``AnimMode`` enum.
 * ``moveTowards`` and ``damp`` functions added to ``MathUtils``.
 * ``Spring1D`` and ``Spring2D`` added.
 

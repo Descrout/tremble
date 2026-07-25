@@ -277,13 +277,15 @@ class SpriteBatch {
   AnimationData getAnimation(
     String name, {
     required double speed,
-    bool loop = true,
+    AnimMode mode = AnimMode.playStop,
+    bool reverse = false,
   }) =>
       AnimationData(
         name: name,
         frames: _frames[name] ?? [_textures[name]!],
         speed: speed,
-        loop: loop,
+        mode: mode,
+        reverse: reverse,
       );
 
   // Reusable buffers
