@@ -31,7 +31,7 @@ class DemoController extends ScreenController {
     hero = Animation(
       animations: [
         spriteBatch.getAnimation("hero-idle", speed: 10),
-        spriteBatch.getAnimation("hero-run", speed: 10),
+        spriteBatch.getAnimation("hero-run", speed: 10, mode: AnimMode.loop),
       ],
       position: Vec2(width / 2, height - 26),
     );
