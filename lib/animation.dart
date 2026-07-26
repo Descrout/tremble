@@ -13,15 +13,11 @@ class AnimationData {
     required this.name,
     required this.frames,
     required this.speed,
-    required this.mode,
-    this.reverse = false,
   });
 
   final String name;
   final List<TexArea> frames;
   final double speed;
-  final AnimMode mode;
-  final bool reverse;
 }
 
 class Animation extends Sprite {
@@ -29,6 +25,8 @@ class Animation extends Sprite {
     required List<AnimationData> animations,
     required super.position,
     int index = 0,
+    this.mode = AnimMode.loop,
+    this.reverse = false,
     super.originX = 0.5,
     super.originY = 0.5,
     super.opacity = 255,
@@ -37,18 +35,17 @@ class Animation extends Sprite {
   })  : assert(animations.isNotEmpty, "you have to provide atleast 1 AnimationData"),
         _animations = Map.fromEntries(animations.map((e) => MapEntry(e.name, e))),
         _state = animations.first.name,
-        _direction = animations.first.reverse ? -1 : 1,
-        _index = animations.first.reverse ? animations.first.frames.length - 1 : index,
-        _timer = animations.first.reverse
-            ? (animations.first.frames.length - 1).toDouble()
-            : index.toDouble(),
+        _direction = reverse ? -1 : 1,
+        _index = reverse ? animations.first.frames.length - 1 : index,
+        _timer = reverse ? (animations.first.frames.length - 1).toDouble() : index.toDouble(),
         super(
-            texture: animations.first
-                .frames[animations.first.reverse ? animations.first.frames.length - 1 : index]);
+            texture: animations.first.frames[reverse ? animations.first.frames.length - 1 : index]);
 
   final Map<String, AnimationData> _animations;
 
   bool paused = false;
+  AnimMode mode;
+  bool reverse;
   String _state;
   double _timer;
   int _direction;
@@ -66,7 +63,7 @@ class Animation extends Sprite {
   }
 
   int _actualIndex(int frameCount) {
-    return currentAnimation.reverse ? (frameCount - 1 - _index) : _index;
+    return reverse ? (frameCount - 1 - _index) : _index;
   }
 
   void update(double deltaTime) {
@@ -78,7 +75,6 @@ class Animation extends Sprite {
     }
 
     _finished = false;
-    final mode = currentAnimation.mode;
 
     if (mode == AnimMode.playStop) {
       _updatePlayStop(deltaTime);
@@ -185,13 +181,12 @@ class Animation extends Sprite {
   void resetAnimation(String name, {int? fromFrame}) {
     paused = false;
     _state = name;
-    final anim = currentAnimation;
-    _direction = anim.reverse ? -1 : 1;
+    _direction = reverse ? -1 : 1;
 
     if (fromFrame != null) {
       index = fromFrame;
-    } else if (anim.reverse) {
-      index = anim.frames.length - 1;
+    } else if (reverse) {
+      index = currentAnimation.frames.length - 1;
     } else {
       index = 0;
     }

@@ -214,7 +214,7 @@
 
 <nav>
   <h1>Tremble</h1>
-  <div class="version">v1.0.21</div>
+  <div class="version">v1.0.22</div>
 
   <div class="section">Guide</div>
   <a href="#overview">Overview</a>
@@ -430,29 +430,30 @@ hero.paused = <span class="bo">false</span>;
 hero.finished;   <span class="cm">// true when a non-looping animation ends</span>
 hero.index;      <span class="cm">// current frame index</span></pre>
 
-<h4>AnimType</h4>
+<h4>AnimMode</h4>
 <p>Controls how the animation plays:</p>
 <div class="ref-grid">
-  <code>AnimType.playStop</code> <span style="color:var(--text-secondary);font-size:.85rem">play once, stop at last frame</span>
-  <code>AnimType.playReset</code> <span style="color:var(--text-secondary);font-size:.85rem">play once, reset to first frame</span>
-  <code>AnimType.loop</code> <span style="color:var(--text-secondary);font-size:.85rem">loop from start to end</span>
-  <code>AnimType.pingPong</code> <span style="color:var(--text-secondary);font-size:.85rem">forward then backward</span>
+  <code>AnimMode.playStop</code> <span style="color:var(--text-secondary);font-size:.85rem">play once, stop at last frame</span>
+  <code>AnimMode.playReset</code> <span style="color:var(--text-secondary);font-size:.85rem">play once, reset to first frame</span>
+  <code>AnimMode.loop</code> <span style="color:var(--text-secondary);font-size:.85rem">loop from start to end</span>
+  <code>AnimMode.pingPong</code> <span style="color:var(--text-secondary);font-size:.85rem">forward then backward</span>
 </div>
-<p>Set <code>reverse: true</code> to play any type in reverse (e.g. <code>playStop</code> stops at first frame instead of last).</p>
+<p>Set <code>reverse: true</code> to play any mode in reverse (e.g. <code>playStop</code> stops at first frame instead of last).</p>
 
 <p><code>AnimationData</code> is returned by <code>batch.getAnimation()</code>:</p>
-<pre><span class="lang-tag">Dart</span><span class="kw">final</span> idleAnim = <span class="fn">batch.getAnimation</span>(<span class="str">"hero-idle"</span>, speed: <span class="nu">10</span>, type: <span class="ty">AnimType</span>.loop);
-<span class="kw">final</span> deathAnim = <span class="fn">batch.getAnimation</span>(<span class="str">"hero-death"</span>, speed: <span class="nu">10</span>, type: <span class="ty">AnimType</span>.playStop);
-<span class="kw">final</span> breathAnim = <span class="fn">batch.getAnimation</span>(<span class="str">"hero-breath"</span>, speed: <span class="nu">8</span>, type: <span class="ty">AnimType</span>.pingPong);
-<span class="kw">final</span> reverseIdle = <span class="fn">batch.getAnimation</span>(<span class="str">"hero-idle"</span>, speed: <span class="nu">10</span>, reverse: <span class="bo">true</span>);
+<pre><span class="lang-tag">Dart</span><span class="cm">// Data is just name + frames + speed</span>
+<span class="kw">final</span> data = <span class="fn">batch.getAnimation</span>(<span class="str">"hero-idle"</span>, speed: <span class="nu">10</span>);
 
-<span class="cm">// Or construct directly:</span>
-<span class="kw">final</span> data = <span class="ty">AnimationData</span>(
-  name: <span class="str">"idle"</span>,
-  frames: frames,
-  speed: <span class="nu">10</span>,
-  type: <span class="ty">AnimType</span>.playReset,
-);</pre>
+<span class="cm">// Mode and reverse live on Animation</span>
+<span class="kw">final</span> hero = <span class="ty">Animation</span>(
+  animations: [data],
+  position: <span class="ty">Vec2</span>(<span class="nu">200</span>, <span class="nu">300</span>),
+  mode: <span class="ty">AnimMode</span>.loop,
+);
+
+<span class="cm">// Change mode at runtime</span>
+hero.mode = <span class="ty">AnimMode</span>.pingPong;
+hero.reverse = <span class="bo">true</span>;</pre>
 
 <hr>
 

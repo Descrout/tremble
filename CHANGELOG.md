@@ -1,3 +1,7 @@
+## 1.0.22
+
+* ``reverse`` and ``mode`` removed from ``AnimationData`` it is instead added to ``Animation`` itself.
+
 ## 1.0.21
 
 * ``AnimationData`` ``loop`` replaced with bunch of animation modes, see ``AnimMode`` enum.

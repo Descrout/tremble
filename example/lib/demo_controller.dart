@@ -31,7 +31,7 @@ class DemoController extends ScreenController {
     hero = Animation(
       animations: [
         spriteBatch.getAnimation("hero-idle", speed: 10),
-        spriteBatch.getAnimation("hero-run", speed: 10, mode: AnimMode.loop),
+        spriteBatch.getAnimation("hero-run", speed: 10),
       ],
       position: Vec2(width / 2, height - 26),
     );
@@ -58,6 +58,7 @@ class DemoController extends ScreenController {
       hero.setAnimation("hero-idle");
     } else {
       hero.setAnimation("hero-run", fromFrame: 0);
+      hero.mode = AnimMode.loop;
       hero.flip = vx < 0;
       hero.position.x += vx * deltaTime;
     }
