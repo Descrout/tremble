@@ -394,7 +394,7 @@
 <span class="cm">// Custom: SpriteBatch.custom(image: ..., textures: ..., frames: ...)</span>
 
 <span class="kw">final</span> rect = <span class="fn">batch.getTexture</span>(<span class="str">"table"</span>);
-<span class="kw">final</span> anim = <span class="fn">batch.getAnimation</span>(<span class="str">"hero-idle"</span>, speed: <span class="nu">10</span>);
+<span class="kw">final</span> anim = <span class="fn">batch.getAnimation</span>(HeroAnim.idle, speed: <span class="nu">10</span>);
 
 <span class="fn">batch.draw</span>(canvas, [hero, table]);
 <span class="fn">batch.dispose</span>(); <span class="cm">// when done</span></pre>
@@ -415,17 +415,19 @@ s.mask = <span class="bo">false</span>;
 
 <h3 id="animation">Animation</h3>
 <p>Extends <code>Sprite</code> with frame-based animation, multiple states, and looping.</p>
-<pre><span class="lang-tag">Dart</span><span class="kw">final</span> hero = <span class="ty">Animation</span>(
+<pre><span class="lang-tag">Dart</span><span class="kw">enum</span> <span class="ty">HeroAnim</span> { idle, run }
+
+<span class="kw">final</span> hero = <span class="ty">Animation</span>&lt;<span class="ty">HeroAnim</span>&gt;(
   animations: [
-    <span class="fn">batch.getAnimation</span>(<span class="str">"hero-idle"</span>, speed: <span class="nu">10</span>),
-    <span class="fn">batch.getAnimation</span>(<span class="str">"hero-run"</span>,  speed: <span class="nu">10</span>),
+    <span class="fn">batch.getAnimation</span>(<span class="ty">HeroAnim</span>.idle, speed: <span class="nu">10</span>),
+    <span class="fn">batch.getAnimation</span>(<span class="ty">HeroAnim</span>.run,  speed: <span class="nu">10</span>),
   ],
   position: <span class="ty">Vec2</span>(<span class="nu">200</span>, <span class="nu">300</span>),
 );
 
 <span class="fn">hero.update</span>(deltaTime);
-<span class="fn">hero.setAnimation</span>(<span class="str">"hero-run"</span>, fromFrame: <span class="nu">0</span>);
-<span class="fn">hero.resetAnimation</span>(<span class="str">"hero-run"</span>, fromFrame: <span class="nu">0</span>);
+<span class="fn">hero.setAnimation</span>(<span class="ty">HeroAnim</span>.run, fromFrame: <span class="nu">0</span>);
+<span class="fn">hero.resetAnimation</span>(<span class="ty">HeroAnim</span>.run, fromFrame: <span class="nu">0</span>);
 hero.paused = <span class="bo">false</span>;
 hero.finished;   <span class="cm">// true when a non-looping animation ends</span>
 hero.index;      <span class="cm">// current frame index</span></pre>
@@ -433,19 +435,19 @@ hero.index;      <span class="cm">// current frame index</span></pre>
 <h4>AnimMode</h4>
 <p>Controls how the animation plays:</p>
 <div class="ref-grid">
-  <code>AnimMode.playStop</code> <span style="color:var(--text-secondary);font-size:.85rem">play once, stop at last frame</span>
-  <code>AnimMode.playReset</code> <span style="color:var(--text-secondary);font-size:.85rem">play once, reset to first frame</span>
+  <code>AnimMode.playOnce</code> <span style="color:var(--text-secondary);font-size:.85rem">play once, stop at last frame</span>
+  <code>AnimMode.playOnceReset</code> <span style="color:var(--text-secondary);font-size:.85rem">play once, reset to first frame</span>
   <code>AnimMode.loop</code> <span style="color:var(--text-secondary);font-size:.85rem">loop from start to end</span>
   <code>AnimMode.pingPong</code> <span style="color:var(--text-secondary);font-size:.85rem">forward then backward</span>
 </div>
-<p>Set <code>reverse: true</code> to play any mode in reverse (e.g. <code>playStop</code> stops at first frame instead of last).</p>
+<p>Set <code>reverse: true</code> to play any mode in reverse (e.g. <code>playOnce</code> stops at first frame instead of last).</p>
 
 <p><code>AnimationData</code> is returned by <code>batch.getAnimation()</code>:</p>
 <pre><span class="lang-tag">Dart</span><span class="cm">// Data is just name + frames + speed</span>
-<span class="kw">final</span> data = <span class="fn">batch.getAnimation</span>(<span class="str">"hero-idle"</span>, speed: <span class="nu">10</span>);
+<span class="kw">final</span> data = <span class="fn">batch.getAnimation</span>(<span class="ty">HeroAnim</span>.idle, speed: <span class="nu">10</span>);
 
 <span class="cm">// Mode and reverse live on Animation</span>
-<span class="kw">final</span> hero = <span class="ty">Animation</span>(
+<span class="kw">final</span> hero = <span class="ty">Animation</span>&lt;<span class="ty">HeroAnim</span>&gt;(
   animations: [data],
   position: <span class="ty">Vec2</span>(<span class="nu">200</span>, <span class="nu">300</span>),
   mode: <span class="ty">AnimMode</span>.loop,
