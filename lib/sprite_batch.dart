@@ -274,13 +274,13 @@ class SpriteBatch {
     );
   }
 
-  AnimationData getAnimation(
-    String name, {
+  AnimationData<T> getAnimation<T extends Enum>(
+    T name, {
     required double speed,
   }) =>
       AnimationData(
         name: name,
-        frames: _frames[name] ?? [_textures[name]!],
+        frames: _frames[name.name] ?? [_textures[name.name]!],
         speed: speed,
       );
 

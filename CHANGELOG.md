@@ -1,5 +1,6 @@
 ## 1.0.23
 
+* ``Animation`` class improvements and renames. (See docs)
 * ``inflate`` and ``deflate`` added to ``AABB``.
 * ``randWeightedPick`` and ``randWeightedTake`` added to ``MathUtils``.
 
