@@ -1,3 +1,7 @@
+## 1.0.24
+
+* ``Animation`` setAnimation will now instantly change frame.
+
 ## 1.0.23
 
 * ``Animation`` class improvements and renames. (See docs)

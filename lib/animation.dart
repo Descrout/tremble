@@ -47,7 +47,8 @@ class Animation<T extends Enum> extends Sprite {
         _index = reverse ? animations.first.frames.length - 1 : index,
         _timer = reverse ? (animations.first.frames.length - 1).toDouble() : index.toDouble(),
         super(
-          texture: animations.first.frames[reverse ? animations.first.frames.length - 1 : index],
+          texture:
+              animations.first.frames[reverse ? animations.first.frames.length - 1 : index],
         ) {
     assert(
       reverse || (index >= 0 && index < animations.first.frames.length),
@@ -237,5 +238,7 @@ class Animation<T extends Enum> extends Sprite {
     } else {
       index = 0;
     }
+
+    texture = currentAnimation.frames[_index];
   }
 }
