@@ -1,3 +1,7 @@
+## 1.0.23
+
+* ``randWeightedPick`` and ``randWeightedTake`` added to ``MathUtils``.
+
 ## 1.0.22
 
 * ``reverse`` and ``mode`` removed from ``AnimationData`` it is instead added to ``Animation`` itself.

@@ -13,8 +13,36 @@ abstract class MathUtils {
     return _rnd.nextDouble() * (max - min) + min;
   }
 
+  static T randWeightedTake<T>(List<T> arr, List<double> weights) {
+    final total = weights.reduce((a, b) => a + b);
+    var roll = _rnd.nextDouble() * total;
+
+    for (var i = 0; i < arr.length; i++) {
+      roll -= weights[i];
+      if (roll <= 0) {
+        weights.removeAt(i);
+        return arr.removeAt(i);
+      }
+    }
+
+    weights.removeLast();
+    return arr.removeLast();
+  }
+
   static T randPick<T>(List<T> arr) {
     return arr[_rnd.nextInt(arr.length)];
+  }
+
+  static T randWeightedPick<T>(List<T> arr, List<double> weights) {
+    final total = weights.reduce((a, b) => a + b);
+    var roll = _rnd.nextDouble() * total;
+
+    for (var i = 0; i < arr.length; i++) {
+      roll -= weights[i];
+      if (roll <= 0) return arr[i];
+    }
+
+    return arr.last;
   }
 
   static T randTake<T>(List<T> arr) {
