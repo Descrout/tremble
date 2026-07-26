@@ -1,5 +1,6 @@
 ## 1.0.23
 
+* ``inflate`` and ``deflate`` added to ``AABB``.
 * ``randWeightedPick`` and ``randWeightedTake`` added to ``MathUtils``.
 
 ## 1.0.22

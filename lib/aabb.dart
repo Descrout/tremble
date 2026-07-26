@@ -33,4 +33,34 @@ class AABB {
       height: height ?? this.height,
     );
   }
+
+  AABB inflated(double amount) {
+    return AABB(
+      position: Vec2(position.x - amount, position.y - amount),
+      width: width + amount * 2,
+      height: height + amount * 2,
+    );
+  }
+
+  AABB deflated(double amount) {
+    return AABB(
+      position: Vec2(position.x + amount, position.y + amount),
+      width: width - amount * 2,
+      height: height - amount * 2,
+    );
+  }
+
+  void inflate(double amount) {
+    position.x -= amount;
+    position.y -= amount;
+    width += amount * 2;
+    height += amount * 2;
+  }
+
+  void deflate(double amount) {
+    position.x += amount;
+    position.y += amount;
+    width -= amount * 2;
+    height -= amount * 2;
+  }
 }
