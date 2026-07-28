@@ -1,5 +1,4 @@
 import 'package:flutter/rendering.dart';
-import 'package:tremble/physics/aabb.dart';
 import 'package:tremble/tremble.dart';
 
 extension ColorX on Color {

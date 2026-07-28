@@ -3,7 +3,7 @@ import 'package:tremble/physics/line.dart';
 import 'package:tremble/physics/rigid_body.dart';
 import 'package:tremble/physics/vec2.dart';
 
-abstract class CollisionResolver {
+abstract final class CollisionResolver {
   static final _temp = Vec2.zero();
   static final _temp2 = Vec2.zero();
 

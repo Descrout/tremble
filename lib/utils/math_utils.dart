@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:tremble/utils/parametrics.dart';
 
-abstract class MathUtils {
+abstract final class MathUtils {
   static Random _rnd = Random();
 
   static int randInt(int min, int max) {

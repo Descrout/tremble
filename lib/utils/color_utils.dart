@@ -3,7 +3,7 @@ import 'package:tremble/utils/math_utils.dart';
 
 enum ColorMood { bright, pastel, dark }
 
-abstract class ColorUtils {
+abstract final class ColorUtils {
   static Color randomColor(ColorMood mood, {double opacity = 1.0}) =>
       ColorUtils.randomHSV(mood, opacity: opacity).toColor();
 

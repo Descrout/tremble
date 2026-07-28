@@ -42,8 +42,8 @@ class MyController extends ScreenController {
 | **Rendering** | Raw `Canvas` access, `SpriteBatch` (GDX atlases + custom), `Sprite`, `Animation` |
 | **Input**     | Keyboard, mouse, resize, scroll |
 | **Camera**    | `Camera` with zoom, shake, nesting |
-| **Tooling**   | `Signal` / `SignalBuilder`, `WaitEvents` / `WaitChainBuilder`, `StateMachine` |
-| **Physics**   | `Shape` (abstract), `Circle`, `AABB`, `Line`, `RigidBody`, `CollisionDetector`, `CollisionResolver`, `SpatialHash` |
+| **Tooling**   | `Signal`/ `SignalValue`/ `SignalValueBuilder`, `WaitEvents` / `WaitChainBuilder`, `StateMachine` |
+| **Physics**   | `Shape` (abstract), `Circle`, `AABB`, `Line`, `RigidBody`, `CollisionDetector`, `CollisionResolver`, `Raycaster`, `SpatialHash`, `Minkowski` |
 | **Utilities** | `Vec2`, `Tween`, `SecondOrderDynamics`, `Spring2D` / `Spring1D`, `ColorUtils`, `MathUtils`, `ImageUtils`, `Extensions`, `Helpers` |
 
 ## Packages

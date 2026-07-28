@@ -67,10 +67,10 @@ class AABB extends Shape {
   AABB get aabb => this;
 
   @override
-  void draw(Canvas canvas, Color color) {
+  void draw(Canvas canvas, Color color, [bool drawBoundingBox = true]) {
     Shape.paint.style = PaintingStyle.fill;
     Shape.paint.color = color;
     canvas.drawRect(rect, Shape.paint);
-    super.draw(canvas, color.inverted);
+    if (drawBoundingBox) super.draw(canvas, color.inverted);
   }
 }

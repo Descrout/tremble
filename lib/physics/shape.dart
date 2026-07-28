@@ -4,7 +4,7 @@ import 'package:tremble/physics/aabb.dart';
 import 'package:tremble/physics/vec2.dart';
 
 abstract class Shape {
-  static final Paint paint = Paint();
+  static final Paint paint = Paint()..strokeWidth = 3;
 
   Vec2 position;
   Shape(this.position);
@@ -14,7 +14,7 @@ abstract class Shape {
 
   AABB get aabb;
 
-  void draw(Canvas canvas, Color color) {
+  void draw(Canvas canvas, Color color, [bool drawBoundingBox = true]) {
     paint.style = PaintingStyle.stroke;
     paint.color = color;
     canvas.drawCircle(Offset(position.x, position.y), 8, paint);

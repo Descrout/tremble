@@ -1,9 +1,9 @@
 import 'package:tremble/physics/aabb.dart';
-import 'package:tremble/physics/line.dart';
 import 'package:tremble/physics/circle.dart';
+import 'package:tremble/physics/line.dart';
 import 'package:tremble/physics/vec2.dart';
 
-abstract class CollisionDetector {
+abstract final class CollisionDetector {
   static bool circleToCircle(Circle a, Circle b) {
     final dist = a.position - b.position;
     final sumRadius = a.radius + b.radius;

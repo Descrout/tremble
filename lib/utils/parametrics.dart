@@ -1,6 +1,6 @@
 typedef ParametricFunc = double Function(double);
 
-abstract class Parametrics {
+abstract final class Parametrics {
   @pragma('vm:prefer-inline')
   static double linear(double t) => t;
 

@@ -1,11 +1,17 @@
 library tremble;
 
 export 'package:tremble/game_area.dart';
+export 'package:tremble/physics/aabb.dart';
 export 'package:tremble/physics/circle.dart';
 export 'package:tremble/physics/collision_detector.dart';
 export 'package:tremble/physics/collision_resolver.dart';
+export 'package:tremble/physics/line.dart';
+export 'package:tremble/physics/minkowski.dart';
+export 'package:tremble/physics/ray.dart';
+export 'package:tremble/physics/raycaster.dart';
 export 'package:tremble/physics/rigid_body.dart';
 export 'package:tremble/physics/second_order_dynamics.dart';
+export 'package:tremble/physics/shape.dart';
 export 'package:tremble/physics/spatial_hash.dart';
 export 'package:tremble/physics/spring.dart';
 export 'package:tremble/physics/vec2.dart';
@@ -22,6 +28,7 @@ export 'package:tremble/utils/image_utils.dart';
 export 'package:tremble/utils/math_utils.dart';
 export 'package:tremble/utils/parametrics.dart';
 export 'package:tremble/utils/signal.dart';
+export 'package:tremble/utils/signal_value_builder.dart';
 export 'package:tremble/utils/state_machine.dart';
 export 'package:tremble/utils/tween.dart';
 export 'package:tremble/utils/types.dart';

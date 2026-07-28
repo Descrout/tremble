@@ -236,15 +236,25 @@
 
   <div class="section">Tooling</div>
   <a href="#signals">Signals</a>
+  <a class="sub" href="#signalvalue">SignalValue</a>
+  <a class="sub" href="#signalvaluebuilder">SignalValueBuilder</a>
   <a href="#wait-events">Wait Events</a>
   <a class="sub" href="#waitchain">WaitChain</a>
   <a href="#statemachine">State Machine</a>
 
-  <div class="section">Collision</div>
-  <a href="#aabb">AABB</a>
-  <a class="sub" href="#circle">Circle</a>
-  <a class="sub" href="#line">Line</a>
-  <a class="sub" href="#collisiondetector">CollisionDetector</a>
+  <div class="section">Physics</div>
+  <a href="#shape">Shape</a>
+  <a class="sub" href="#physics-circle">Circle</a>
+  <a class="sub" href="#aabb">AABB</a>
+  <a class="sub" href="#physics-line">Line</a>
+  <a href="#rigidbody">RigidBody</a>
+  <a href="#collisiondetector">CollisionDetector</a>
+  <a href="#collisionresolver">CollisionResolver</a>
+  <a href="#spatialhash">SpatialHash</a>
+  <a href="#minkowski">Minkowski</a>
+  <a href="#ray">Ray &amp; Raycaster</a>
+  <a class="sub" href="#ray">Ray</a>
+  <a class="sub" href="#raycaster">Raycaster</a>
 
   <div class="section">Utilities</div>
   <a href="#vec2">Vec2</a>
@@ -494,16 +504,20 @@ hero.reverse = <span class="bo">true</span>;</pre>
 <span class="fn">sig.clear</span>();
 sig.length;</pre>
 
-<h4>SignalBuilder</h4>
-<pre><span class="lang-tag">Dart</span><span class="ty">SignalBuilder</span>&lt;<span class="kw">int</span>&gt;(
-  signal: sig,
-  onSignal: (v) { <span class="fn">print</span>(v); <span class="kw">return</span> <span class="bo">true</span>; },
-  builder: (ctx, val) <span class="op">=></span> <span class="ty">Text</span>(<span class="str">"$val"</span>),
-)</pre>
-<p><code>onSignal</code> return values: <code>true</code> rebuilds, <code>false</code> unsubscribes, <code>null</code> keeps listening without rebuild.</p>
+<h4 id="signalvalue">SignalValue</h4>
+<p>Reactive value holder. Setting <code>value</code> dispatches through an internal <code>Signal</code>. Automatically updates the stored value when the signal fires.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> health = <span class="ty">SignalValue</span>&lt;<span class="kw">int</span>&gt;(<span class="nu">100</span>);
 
-<h4>SignalsBuilder</h4>
-<p>Listens to multiple signals and rebuilds when any fires.</p>
+<span class="fn">health.value</span> = <span class="nu">80</span>;  <span class="cm">// dispatches through health.signal</span>
+health.signal;         <span class="cm">// underlying Signal&lt;int&gt;</span>
+<span class="fn">health.dispose</span>();</pre>
+
+<h4 id="signalvaluebuilder">SignalValueBuilder</h4>
+<p>Flutter widget that rebuilds when its <code>SignalValue</code> changes. <code>onSignal</code> return values: <code>true</code> rebuilds, <code>false</code> unsubscribes, <code>null</code> keeps listening without rebuild.</p>
+<pre><span class="lang-tag">Dart</span><span class="ty">SignalValueBuilder</span>&lt;<span class="kw">int</span>&gt;(
+  value: health,
+  builder: (context, child, val) <span class="op">=></span> <span class="ty">Text</span>(<span class="str">"$val"</span>),
+)</pre>
 
 <h3 id="wait-events">Wait Events</h3>
 <p>Timer utilities driven by your game loop. Call <code>wait.update(dt)</code> each frame.</p>
@@ -584,38 +598,72 @@ fsm.onAfterStateChange  = (from, to) { };</pre>
 
 <hr>
 
-<h2>Collision</h2>
-<p>Import these via their own files: <code>package:tremble/collision_detector.dart</code>, <code>package:tremble/aabb.dart</code>, <code>package:tremble/circle.dart</code>, <code>package:tremble/line.dart</code>. <code>Circle</code> is also exported from the main library.</p>
+<h2>Physics</h2>
+<p>All shapes live under <code>lib/physics/</code> and are re-exported from the main library. <code>Shape</code> is the abstract base — <code>Circle</code>, <code>AABB</code>, and <code>Line</code> extend it. <code>RigidBody</code> wraps a <code>Shape</code> with physics properties for dynamic simulation.</p>
+
+<h3 id="shape">Shape</h3>
+<p>Abstract base class for all collision shapes. Each shape has a <code>position</code> and provides an <code>aabb</code> getter for broad-phase queries.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">abstract class</span> <span class="ty">Shape</span> {
+  <span class="ty">Vec2</span> position;
+  <span class="ty">AABB</span> <span class="fn">get aabb</span>;
+  <span class="kw">void</span> <span class="fn">draw</span>(<span class="ty">Canvas</span>, <span class="ty">Color</span>);
+}</pre>
+
+<h3 id="physics-circle">Circle</h3>
+<p>Extends <code>Shape</code>. Positional constructor.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> circle = <span class="ty">Circle</span>(
+  <span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">100</span>),
+  radius: <span class="nu">30</span>,
+);
+
+circle.x; circle.y; circle.radius; circle.radSq;
+circle.aabb;  <span class="cm">// → AABB</span>
+<span class="fn">circle.copyWith</span>(radius: <span class="nu">40</span>);
+<span class="fn">circle.draw</span>(canvas, color); <span class="cm">// debug draw</span></pre>
 
 <h3 id="aabb">AABB</h3>
-<p>Axis-aligned bounding box.</p>
+<p>Extends <code>Shape</code>. Axis-aligned bounding box.</p>
 <pre><span class="lang-tag">Dart</span><span class="kw">final</span> box = <span class="ty">AABB</span>(
-  position: <span class="ty">Vec2</span>(<span class="nu">10</span>, <span class="nu">20</span>),
+  <span class="ty">Vec2</span>(<span class="nu">10</span>, <span class="nu">20</span>),
   width: <span class="nu">50</span>,
   height: <span class="nu">80</span>,
 );
 
 box.x; box.y; box.left; box.top; box.right; box.bottom;
 box.rect;  <span class="cm">// → Rect</span>
+<span class="fn">box.inflated</span>(<span class="nu">5</span>); <span class="fn">box.deflated</span>(<span class="nu">5</span>);
+<span class="fn">box.inflate</span>(<span class="nu">5</span>); <span class="fn">box.deflate</span>(<span class="nu">5</span>);
 <span class="fn">box.copyWith</span>(width: <span class="nu">100</span>);</pre>
 
-<h3 id="circle">Circle</h3>
-<pre><span class="lang-tag">Dart</span><span class="kw">final</span> circle = <span class="ty">Circle</span>(
-  position: <span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">100</span>),
-  radius: <span class="nu">30</span>,
-);
-circle.x; circle.y; circle.radSq;
-<span class="fn">circle.copyWith</span>(radius: <span class="nu">40</span>);</pre>
-
-<h3 id="line">Line</h3>
+<h3 id="physics-line">Line</h3>
+<p>Extends <code>Shape</code>. <code>p1</code> is an alias for <code>position</code>, <code>p2</code> is the other endpoint.</p>
 <pre><span class="lang-tag">Dart</span><span class="kw">final</span> line = <span class="ty">Line</span>(
-  p1: <span class="ty">Vec2</span>(<span class="nu">0</span>, <span class="nu">0</span>),
-  p2: <span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">50</span>),
+  <span class="ty">Vec2</span>(<span class="nu">0</span>, <span class="nu">0</span>),
+  <span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">50</span>),
 );
+line.p1;  <span class="cm">// position</span>
+line.p2;  <span class="cm">// endpoint</span>
 line.aabb; <span class="cm">// bounding AABB</span></pre>
 
+<h3 id="rigidbody">RigidBody</h3>
+<p>Wraps a <code>Shape</code> with physics properties for dynamic simulation. The <code>shape</code> field holds the geometry — position changes on the shape affect the body and vice versa.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> body = <span class="ty">RigidBody</span>(
+  shape: <span class="ty">Circle</span>(<span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">100</span>), radius: <span class="nu">20</span>),
+  mass: <span class="nu">2.0</span>,
+  elasticity: <span class="nu">0.7</span>,
+  isStatic: <span class="bo">false</span>,
+);
+
+body.shape;         <span class="cm">// → Shape (cast to Circle for radius access)</span>
+body.velocity;      <span class="cm">// → Vec2</span>
+body.invMass;       <span class="cm">// 0 if isStatic</span>
+<span class="fn">body.applyImpulse</span>(<span class="ty">Vec2</span>(<span class="nu">50</span>, <span class="nu">0</span>));
+<span class="fn">body.update</span>(deltaTime);  <span class="cm">// advances position by velocity</span>
+<span class="fn">body.copyWith</span>(shape: ..., mass: ...);</pre>
+
 <h3 id="collisiondetector">CollisionDetector</h3>
-<pre><span class="lang-tag">Dart</span><span class="ty">CollisionDetector</span>.<span class="fn">circleToCircle</span>(a, b);
+<p>Static detection methods. Works directly with the <code>Shape</code> types.</p>
+<pre><span class="lang-tag">Dart</span><span class="ty">CollisionDetector</span>.<span class="fn">circleToCircle</span>(circleA, circleB);
 <span class="ty">CollisionDetector</span>.<span class="fn">pointToCircle</span>(point, circle);
 <span class="ty">CollisionDetector</span>.<span class="fn">rectToRect</span>(boxA, boxB);
 <span class="ty">CollisionDetector</span>.<span class="fn">circleToRect</span>(circle, box);
@@ -624,6 +672,77 @@ line.aabb; <span class="cm">// bounding AABB</span></pre>
 <span class="ty">CollisionDetector</span>.<span class="fn">lineToLine</span>(lineA, lineB);
 <span class="ty">CollisionDetector</span>.<span class="fn">lineToRect</span>(line, box);
 <span class="ty">CollisionDetector</span>.<span class="fn">lineToCircle</span>(line, circle);</pre>
+
+<h3 id="collisionresolver">CollisionResolver</h3>
+<p>Static resolution methods. Penetration correction + impulse-based response for <code>RigidBody</code> collisions. No per-call allocations (uses internal temp <code>Vec2</code>s).</p>
+<pre><span class="lang-tag">Dart</span><span class="ty">CollisionResolver</span>.<span class="fn">circleToCircle</span>(bodyA, bodyB);
+<span class="ty">CollisionResolver</span>.<span class="fn">circleToStaticLine</span>(body, line);
+</pre>
+<p>Each returns <code>true</code> if a collision occurred. Position is corrected based on <code>invMass</code> (static bodies don't move), and velocity is reflected with elasticity.</p>
+
+<h3 id="spatialhash">SpatialHash</h3>
+<p>Broad-phase spatial grid. Partitions space into cells to reduce collision checks — query only objects in nearby cells instead of all objects. No per-query allocations (reusable internal buffers).</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> hash = <span class="ty">SpatialHash</span>&lt;<span class="ty">RigidBody</span>&gt;(cellSize: <span class="nu">64</span>);
+
+<span class="cm">// Each frame: rebuild or update</span>
+hash.<span class="fn">clear</span>();
+<span class="kw">for</span> (<span class="kw">final</span> body <span class="kw">in</span> bodies) {
+  hash.<span class="fn">insert</span>(body, body.shape.aabb);
+}
+
+<span class="cm">// Query candidates for collision</span>
+<span class="kw">for</span> (<span class="kw">final</span> body <span class="kw">in</span> bodies) {
+  <span class="kw">final</span> candidates = hash.<span class="fn">query</span>(body.shape.aabb);
+  <span class="kw">for</span> (<span class="kw">final</span> other <span class="kw">in</span> candidates) {
+    <span class="kw">if</span> (other == body) <span class="kw">continue</span>;
+    <span class="cm">// narrow-phase detection + resolution</span>
+  }
+}
+
+<span class="cm">// Update a single moving body</span>
+hash.<span class="fn">update</span>(body, oldAABB, newAABB);
+
+hash.cellCount;  <span class="cm">// number of occupied cells</span></pre>
+<p>Using <code>insert</code>/<code>remove</code>/<code>update</code> avoids a full rebuild when only a few objects move.</p>
+
+<h3 id="minkowski">Minkowski</h3>
+<p>Static methods for Minkowski difference and penetration vectors. Used for narrow-phase collision detection — if the origin is inside the difference shape, the shapes overlap.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> diff = <span class="ty">Minkowski</span>.<span class="fn">difference</span>(aabbA, aabbB);
+<span class="kw">if</span> (<span class="ty">Minkowski</span>.<span class="fn">containsOrigin</span>(diff)) {
+  <span class="kw">final</span> pen = <span class="ty">Minkowski</span>.<span class="fn">getPenetration</span>(diff);
+  <span class="cm">// resolve with pen vector</span>
+}
+
+<span class="ty">Minkowski</span>.<span class="fn">differenceAABB</span>(a, b);
+<span class="ty">Minkowski</span>.<span class="fn">differenceCircle</span>(a, b);
+<span class="ty">Minkowski</span>.<span class="fn">differenceAABBAndCircle</span>(a, b);
+<span class="ty">Minkowski</span>.<span class="fn">containsOriginAABB</span>(aabb);
+<span class="ty">Minkowski</span>.<span class="fn">containsOriginCircle</span>(circle);
+<span class="ty">Minkowski</span>.<span class="fn">getPenetrationAABB</span>(aabb);
+<span class="ty">Minkowski</span>.<span class="fn">getPenetrationCircle</span>(circle);</pre>
+
+<h3 id="ray">Ray</h3>
+<p>A ray with an <code>origin</code> and unit-length <code>direction</code>. Direction is normalized on construction.</p>
+<pre><span class="lang-tag">Dart</span><span class="kw">final</span> ray = <span class="ty">Ray</span>(origin: <span class="ty">Vec2</span>(<span class="nu">0</span>, <span class="nu">0</span>), direction: <span class="ty">Vec2</span>(<span class="nu">1</span>, <span class="nu">0</span>));
+
+ray.<span class="fn">pointAt</span>(<span class="nu">10</span>);  <span class="cm">// Vec2(10, 0)</span></pre>
+
+<h3 id="raycaster">Raycaster</h3>
+<p>Static raycast methods. Casts against circles, AABBs, lines, a spatial hash, or a tile grid. All return typed hit objects or <code>null</code>.</p>
+<pre><span class="lang-tag">Dart</span><span class="ty">RaycastHit</span>&lt;<span class="ty">Circle</span>&gt;? hit1 = <span class="ty">Raycaster</span>.<span class="fn">raycastCircle</span>(ray, circle);
+<span class="ty">RaycastHit</span>&lt;<span class="ty">AABB</span>&gt;? hit2 = <span class="ty">Raycaster</span>.<span class="fn">raycastAABB</span>(ray, aabb);
+<span class="ty">RaycastHit</span>&lt;<span class="ty">Line</span>&gt;? hit3 = <span class="ty">Raycaster</span>.<span class="fn">raycastLine</span>(ray, line);
+<span class="ty">RaycastHit</span>&lt;<span class="ty">Shape</span>&gt;? hit4 = <span class="ty">Raycaster</span>.<span class="fn">raycastShape</span>(ray, shape);
+<span class="ty">RaycastHit</span>&lt;<span class="ty">RigidBody</span>&gt;? hit5 = <span class="ty">Raycaster</span>.<span class="fn">raycastSpatial</span>(
+  ray, hash, (body) <span class="op">=></span> body.shape,
+);
+
+<span class="ty">RaycastGridHit</span>? hit6 = <span class="ty">Raycaster</span>.<span class="fn">raycastGrid</span>(
+  ray,
+  tileSize: <span class="nu">16</span>,
+  maxDistance: <span class="nu">200</span>,
+  isSolid: (tx, ty) <span class="op">=></span> grid.<span class="fn">isSolid</span>(tx, ty),
+);</pre>
 
 <hr>
 

@@ -1,7 +1,8 @@
 ## 1.2.0
 
 * Big structural changes. You might need to rename some imports. ``[BREAKING]``
-* ``RigidBody``, ``CollisionResolver``, ``SpatialHash`` introduced.
+* ``SignalValue`` added and ``SignalBuilder`` changed to ``SignalValueBuilder``.
+* ``RigidBody``, ``CollisionResolver``, ``SpatialHash``, ``Raycaster`` introduced.
 * ``AABB``, ``Circle`` and ``Line`` classes got a ``draw(canvas, color)`` function.
 
 ## 1.0.24

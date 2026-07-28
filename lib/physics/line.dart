@@ -23,10 +23,10 @@ class Line extends Shape {
   AABB get aabb => AABB(Vec2(left, top), width: right - left, height: bottom - top);
 
   @override
-  void draw(Canvas canvas, Color color) {
+  void draw(Canvas canvas, Color color, [bool drawBoundingBox = true]) {
     Shape.paint.style = PaintingStyle.stroke;
     Shape.paint.color = color;
     canvas.drawLine(p1.offset(), p2.offset(), Shape.paint);
-    super.draw(canvas, color.inverted);
+    if (drawBoundingBox) super.draw(canvas, color.inverted);
   }
 }
