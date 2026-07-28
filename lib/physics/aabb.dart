@@ -1,25 +1,24 @@
 import 'dart:ui';
 
-import 'package:tremble/vec2.dart';
+import 'package:tremble/physics/shape.dart';
+import 'package:tremble/physics/vec2.dart';
+import 'package:tremble/utils/extensions.dart';
 
-class AABB {
-  Vec2 position;
+class AABB extends Shape {
   double width;
   double height;
 
-  AABB({
-    required this.position,
+  AABB(
+    super.position, {
     required this.width,
     required this.height,
   });
-
-  double get x => position.x;
-  double get y => position.y;
 
   double get left => position.x;
   double get top => position.y;
   double get right => position.x + width;
   double get bottom => position.y + height;
+
   Rect get rect => Rect.fromLTWH(position.x, position.y, width, height);
 
   AABB copyWith({
@@ -28,7 +27,7 @@ class AABB {
     double? height,
   }) {
     return AABB(
-      position: position ?? this.position,
+      position ?? this.position,
       width: width ?? this.width,
       height: height ?? this.height,
     );
@@ -36,7 +35,7 @@ class AABB {
 
   AABB inflated(double amount) {
     return AABB(
-      position: Vec2(position.x - amount, position.y - amount),
+      Vec2(position.x - amount, position.y - amount),
       width: width + amount * 2,
       height: height + amount * 2,
     );
@@ -44,7 +43,7 @@ class AABB {
 
   AABB deflated(double amount) {
     return AABB(
-      position: Vec2(position.x + amount, position.y + amount),
+      Vec2(position.x + amount, position.y + amount),
       width: width - amount * 2,
       height: height - amount * 2,
     );
@@ -62,5 +61,16 @@ class AABB {
     position.y += amount;
     width -= amount * 2;
     height -= amount * 2;
+  }
+
+  @override
+  AABB get aabb => this;
+
+  @override
+  void draw(Canvas canvas, Color color) {
+    Shape.paint.style = PaintingStyle.fill;
+    Shape.paint.color = color;
+    canvas.drawRect(rect, Shape.paint);
+    super.draw(canvas, color.inverted);
   }
 }

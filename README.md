@@ -43,8 +43,8 @@ class MyController extends ScreenController {
 | **Input**     | Keyboard, mouse, resize, scroll |
 | **Camera**    | `Camera` with zoom, shake, nesting |
 | **Tooling**   | `Signal` / `SignalBuilder`, `WaitEvents` / `WaitChainBuilder`, `StateMachine` |
-| **Collision** | `CollisionDetector`, `AABB`, `Circle`, `Line` |
-| **Utilities** | `Vec2`, `Tween`, `SecondOrderDynamics`, `ColorUtils`, `MathUtils`, `ImageUtils`, `Extensions`, `Helpers`, `Spring2D` |
+| **Physics**   | `Shape` (abstract), `Circle`, `AABB`, `Line`, `RigidBody`, `CollisionDetector`, `CollisionResolver`, `SpatialHash` |
+| **Utilities** | `Vec2`, `Tween`, `SecondOrderDynamics`, `Spring2D` / `Spring1D`, `ColorUtils`, `MathUtils`, `ImageUtils`, `Extensions`, `Helpers` |
 
 ## Packages
 

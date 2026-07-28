@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tremble/wait_chain_builder.dart';
-import 'package:tremble/wait_events.dart';
+import 'package:tremble/utils/wait_chain_builder.dart';
+import 'package:tremble/utils/wait_events.dart';
 
 void main() {
   test('only run', () {

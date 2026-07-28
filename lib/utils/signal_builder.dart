@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:tremble/signal.dart';
+import 'package:tremble/utils/signal.dart';
 import 'package:tremble/utils/types.dart';
 
 class SignalBuilder<T> extends StatefulWidget {

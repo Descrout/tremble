@@ -1,5 +1,5 @@
 import 'package:tremble/utils/types.dart';
-import 'package:tremble/wait_events.dart';
+import 'package:tremble/utils/wait_events.dart';
 
 class WaitChainBuilder {
   final WaitEvents _waitEvents;

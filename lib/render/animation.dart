@@ -1,5 +1,5 @@
-import 'package:tremble/sprite.dart';
-import 'package:tremble/tex_area.dart';
+import 'package:tremble/render/sprite.dart';
+import 'package:tremble/render/tex_area.dart';
 
 enum AnimMode {
   playOnce,
@@ -47,8 +47,7 @@ class Animation<T extends Enum> extends Sprite {
         _index = reverse ? animations.first.frames.length - 1 : index,
         _timer = reverse ? (animations.first.frames.length - 1).toDouble() : index.toDouble(),
         super(
-          texture:
-              animations.first.frames[reverse ? animations.first.frames.length - 1 : index],
+          texture: animations.first.frames[reverse ? animations.first.frames.length - 1 : index],
         ) {
     assert(
       reverse || (index >= 0 && index < animations.first.frames.length),

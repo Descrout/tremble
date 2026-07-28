@@ -1,6 +1,17 @@
 import 'package:flutter/rendering.dart';
-import 'package:tremble/aabb.dart';
+import 'package:tremble/physics/aabb.dart';
 import 'package:tremble/tremble.dart';
+
+extension ColorX on Color {
+  Color get inverted {
+    return Color.fromARGB(
+      a.toInt(),
+      255 - r.toInt(),
+      255 - g.toInt(),
+      255 - b.toInt(),
+    );
+  }
+}
 
 extension DoubleX on double {
   double get fract => this - floor();
@@ -48,5 +59,5 @@ extension RectX on Rect {
     return textures;
   }
 
-  AABB get aabb => AABB(position: Vec2(left, top), width: width, height: height);
+  AABB get aabb => AABB(Vec2(left, top), width: width, height: height);
 }

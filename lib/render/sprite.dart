@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tremble/tex_area.dart';
-import 'package:tremble/vec2.dart';
+import 'package:tremble/physics/vec2.dart';
+import 'package:tremble/render/tex_area.dart';
 
 class Sprite {
   TexArea texture;

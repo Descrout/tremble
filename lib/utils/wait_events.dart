@@ -1,5 +1,5 @@
 import 'package:tremble/utils/types.dart';
-import 'package:tremble/wait_chain_builder.dart';
+import 'package:tremble/utils/wait_chain_builder.dart';
 
 class WaitEvents {
   final _updates = <UpdateSubscriptionCallback>[];

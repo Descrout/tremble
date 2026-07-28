@@ -1,6 +1,7 @@
-import 'package:tremble/aabb.dart';
-import 'package:tremble/line.dart';
-import 'package:tremble/tremble.dart';
+import 'package:tremble/physics/aabb.dart';
+import 'package:tremble/physics/line.dart';
+import 'package:tremble/physics/circle.dart';
+import 'package:tremble/physics/vec2.dart';
 
 abstract class CollisionDetector {
   static bool circleToCircle(Circle a, Circle b) {
@@ -64,10 +65,10 @@ abstract class CollisionDetector {
   static bool lineToRect(Line line, AABB rect) {
     if (pointToRect(line.p1, rect) || pointToRect(line.p2, rect)) return true;
 
-    final top = Line(p1: Vec2(rect.left, rect.top), p2: Vec2(rect.right, rect.top));
-    final bottom = Line(p1: Vec2(rect.left, rect.bottom), p2: Vec2(rect.right, rect.bottom));
-    final left = Line(p1: Vec2(rect.left, rect.top), p2: Vec2(rect.left, rect.bottom));
-    final right = Line(p1: Vec2(rect.right, rect.top), p2: Vec2(rect.right, rect.bottom));
+    final top = Line(Vec2(rect.left, rect.top), Vec2(rect.right, rect.top));
+    final bottom = Line(Vec2(rect.left, rect.bottom), Vec2(rect.right, rect.bottom));
+    final left = Line(Vec2(rect.left, rect.top), Vec2(rect.left, rect.bottom));
+    final right = Line(Vec2(rect.right, rect.top), Vec2(rect.right, rect.bottom));
 
     return lineToLine(line, top) ||
         lineToLine(line, bottom) ||

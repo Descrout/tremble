@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:tremble/vec2.dart';
+import 'package:tremble/physics/vec2.dart';
 
 class SecondOrderDynamics {
   late final double k1;

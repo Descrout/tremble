@@ -214,7 +214,7 @@
 
 <nav>
   <h1>Tremble</h1>
-  <div class="version">v1.0.23</div>
+  <div class="version">v1.2.0</div>
 
   <div class="section">Guide</div>
   <a href="#overview">Overview</a>
@@ -393,7 +393,7 @@
 <span class="cm">// Newer format: SpriteBatch.fromGdxPacker(...)</span>
 <span class="cm">// Custom: SpriteBatch.custom(image: ..., textures: ..., frames: ...)</span>
 
-<span class="kw">final</span> rect = <span class="fn">batch.getTexture</span>(<span class="str">"table"</span>);
+<span class="kw">final</span> rect = <span class="fn">batch.getTexture</span>(<span class="ty">Tex</span>.table);
 <span class="kw">final</span> anim = <span class="fn">batch.getAnimation</span>(HeroAnim.idle, speed: <span class="nu">10</span>);
 
 <span class="fn">batch.draw</span>(canvas, [hero, table]);
@@ -401,7 +401,7 @@
 
 <h3 id="sprite">Sprite</h3>
 <pre><span class="lang-tag">Dart</span><span class="kw">final</span> s = <span class="ty">Sprite</span>(
-  texture: <span class="fn">batch.getTexture</span>(<span class="str">"table"</span>),
+  texture: <span class="fn">batch.getTexture</span>(<span class="ty">Tex</span>.table),
   position: <span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">100</span>),
 );
 s.originX = <span class="nu">0.5</span>;  s.originY = <span class="nu">0.5</span>;
@@ -544,7 +544,7 @@ wait.length;</pre>
   .<span class="fn">run</span>(() {
     <span class="fn">world.spawn</span>(<span class="str">"debris"</span>, x: <span class="nu">120</span>, y: <span class="nu">300</span>);
     <span class="fn">world.spawn</span>(<span class="str">"shockwave"</span>, x: <span class="nu">120</span>, y: <span class="nu">300</span>);
-    bossSprite.texture = <span class="fn">batch.getTexture</span>(<span class="str">"boss_rage"</span>);
+    bossSprite.texture = <span class="fn">batch.getTexture</span>(<span class="ty">Tex</span>.bossRage);
   })
 
   <span class="cm">// 6. Wait for a dialog to finish (external callback)</span>

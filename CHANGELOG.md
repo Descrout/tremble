@@ -1,3 +1,9 @@
+## 1.2.0
+
+* Big structural changes. You might need to rename some imports. ``[BREAKING]``
+* ``RigidBody``, ``CollisionResolver``, ``SpatialHash`` introduced.
+* ``AABB``, ``Circle`` and ``Line`` classes got a ``draw(canvas, color)`` function.
+
 ## 1.0.24
 
 * ``Animation`` setAnimation will now instantly change frame.

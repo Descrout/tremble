@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tremble/physics/vec2.dart';
 import 'package:tremble/utils/math_utils.dart';
-import 'package:tremble/vec2.dart';
-import 'package:tremble/wait_events.dart';
+import 'package:tremble/utils/wait_events.dart';
 
 class Camera {
   static int _idCounter = 0;
