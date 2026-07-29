@@ -20,7 +20,7 @@ class Ray {
     );
   }
 
-  void draw(Canvas canvas, Color color, double length) {
+  void draw(Canvas canvas, Color color, double length, {bool drawArrowHead = true}) {
     Shape.paint.color = color;
 
     final o = origin.offset();
@@ -33,15 +33,16 @@ class Ray {
     Shape.paint.style = PaintingStyle.stroke;
     canvas.drawLine(o, t, Shape.paint);
 
-    // Arrowhead
-    const arrowLen = 12.0;
-    const arrowAngle = 0.45;
-    final dx = -direction.x * arrowLen;
-    final dy = -direction.y * arrowLen;
-    final ca = cos(arrowAngle);
-    final sa = sin(arrowAngle);
+    if (drawArrowHead) {
+      const arrowLen = 12.0;
+      const arrowAngle = 0.45;
+      final dx = -direction.x * arrowLen;
+      final dy = -direction.y * arrowLen;
+      final ca = cos(arrowAngle);
+      final sa = sin(arrowAngle);
 
-    canvas.drawLine(t, Offset(tip.x + dx * ca - dy * sa, tip.y + dy * ca + dx * sa), Shape.paint);
-    canvas.drawLine(t, Offset(tip.x + dx * ca + dy * sa, tip.y + dy * ca - dx * sa), Shape.paint);
+      canvas.drawLine(t, Offset(tip.x + dx * ca - dy * sa, tip.y + dy * ca + dx * sa), Shape.paint);
+      canvas.drawLine(t, Offset(tip.x + dx * ca + dy * sa, tip.y + dy * ca - dx * sa), Shape.paint);
+    }
   }
 }

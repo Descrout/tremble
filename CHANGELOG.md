@@ -4,6 +4,7 @@
 * ``SignalValue`` added and ``SignalBuilder`` changed to ``SignalValueBuilder``.
 * ``RigidBody``, ``CollisionResolver``, ``SpatialHash``, ``Raycaster`` introduced.
 * ``AABB``, ``Circle`` and ``Line`` classes got a ``draw(canvas, color)`` function.
+* ``draw`` function added to ``Vec2``.
 
 ## 1.0.24
 

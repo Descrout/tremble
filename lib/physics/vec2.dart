@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:tremble/physics/shape.dart';
+
 class Vec2 {
   double x;
   double y;
@@ -262,6 +264,41 @@ class Vec2 {
   }
 
   Vec2 clone() => Vec2(x, y);
+
+  void draw(Canvas canvas, Color color,
+      {bool drawArrowHead = true,
+      bool drawOrigin = false,
+      Offset origin = Offset.zero,
+      double scale = 1}) {
+    Shape.paint.color = color;
+
+    // Origin
+    final o = origin;
+    // Tip
+    final t = Offset(o.dx + x * scale, o.dy + y * scale);
+
+    if (drawOrigin) {
+      Shape.paint.style = PaintingStyle.fill;
+      canvas.drawCircle(o, 8, Shape.paint);
+    }
+
+    Shape.paint.style = PaintingStyle.stroke;
+    canvas.drawLine(o, t, Shape.paint);
+
+    if (drawArrowHead) {
+      const arrowLen = 12.0;
+      const arrowAngle = 0.45;
+      final dist = magnitude;
+      if (dist <= 0.001) return;
+      final dx = -(x / dist) * arrowLen;
+      final dy = -(y / dist) * arrowLen;
+      final ca = cos(arrowAngle);
+      final sa = sin(arrowAngle);
+
+      canvas.drawLine(t, Offset(t.dx + dx * ca - dy * sa, t.dy + dy * ca + dx * sa), Shape.paint);
+      canvas.drawLine(t, Offset(t.dx + dx * ca + dy * sa, t.dy + dy * ca - dx * sa), Shape.paint);
+    }
+  }
 
   @override
   String toString() => 'Vec2($x, $y)';
