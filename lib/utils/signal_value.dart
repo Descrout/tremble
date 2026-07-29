@@ -7,7 +7,8 @@ class SignalValue<T> {
   T get value => _value;
   set value(T val) {
     if (val == _value || _disposed) return;
-    signal.dispatch(_value);
+    _value = val;
+    signal.dispatch(val);
   }
 
   bool _disposed = false;

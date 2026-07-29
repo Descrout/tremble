@@ -8,6 +8,7 @@
 * ``.circle`` getter added to ``AABB`` and ``.aabb`` getter added to ``Sprite``.
 * ``SpriteBatch`` ``.getAnimation`` and ``.getTexture`` now expects ``AssetName`` implementated object.
 * ``.speed`` field added to ``Animation``.
+* ``CanvasText`` introduced.
 
 ## 1.0.24
 

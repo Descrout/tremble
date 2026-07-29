@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tremble/physics/aabb.dart';
 import 'package:tremble/physics/vec2.dart';
 import 'package:tremble/utils/math_utils.dart';
 import 'package:tremble/utils/wait_events.dart';
@@ -18,6 +19,9 @@ class Camera {
     double y = 0,
   })  : position = Vec2(x, y),
         id = _idCounter++;
+
+  AABB aabb({required double width, required double height}) =>
+      AABB(position, width: width * zoom, height: height * zoom);
 
   void reset() {
     position.set(0, 0);
@@ -40,11 +44,11 @@ class Camera {
     _lastCameraStarted = null;
   }
 
-  bool shaking = false;
+  bool _shaking = false;
   void shake(
       {required WaitEvents wait, double time = 0.1, double amount = 2, bool slowlyHalt = false}) {
-    if (shaking) return;
-    shaking = true;
+    if (_shaking) return;
+    _shaking = true;
     final beforePos = position.clone();
     wait.waitAndDo(
       time: time,
@@ -56,7 +60,7 @@ class Camera {
       },
       onEnd: () {
         position.setFrom(beforePos);
-        shaking = false;
+        _shaking = false;
       },
     );
   }

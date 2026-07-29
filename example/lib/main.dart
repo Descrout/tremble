@@ -1,80 +1,397 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:tremble/game_area.dart';
-import 'package:tremble_example/demo_controller.dart';
+import 'package:tremble/tremble.dart';
+import 'package:tremble/utils/signal_value.dart';
+import 'package:tremble_example/examples/input_example.dart';
+import 'package:tremble_example/examples/spritebatch_example.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+enum ExampleType { input, rendering, tooling, utility, physics, demo }
+
+class ExampleItem {
+  final String title;
+  final String description;
+  final ExampleType type;
+  final String codeUrl;
+
+  final ScreenController Function() screen;
+
+  ExampleItem({
+    required this.title,
+    required this.description,
+    required this.type,
+    required this.codeUrl,
+    required this.screen,
+  });
+}
+
+final examples = <ExampleItem>[
+  ExampleItem(
+    title: "Input Handling",
+    description: "Handle *keyboard* and *mouse/touch* inputs.",
+    type: ExampleType.input,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/input_example.dart",
+    screen: () => InputExample(),
+  ),
+  ExampleItem(
+    title: "SpriteBatch",
+    description: "Efficiently draw a lot of *Sprite* and *Animation* objects.",
+    type: ExampleType.rendering,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/spritebatch_example.dart",
+    screen: () => SpritebatchExample(),
+  ),
+];
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = DemoController();
+  State<MyApp> createState() => _MyAppState();
+}
 
+class _MyAppState extends State<MyApp> {
+  final exampleIndex = SignalValue<int>(0);
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Tremble Demo',
-      theme: ThemeData.dark(),
+      title: 'Tremble Examples',
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF0f0f1a),
+      ),
       home: Scaffold(
-        body: Stack(
+        body: SignalValueBuilder(
+          value: exampleIndex,
+          builder: (context, child, index) {
+            return Row(
+              children: [
+                _buildSidebar(index),
+                const VerticalDivider(width: 1, color: Color(0xFF2a2a3e)),
+                Expanded(child: _buildGamePanel(index)),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSidebar(int selectedIndex) {
+    return SizedBox(
+      width: 360,
+      child: Container(
+        color: const Color(0xFF14142a),
+        child: Column(
           children: [
-            Positioned.fill(
-              child: FittedBox(
-                child: SizedBox(
-                  width: 480,
-                  height: 640,
-                  child: GameArea(
-                    controller: controller,
-                  ),
+            _buildSidebarHeader(),
+            const Divider(height: 1, color: Color(0xFF2a2a3e)),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(12),
+                itemCount: examples.length,
+                itemBuilder: (context, i) => _buildExampleItem(
+                  examples[i],
+                  i == selectedIndex,
+                  i,
                 ),
               ),
             ),
-            if (kIsWeb || Platform.isMacOS || Platform.isWindows || Platform.isLinux)
-              Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text("Keyboard Mode"),
-                            ValueListenableBuilder<bool>(
-                                valueListenable: controller.isMouseControlled,
-                                builder: (context, value, child) {
-                                  return Focus(
-                                    canRequestFocus: false,
-                                    skipTraversal: true,
-                                    descendantsAreFocusable: false,
-                                    descendantsAreTraversable: false,
-                                    child: Switch(
-                                        value: value,
-                                        onChanged: (isOn) {
-                                          controller.isMouseControlled.value = isOn;
-                                        }),
-                                  );
-                                }),
-                            const Text("Mouse Mode"),
-                          ],
-                        ),
-                        ValueListenableBuilder<bool>(
-                            valueListenable: controller.isMouseControlled,
-                            builder: (context, value, child) {
-                              if (value) return const Text("Mouse Press");
-                              return const Text("Left Arrow | Space | Right Arrow");
-                            }),
-                      ],
-                    ),
-                  ))
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildSidebarHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              "assets/tremble_logo.jpeg",
+              width: 36,
+              height: 36,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Tremble Examples",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.grey[100],
+                    letterSpacing: -0.3,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  "v1.2.0",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () => launchUrl(Uri.parse("https://tremble-docs.netlify.app")),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey[700]!),
+                ),
+                child: Icon(Icons.menu_book, size: 18, color: Colors.grey[400]),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExampleItem(ExampleItem example, bool selected, int index) {
+    final typeColor = _typeColor(example.type);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => exampleIndex.value = index,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: selected ? const Color(0xFF1e1e3f) : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: selected ? typeColor.withValues(alpha: 0.5) : const Color(0xFF2a2a3e),
+              width: selected ? 1.5 : 1,
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _typeIcon(example.type, typeColor),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            example.title,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                              color: Colors.grey[100],
+                            ),
+                          ),
+                        ),
+                        _typeChip(example.type, typeColor),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[400],
+                          height: 1.4,
+                        ),
+                        children: _parseDescription(
+                          example.description,
+                          highlightColor: typeColor,
+                        ),
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGamePanel(int index) {
+    final example = examples[index];
+    return Column(
+      children: [
+        _buildGameHeader(example),
+        const Divider(height: 1, color: Color(0xFF2a2a3e)),
+        Expanded(
+          child: FittedBox(
+            child: Container(
+              width: 800,
+              height: 600,
+              margin: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white,
+                  width: 2,
+                ),
+              ),
+              child: GameArea(controller: example.screen()),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGameHeader(ExampleItem example) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      color: const Color(0xFF14142a),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  example.title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[400],
+                      height: 1.3,
+                    ),
+                    children: _parseDescription(
+                      example.description,
+                      highlightColor: Colors.cyan[400]!,
+                    ),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          TextButton.icon(
+            onPressed: () => launchUrl(Uri.parse(example.codeUrl)),
+            icon: Icon(Icons.code, size: 18, color: Colors.cyan[400]),
+            label: Text(
+              "View Code",
+              style: TextStyle(fontSize: 14, color: Colors.cyan[400]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _typeColor(ExampleType type) {
+    return switch (type) {
+      ExampleType.input => Colors.orange[400]!,
+      ExampleType.rendering => Colors.purple[400]!,
+      ExampleType.tooling => Colors.teal[400]!,
+      ExampleType.utility => Colors.blue[400]!,
+      ExampleType.physics => Colors.red[400]!,
+      ExampleType.demo => Colors.green[400]!,
+    };
+  }
+
+  Widget _typeIcon(ExampleType type, Color color, {double size = 32}) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(
+        switch (type) {
+          ExampleType.input => Icons.keyboard,
+          ExampleType.rendering => Icons.image,
+          ExampleType.tooling => Icons.build,
+          ExampleType.utility => Icons.handyman,
+          ExampleType.physics => Icons.bolt,
+          ExampleType.demo => Icons.play_circle,
+        },
+        size: size * 0.55,
+        color: color,
+      ),
+    );
+  }
+
+  Widget _typeChip(ExampleType type, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 0.5),
+      ),
+      child: Text(
+        type.name.toUpperCase(),
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: color,
+          letterSpacing: 0.8,
+        ),
+      ),
+    );
+  }
+
+  List<InlineSpan> _parseDescription(String text, {required Color highlightColor}) {
+    final spans = <InlineSpan>[];
+    final parts = text.split('*');
+    for (int i = 0; i < parts.length; i++) {
+      if (parts[i].isEmpty) continue;
+      if (i.isOdd) {
+        spans.add(TextSpan(
+          text: parts[i],
+          style: TextStyle(
+            color: highlightColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ));
+      } else {
+        spans.add(TextSpan(
+          text: parts[i],
+          style: TextStyle(color: Colors.grey[400]),
+        ));
+      }
+    }
+    return spans;
+  }
+
+  @override
+  void dispose() {
+    exampleIndex.dispose();
+    super.dispose();
   }
 }

@@ -64,59 +64,45 @@ class Sprite {
 
   AABB get aabb {
     final r = texture.rect;
+    final w = r.width * scale;
+    final h = r.height * scale;
 
     if (rotation == 0) {
-      final w = r.width * scale;
-      final h = r.height * scale;
-
       return AABB(
-        Vec2(
-          position.x - originX * w,
-          position.y - originY * h,
-        ),
+        Vec2(position.x - originX * w, position.y - originY * h),
         width: w,
         height: h,
       );
     }
 
-    final anchorX = r.width * originX;
-    final anchorY = r.height * originY;
+    final ox = r.width * originX;
+    final oy = r.height * originY;
+    final cosR = cos(rotation);
+    final sinR = sin(rotation);
 
-    final dx1 = r.left - anchorX;
-    final dx2 = r.right - anchorX;
-    final dy1 = r.top - anchorY;
-    final dy2 = r.bottom - anchorY;
+    final l = -ox, rw = r.width - ox;
+    final t = -oy, b = r.height - oy;
 
-    final scos = cos(rotation) * scale;
-    final ssin = sin(rotation) * scale;
+    final sx = scale, cx = cosR, sx2 = sinR;
 
-    // px = position.x + scos*dx - ssin*dy  ->  {ax1,ax2} - {by1,by2}
-    // py = position.y + ssin*dx + scos*dy  ->  {cy1,cy2} + {ey1,ey2}
-    final ax1 = scos * dx1, ax2 = scos * dx2;
-    final by1 = ssin * dy1, by2 = ssin * dy2;
-    final cy1 = ssin * dx1, cy2 = ssin * dx2;
-    final ey1 = scos * dy1, ey2 = scos * dy2;
+    final lc = l * cx, ls = l * sx2;
+    final rc = rw * cx, rs = rw * sx2;
+    final tc = t * cx, ts = t * sx2;
+    final bc = b * cx, bs = b * sx2;
 
-    final axLess = ax1 < ax2;
-    final minAx = axLess ? ax1 : ax2;
-    final maxAx = axLess ? ax2 : ax1;
+    final p1x = position.x + (lc - ts) * sx;
+    final p1y = position.y + (ls + tc) * sx;
+    final p2x = position.x + (lc - bs) * sx;
+    final p2y = position.y + (ls + bc) * sx;
+    final p3x = position.x + (rc - ts) * sx;
+    final p3y = position.y + (rs + tc) * sx;
+    final p4x = position.x + (rc - bs) * sx;
+    final p4y = position.y + (rs + bc) * sx;
 
-    final byLess = by1 < by2;
-    final minBy = byLess ? by1 : by2;
-    final maxBy = byLess ? by2 : by1;
-
-    final cyLess = cy1 < cy2;
-    final minCy = cyLess ? cy1 : cy2;
-    final maxCy = cyLess ? cy2 : cy1;
-
-    final eyLess = ey1 < ey2;
-    final minEy = eyLess ? ey1 : ey2;
-    final maxEy = eyLess ? ey2 : ey1;
-
-    final minX = position.x + minAx - maxBy;
-    final maxX = position.x + maxAx - minBy;
-    final minY = position.y + minCy + minEy;
-    final maxY = position.y + maxCy + maxEy;
+    final minX = min(min(p1x, p2x), min(p3x, p4x));
+    final maxX = max(max(p1x, p2x), max(p3x, p4x));
+    final minY = min(min(p1y, p2y), min(p3y, p4y));
+    final maxY = max(max(p1y, p2y), max(p3y, p4y));
 
     return AABB(
       Vec2(minX, minY),

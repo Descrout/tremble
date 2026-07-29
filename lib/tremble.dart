@@ -17,6 +17,7 @@ export 'package:tremble/physics/spring.dart';
 export 'package:tremble/physics/vec2.dart';
 export 'package:tremble/render/animation.dart';
 export 'package:tremble/render/camera.dart';
+export 'package:tremble/render/canvas_text.dart';
 export 'package:tremble/render/sprite.dart';
 export 'package:tremble/render/sprite_batch.dart';
 export 'package:tremble/render/tex_area.dart';
