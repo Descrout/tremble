@@ -5,6 +5,7 @@
 * ``RigidBody``, ``CollisionResolver``, ``SpatialHash``, ``Raycaster`` introduced.
 * ``AABB``, ``Circle`` and ``Line`` classes got a ``draw(canvas, color)`` function.
 * ``draw`` function added to ``Vec2``.
+* ``.circle`` getter added to ``AABB`` and ``.aabb`` getter added to ``Sprite``.
 
 ## 1.0.24
 

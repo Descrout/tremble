@@ -1,5 +1,7 @@
+import 'dart:math';
 import 'dart:ui';
 
+import 'package:tremble/physics/circle.dart';
 import 'package:tremble/physics/shape.dart';
 import 'package:tremble/physics/vec2.dart';
 import 'package:tremble/utils/extensions.dart';
@@ -62,6 +64,9 @@ class AABB extends Shape {
     width -= amount * 2;
     height -= amount * 2;
   }
+
+  Circle get circle =>
+      Circle(Vec2(x + width * 0.5, y + height * 0.5), radius: min(width, height) * 0.5);
 
   @override
   AABB get aabb => this;
