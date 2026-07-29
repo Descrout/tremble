@@ -1,5 +1,9 @@
 # Tremble
 
+<p align="center">
+  <img src="docs/tremble_logo.jpeg" alt="Tremble Logo" width="200" style="border-radius: 20px;">
+</p>
+
 A simple Flutter game engine following the setup/update/draw pattern (p5.js, Processing, Raylib, LÖVE style).
 
 > 📖 **Full documentation**: [tremble-docs.netlify.app](https://tremble-docs.netlify.app/)
