@@ -430,7 +430,14 @@ s.mask = <span class="bo">false</span>;
 
 <h3 id="animation">Animation</h3>
 <p>Extends <code>Sprite</code> with frame-based animation, multiple states, and looping.</p>
-<pre><span class="lang-tag">Dart</span><span class="kw">enum</span> <span class="ty">HeroAnim</span> { idle, run }
+<pre><span class="lang-tag">Dart</span><span class="kw">enum</span> <span class="ty">HeroAnim</span> <span class="kw">implements</span> <span class="ty">AssetName</span> {
+  idle(<span class="str">"hero-idle"</span>),
+  run(<span class="str">"hero-run"</span>);
+
+  <span class="kw">const</span> <span class="ty">HeroAnim</span>(<span class="kw">this</span>.assetName);
+  <span class="pr">@override</span>
+  <span class="kw">final</span> <span class="ty">String</span> assetName;
+}
 
 <span class="kw">final</span> hero = <span class="ty">Animation</span>&lt;<span class="ty">HeroAnim</span>&gt;(
   animations: [
@@ -438,14 +445,16 @@ s.mask = <span class="bo">false</span>;
     <span class="fn">batch.getAnimation</span>(<span class="ty">HeroAnim</span>.run,  speed: <span class="nu">10</span>),
   ],
   position: <span class="ty">Vec2</span>(<span class="nu">200</span>, <span class="nu">300</span>),
+  speed: <span class="nu">1.0</span>,
 );
 
 <span class="fn">hero.update</span>(deltaTime);
 <span class="fn">hero.setAnimation</span>(<span class="ty">HeroAnim</span>.run, fromFrame: <span class="nu">0</span>);
 <span class="fn">hero.resetAnimation</span>(<span class="ty">HeroAnim</span>.run, fromFrame: <span class="nu">0</span>);
 hero.paused = <span class="bo">false</span>;
-hero.finished;   <span class="cm">// true when a non-looping animation ends</span>
-hero.index;      <span class="cm">// current frame index</span></pre>
+hero.speed = <span class="nu">0.5</span>;  <span class="cm">// internal speed multiplier (default 1.0)</span>
+hero.finished;       <span class="cm">// true when a non-looping animation ends</span>
+hero.index;          <span class="cm">// current frame index</span></pre>
 
 <h4>AnimMode</h4>
 <p>Controls how the animation plays:</p>
@@ -458,17 +467,19 @@ hero.index;      <span class="cm">// current frame index</span></pre>
 <p>Set <code>reverse: true</code> to play any mode in reverse (e.g. <code>playOnce</code> stops at first frame instead of last).</p>
 
 <p><code>AnimationData</code> is returned by <code>batch.getAnimation()</code>:</p>
-<pre><span class="lang-tag">Dart</span><span class="cm">// Data is just name + frames + speed</span>
+<pre><span class="lang-tag">Dart</span><span class="cm">// Data holds name + frames + base speed</span>
 <span class="kw">final</span> data = <span class="fn">batch.getAnimation</span>(<span class="ty">HeroAnim</span>.idle, speed: <span class="nu">10</span>);
 
-<span class="cm">// Mode and reverse live on Animation</span>
+<span class="cm">// Animation adds an internal speed multiplier</span>
 <span class="kw">final</span> hero = <span class="ty">Animation</span>&lt;<span class="ty">HeroAnim</span>&gt;(
   animations: [data],
   position: <span class="ty">Vec2</span>(<span class="nu">200</span>, <span class="nu">300</span>),
+  speed: <span class="nu">1.0</span>,
   mode: <span class="ty">AnimMode</span>.loop,
 );
 
-<span class="cm">// Change mode at runtime</span>
+<span class="cm">// Change at runtime</span>
+hero.speed = <span class="nu">0.5</span>;
 hero.mode = <span class="ty">AnimMode</span>.pingPong;
 hero.reverse = <span class="bo">true</span>;</pre>
 

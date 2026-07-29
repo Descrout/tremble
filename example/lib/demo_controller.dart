@@ -2,7 +2,15 @@ import 'package:flutter/material.dart' hide Animation;
 import 'package:flutter/services.dart';
 import 'package:tremble/tremble.dart';
 
-enum HeroAnimation { idle, run }
+enum HeroAnim implements AssetName {
+  idle("hero-idle"),
+  run("hero-run");
+
+  const HeroAnim(this.assetName);
+
+  @override
+  final String assetName;
+}
 
 class DemoController extends ScreenController {
   double mouseX = 0;
@@ -16,7 +24,7 @@ class DemoController extends ScreenController {
   double shootTimer = 0;
 
   late final SpriteBatch spriteBatch;
-  late final Animation<HeroAnimation> hero;
+  late final Animation<HeroAnim> hero;
 
   final isMouseControlled = ValueNotifier<bool>(true);
 
@@ -32,8 +40,8 @@ class DemoController extends ScreenController {
   void setup(BuildContext context, double width, double height) {
     hero = Animation(
       animations: [
-        spriteBatch.getAnimation(HeroAnimation.idle, speed: 10),
-        spriteBatch.getAnimation(HeroAnimation.run, speed: 10),
+        spriteBatch.getAnimation(HeroAnim.idle, speed: 10),
+        spriteBatch.getAnimation(HeroAnim.run, speed: 10),
       ],
       position: Vec2(width / 2, height - 26),
     );
@@ -57,9 +65,9 @@ class DemoController extends ScreenController {
 
     // Set hero animation based on velocity
     if (vx == 0) {
-      hero.setAnimation(HeroAnimation.idle);
+      hero.setAnimation(HeroAnim.idle);
     } else {
-      hero.setAnimation(HeroAnimation.run, fromFrame: 0);
+      hero.setAnimation(HeroAnim.run, fromFrame: 0);
       hero.mode = AnimMode.loop;
       hero.flip = vx < 0;
       hero.position.x += vx * deltaTime;

@@ -247,8 +247,18 @@ class SpriteBatch {
     );
   }
 
-  TexArea getTexture(String key) {
-    return _textures[key]!;
+  AnimationData<T> getAnimation<T extends AssetName>(
+    T name, {
+    required double speed,
+  }) =>
+      AnimationData(
+        name: name,
+        frames: _frames[name.assetName] ?? [_textures[name.assetName]!],
+        speed: speed,
+      );
+
+  TexArea getTexture<T extends AssetName>(T name) {
+    return _textures[name.assetName]!;
   }
 
   Rect getRect(String key) {
@@ -273,16 +283,6 @@ class SpriteBatch {
       rect.height,
     );
   }
-
-  AnimationData<T> getAnimation<T extends Enum>(
-    T name, {
-    required double speed,
-  }) =>
-      AnimationData(
-        name: name,
-        frames: _frames[name.name] ?? [_textures[name.name]!],
-        speed: speed,
-      );
 
   // Reusable buffers
   Float32List _rects = Float32List(0);

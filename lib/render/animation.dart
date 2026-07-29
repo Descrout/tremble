@@ -14,7 +14,7 @@ int _clampToRange(int value, int min, int max) {
   return value;
 }
 
-class AnimationData<T extends Enum> {
+class AnimationData<T extends AssetName> {
   AnimationData({
     required this.name,
     required this.frames,
@@ -27,11 +27,12 @@ class AnimationData<T extends Enum> {
   final double speed;
 }
 
-class Animation<T extends Enum> extends Sprite {
+class Animation<T extends AssetName> extends Sprite {
   Animation({
     required List<AnimationData<T>> animations,
     required super.position,
     int index = 0,
+    this.speed = 1.0,
     this.mode = AnimMode.loop,
     bool reverse = false,
     super.originX = 0.5,
@@ -54,6 +55,8 @@ class Animation<T extends Enum> extends Sprite {
       "initial index is out of bounds for the first animation",
     );
   }
+
+  final double speed;
 
   final Map<T, AnimationData<T>> _animations;
 
@@ -119,7 +122,7 @@ class Animation<T extends Enum> extends Sprite {
       return;
     }
 
-    _timer += _direction * anim.speed * deltaTime;
+    _timer += _direction * anim.speed * speed * deltaTime;
 
     if (_direction > 0) {
       if (_timer >= frameCount - 1) {
@@ -153,7 +156,7 @@ class Animation<T extends Enum> extends Sprite {
       return;
     }
 
-    _timer += _direction * anim.speed * deltaTime;
+    _timer += _direction * anim.speed * speed * deltaTime;
 
     if (_direction > 0) {
       if (_timer >= frameCount) {
@@ -188,7 +191,7 @@ class Animation<T extends Enum> extends Sprite {
       return;
     }
 
-    _timer += _direction * anim.speed * deltaTime;
+    _timer += _direction * anim.speed * speed * deltaTime;
     _timer %= frameCount;
 
     _index = _clampToRange(_timer.toInt(), 0, frameCount - 1);
@@ -206,7 +209,7 @@ class Animation<T extends Enum> extends Sprite {
     }
 
     final cycleLength = 2 * (frameCount - 1);
-    _timer += _direction * anim.speed * deltaTime;
+    _timer += _direction * anim.speed * speed * deltaTime;
 
     _timer %= cycleLength;
 

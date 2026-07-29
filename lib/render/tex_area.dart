@@ -19,3 +19,7 @@ class TexArea {
   @override
   String toString() => 'TexArea(rect: $rect, pageIndex: $pageIndex)';
 }
+
+abstract interface class AssetName {
+  String get assetName;
+}
