@@ -3,7 +3,7 @@ description: A Simple Flutter game engine.
 homepage: https://github.com/Descrout/tremble.git
 documentation: https://tremble-docs.netlify.app
 
-version: 1.2.0
+version: 1.2.1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

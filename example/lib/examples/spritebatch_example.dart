@@ -61,7 +61,7 @@ class SpritebatchExample extends ScreenController {
     batch.draw(canvas, sprites);
 
     for (final spr in sprites) {
-      spr.aabb.draw(canvas, Colors.white);
+      spr.aabb.draw(canvas, Colors.transparent, true);
       Shape.paint.style = PaintingStyle.fill;
       canvas.drawCircle(spr.position.offset(), 4, Shape.paint);
     }

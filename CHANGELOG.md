@@ -1,3 +1,7 @@
+## 1.2.1
+
+* Readme and examples updated.
+
 ## 1.2.0
 
 * Big structural changes. You might need to rename some imports. ``[BREAKING]``

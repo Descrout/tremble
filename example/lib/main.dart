@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tremble/tremble.dart';
 import 'package:tremble/utils/signal_value.dart';
+import 'package:tremble_example/examples/bouncing_shapes_example.dart';
 import 'package:tremble_example/examples/input_example.dart';
 import 'package:tremble_example/examples/spritebatch_example.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -25,6 +26,14 @@ class ExampleItem {
 }
 
 final examples = <ExampleItem>[
+  ExampleItem(
+    title: "Bouncing Shapes",
+    description: "Bunch of random shapes bouncing around.",
+    type: ExampleType.demo,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/bouncing_shapes_example.dart",
+    screen: () => BouncingShapesExample(),
+  ),
   ExampleItem(
     title: "Input Handling",
     description: "Handle *keyboard* and *mouse/touch* inputs.",

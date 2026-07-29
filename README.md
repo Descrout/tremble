@@ -10,6 +10,7 @@
 </tr></table>
 
 > 📖 **Full documentation**: [tremble-docs.netlify.app](https://tremble-docs.netlify.app/)
+> 📖 **Interactive Examples**: [tremble-examples.netlify.app](https://tremble-examples.netlify.app/)
 
 ## Quick Start
 
@@ -57,7 +58,6 @@ class MyController extends ScreenController {
 
 - [Tremble](https://pub.dev/packages/tremble)
 - [TECS](https://pub.dev/packages/tecs) — standalone ECS library
-- [Lunapulse](https://descrout.itch.io/lunapulse) — example game built with Tremble + TECS
 
 ## License
 

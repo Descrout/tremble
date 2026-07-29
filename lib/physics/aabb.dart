@@ -1,9 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:tremble/physics/circle.dart';
-import 'package:tremble/physics/shape.dart';
-import 'package:tremble/physics/vec2.dart';
+import 'package:tremble/tremble.dart';
 
 class AABB extends Shape {
   double width;
@@ -69,4 +67,12 @@ class AABB extends Shape {
 
   @override
   AABB get aabb => this;
+
+  @override
+  void draw(Canvas canvas, Color color, [bool drawBoundingBox = false]) {
+    Shape.paint.style = PaintingStyle.fill;
+    Shape.paint.color = color;
+    canvas.drawRect(rect, Shape.paint);
+    if (drawBoundingBox) super.draw(canvas, const Color(0xFFFFFFFF));
+  }
 }

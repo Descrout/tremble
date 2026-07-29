@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:tremble/physics/aabb.dart';
 import 'package:tremble/physics/shape.dart';
 import 'package:tremble/physics/vec2.dart';
-import 'package:tremble/utils/extensions.dart';
 
 class Circle extends Shape {
   double radius;
@@ -26,11 +25,11 @@ class Circle extends Shape {
       );
 
   @override
-  void draw(Canvas canvas, Color color, [bool drawBoundingBox = true]) {
+  void draw(Canvas canvas, Color color, [bool drawBoundingBox = false]) {
     Shape.paint.style = PaintingStyle.fill;
     Shape.paint.color = color;
     canvas.drawCircle(Offset(position.x, position.y), radius, Shape.paint);
-    if (drawBoundingBox) super.draw(canvas, color.inverted);
+    if (drawBoundingBox) super.draw(canvas, const Color(0xFFFFFFFF));
   }
 
   Circle copyWith({

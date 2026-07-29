@@ -4,7 +4,6 @@ import 'package:flutter/rendering.dart';
 import 'package:tremble/physics/aabb.dart';
 import 'package:tremble/physics/shape.dart';
 import 'package:tremble/physics/vec2.dart';
-import 'package:tremble/utils/extensions.dart';
 
 class Line extends Shape {
   Vec2 p2;
@@ -23,10 +22,10 @@ class Line extends Shape {
   AABB get aabb => AABB(Vec2(left, top), width: right - left, height: bottom - top);
 
   @override
-  void draw(Canvas canvas, Color color, [bool drawBoundingBox = true]) {
+  void draw(Canvas canvas, Color color, [bool drawBoundingBox = false]) {
     Shape.paint.style = PaintingStyle.stroke;
     Shape.paint.color = color;
     canvas.drawLine(p1.offset(), p2.offset(), Shape.paint);
-    if (drawBoundingBox) super.draw(canvas, color.inverted);
+    if (drawBoundingBox) super.draw(canvas, const Color(0xFFFFFFFF));
   }
 }

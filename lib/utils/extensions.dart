@@ -3,11 +3,12 @@ import 'package:tremble/tremble.dart';
 
 extension ColorX on Color {
   Color get inverted {
-    return Color.fromARGB(
-      a.toInt(),
-      255 - r.toInt(),
-      255 - g.toInt(),
-      255 - b.toInt(),
+    return Color.from(
+      alpha: 1,
+      red: 1 - r,
+      green: 1 - g,
+      blue: 1 - b,
+      colorSpace: colorSpace,
     );
   }
 }

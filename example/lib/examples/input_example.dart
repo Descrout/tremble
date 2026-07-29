@@ -22,7 +22,7 @@ class InputExample extends ScreenController {
     for (final key in keys) {
       holding = true;
       str.write("- ");
-      str.writeln(key.debugName);
+      str.writeln(key == LogicalKeyboardKey.space ? "Space" : key.keyLabel);
     }
     if (!holding) str.write("NONE");
     currentKeys.text = str.toString();
@@ -55,7 +55,8 @@ class InputExample extends ScreenController {
   @override
   void keyDown(LogicalKeyboardKey key) {
     keys.add(key);
-    latestKey.text = "Latest Key Press:\n${key.debugName}";
+    latestKey.text =
+        "Latest Key Press:\n${key == LogicalKeyboardKey.space ? "Space" : key.keyLabel}";
   }
 
   @override

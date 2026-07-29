@@ -279,7 +279,7 @@ class Vec2 {
 
     if (drawOrigin) {
       Shape.paint.style = PaintingStyle.fill;
-      canvas.drawCircle(o, 8, Shape.paint);
+      canvas.drawCircle(o, 4, Shape.paint);
     }
 
     Shape.paint.style = PaintingStyle.stroke;
