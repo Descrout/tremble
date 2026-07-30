@@ -29,11 +29,6 @@ class InputExample extends ScreenController {
   }
 
   @override
-  void lifecycleChanged(AppLifecycleState state) {
-    print(state);
-  }
-
-  @override
   void draw(Canvas canvas, Size size) {
     mouseText.draw(canvas, mouse);
     latestKey.draw(canvas, Vec2(size.width * 0.5 - 80, 32));
