@@ -20,7 +20,8 @@ class GameTicker extends StatefulWidget {
   State<GameTicker> createState() => _GameTickerState();
 }
 
-class _GameTickerState extends State<GameTicker> with SingleTickerProviderStateMixin {
+class _GameTickerState extends State<GameTicker>
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   Ticker? ticker;
   int beforeMS = 0;
 
@@ -28,6 +29,7 @@ class _GameTickerState extends State<GameTicker> with SingleTickerProviderStateM
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     widget.controller.setup(context, widget.width, widget.height);
     widget.controller.update(0);
 
@@ -39,11 +41,17 @@ class _GameTickerState extends State<GameTicker> with SingleTickerProviderStateM
 
   void tick(Duration elapsed) {
     final elapsedMS = elapsed.inMicroseconds;
-    final dt = (elapsedMS - beforeMS) / 1e6;
+    final deltaTime = ((elapsedMS - beforeMS) / 1e6).clamp(0.0, 0.05);
 
     beforeMS = elapsedMS;
-    widget.controller.update(dt);
+
+    widget.controller.update(deltaTime);
     listener.update();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    widget.controller.lifecycleChanged(state);
   }
 
   @override
@@ -63,13 +71,14 @@ class _GameTickerState extends State<GameTicker> with SingleTickerProviderStateM
       widget.controller.setup(context, widget.width, widget.height);
     }
     if (oldWidget.width != widget.width || oldWidget.height != widget.height) {
-      widget.controller.resize(widget.width, widget.height);
+      widget.controller.resized(widget.width, widget.height);
     }
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     listener.dispose();
     ticker?.dispose();
     super.dispose();

@@ -21,12 +21,16 @@ class InputExample extends ScreenController {
     bool holding = false;
     for (final key in keys) {
       holding = true;
-      str.write("- ");
       str.writeln(key == LogicalKeyboardKey.space ? "Space" : key.keyLabel);
     }
     if (!holding) str.write("NONE");
     currentKeys.text = str.toString();
     currentKeys.style = TextStyle(color: holding ? Colors.yellow : Colors.white);
+  }
+
+  @override
+  void lifecycleChanged(AppLifecycleState state) {
+    print(state);
   }
 
   @override

@@ -8,7 +8,8 @@ abstract class ScreenController {
   }
 
   void setup(BuildContext context, double width, double height);
-  void resize(double width, double height) {}
+  void resized(double width, double height) {}
+  void lifecycleChanged(AppLifecycleState state) {}
 
   void mouseMove(int pointerID, double mouseX, double mouseY) {}
   void mousePressed(int pointerID, int button, double mouseX, double mouseY) {}

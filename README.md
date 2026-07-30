@@ -9,7 +9,7 @@
   </td>
 </tr></table>
 
-> 📖 **Full documentation**: [tremble-docs.netlify.app](https://tremble-docs.netlify.app/)
+> 📖 **Full documentation**: [tremble-docs.netlify.app](https://tremble-docs.netlify.app/)    
 > 📖 **Interactive Examples**: [tremble-examples.netlify.app](https://tremble-examples.netlify.app/)
 
 ## Quick Start

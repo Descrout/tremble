@@ -24,6 +24,7 @@ export 'package:tremble/render/tex_area.dart';
 export 'package:tremble/screen_controller.dart';
 export 'package:tremble/utils/color_utils.dart';
 export 'package:tremble/utils/extensions.dart';
+export 'package:tremble/utils/fixed_update.dart';
 export 'package:tremble/utils/helpers.dart';
 export 'package:tremble/utils/image_utils.dart';
 export 'package:tremble/utils/math_utils.dart';

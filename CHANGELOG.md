@@ -1,3 +1,8 @@
+## 1.2.2
+
+* ``FixedUpdate`` implemented. You can have multiple of them and update them whenever.
+* ``lifecycleChanged`` added to ``ScreenController``.
+
 ## 1.2.1
 
 * Readme and examples updated.
@@ -6,7 +11,7 @@
 
 * Big structural changes. You might need to rename some imports. ``[BREAKING]``
 * ``SignalValue`` added and ``SignalBuilder`` changed to ``SignalValueBuilder``.
-* ``RigidBody``, ``CollisionResolver``, ``SpatialHash``, ``Raycaster`` introduced.
+* ``RigidBody``, ``CollisionResolver``, ``SpatialHash``, ``Raycaster``, ``Minkowski`` introduced.
 * ``AABB``, ``Circle`` and ``Line`` classes got a ``draw(canvas, color)`` function.
 * ``draw`` function added to ``Vec2``.
 * ``.circle`` getter added to ``AABB`` and ``.aabb`` getter added to ``Sprite``.

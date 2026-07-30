@@ -277,6 +277,12 @@ class _MyAppState extends State<MyApp> {
       color: const Color(0xFF14142a),
       child: Row(
         children: [
+          IconButton(
+            onPressed: () => launchUrl(Uri.parse(example.codeUrl)),
+            icon: Icon(Icons.code, color: Colors.cyan[400]),
+            tooltip: "View Code",
+          ),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
