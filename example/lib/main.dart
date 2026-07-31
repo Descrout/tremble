@@ -56,7 +56,7 @@ final examples = <ExampleItem>[
     description: "Simple in-game level editor using *TileMap* and *Grid*.",
     type: ExampleType.demo,
     codeUrl:
-        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/tilemap_example.dart",
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/tile_map_example.dart",
     screen: () => TileMapExample(),
   ),
 ];
