@@ -4,6 +4,7 @@ import 'package:tremble/tremble.dart';
 
 class InputExample extends ScreenController {
   final mouse = Vec2.zero();
+  final scrolled = Vec2.zero();
   final mouseText = CanvasText();
 
   final keys = <LogicalKeyboardKey>{};
@@ -15,7 +16,8 @@ class InputExample extends ScreenController {
 
   @override
   void update(double deltaTime) {
-    mouseText.text = "mouseX: ${mouse.x.toInt()}\nmouseY: ${mouse.y.toInt()}";
+    mouseText.text =
+        "mouseX: ${mouse.x.toInt()}\nmouseY: ${mouse.y.toInt()}\n---\nscrolledX: ${scrolled.x.toInt()}\nscrolledY: ${scrolled.y.toInt()}";
 
     final str = StringBuffer("Currently Holding:\n");
     bool holding = false;
@@ -49,6 +51,12 @@ class InputExample extends ScreenController {
   @override
   void mouseReleased(int pointerID) {
     mouseText.style = const TextStyle(color: Colors.white);
+  }
+
+  @override
+  void mouseScroll(Offset scrollOffset) {
+    scrolled.x += scrollOffset.dx;
+    scrolled.y += scrollOffset.dy;
   }
 
   @override

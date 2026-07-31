@@ -14,7 +14,7 @@ int _clampToRange(int value, int min, int max) {
   return value;
 }
 
-class AnimationData<T extends AssetName> {
+class AnimationData<T extends Object> {
   AnimationData({
     required this.name,
     required this.frames,
@@ -27,7 +27,7 @@ class AnimationData<T extends AssetName> {
   final double speed;
 }
 
-class Animation<T extends AssetName> extends Sprite {
+class Animation<T extends Object> extends Sprite {
   Animation({
     required List<AnimationData<T>> animations,
     required super.position,

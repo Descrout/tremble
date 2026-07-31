@@ -307,7 +307,7 @@
       <img src="tremble_logo.jpeg" alt="Tremble Logo" style="width:64px;border-radius:12px;flex-shrink:0">
       <div>
         <h1 style="margin:0;font-size:1.3rem">Tremble</h1>
-        <div class="version" style="margin:0">v1.2.2</div>
+        <div class="version" style="margin:0">v1.2.3</div>
       </div>
     </div>
 
@@ -327,6 +327,8 @@
     <a class="sub" href="#sprite">Sprite</a>
     <a class="sub" href="#animation">Animation</a>
     <a class="sub" href="#canvastext">CanvasText</a>
+    <a href="#grid">Grid</a>
+    <a href="#tilemap">TileMap</a>
 
     <div class="section">Camera</div>
     <a href="#camera">Camera</a>
@@ -478,7 +480,8 @@
     <h4 id="lifecycle">Lifecycle</h4>
     <p><code>lifecycleChanged</code> is called when the app transitions between foreground and background. The
       <code>AppLifecycleState</code> values are <code>resumed</code>, <code>inactive</code>, <code>paused</code>,
-      <code>hidden</code>, and <code>detached</code>. Use it to pause/resume game logic or audio.</p>
+      <code>hidden</code>, and <code>detached</code>. Use it to pause/resume game logic or audio.
+    </p>
     <pre><span class="lang-tag">Dart</span><span class="kw">void</span> <span class="fn">lifecycleChanged</span>(<span class="ty">AppLifecycleState</span> state) {
   <span class="kw">if</span> (state == <span class="ty">AppLifecycleState</span>.paused) {
     <span class="cm">// pause music, save game state</span>
@@ -537,18 +540,20 @@
     <h3 id="spritebatch">SpriteBatch</h3>
     <p>Loads a GDX texture atlas and renders all sprites in a single draw call. Supports flipping and masking without
       canvas transforms.</p>
-    <pre><span class="lang-tag">Dart</span><span class="kw">final</span> batch = <span class="kw">await</span> <span class="ty">SpriteBatch</span>.<span class="fn">fromOldGdxPacker</span>(
-  <span class="str">"assets/batches/sprites.atlas"</span>,
+    <pre><span class="lang-tag">Dart</span><span class="kw">final</span> batch = <span class="kw">await</span> <span class="ty">SpriteBatch</span>.<span class="fn">fromGdxPacker</span>(
+  <span class="str">"assets/sprites.atlas"</span>,
   flippable: <span class="bo">true</span>,
   maskable: <span class="bo">false</span>,
 );
-<span class="cm">// Newer format: SpriteBatch.fromGdxPacker(...)</span>
 <span class="cm">// Custom: SpriteBatch.custom(image: ..., textures: ..., frames: ...)</span>
 
-<span class="kw">final</span> rect = <span class="fn">batch.getTexture</span>(<span class="ty">Tex</span>.table);
-<span class="kw">final</span> anim = <span class="fn">batch.getAnimation</span>(HeroAnim.idle, speed: <span class="nu">10</span>);
+<span class="kw">final</span> tex = <span class="fn">batch.getTexture</span>(<span class="ty">Tex</span>.table);
+<span class="kw">final</span> anim = <span class="fn">batch.getAnimation</span>(<span class="ty">Tex</span>.marioBigRun, speed: <span class="nu">10</span>);
 
 <span class="fn">batch.draw</span>(canvas, [hero, table]);
+
+<span class="cm">// Generate enum code from atlas for debugging</span>
+<span class="fn">batch.getEnum</span>(); <span class="cm">// → "enum Tex { marioBigIdle("Mario_Big_Idle", false), ... }"</span>
 <span class="fn">batch.dispose</span>(); <span class="cm">// when done</span></pre>
 
     <h3 id="sprite">Sprite</h3>
@@ -567,13 +572,15 @@ s.mask = <span class="bo">false</span>;
 
     <h3 id="animation">Animation</h3>
     <p>Extends <code>Sprite</code> with frame-based animation, multiple states, and looping.</p>
-    <pre><span class="lang-tag">Dart</span><span class="kw">enum</span> <span class="ty">HeroAnim</span> <span class="kw">implements</span> <span class="ty">AssetName</span> {
+    <pre><span class="lang-tag">Dart</span><span class="kw">enum</span> <span class="ty">HeroAnim</span> {
   idle(<span class="str">"hero-idle"</span>),
   run(<span class="str">"hero-run"</span>);
 
   <span class="kw">const</span> <span class="ty">HeroAnim</span>(<span class="kw">this</span>.assetName);
-  <span class="pr">@override</span>
   <span class="kw">final</span> <span class="ty">String</span> assetName;
+
+  <span class="pr">@override</span>
+  <span class="ty">String</span> <span class="fn">toString</span>() <span class="op">=></span> assetName;
 }
 
 <span class="kw">final</span> hero = <span class="ty">Animation</span>&lt;<span class="ty">HeroAnim</span>&gt;(
@@ -628,7 +635,8 @@ hero.reverse = <span class="bo">true</span>;</pre>
     <h3 id="canvastext">CanvasText</h3>
     <p>Efficiently draws text on a <code>Canvas</code> without rebuilding the <code>TextPainter</code> on every frame.
       Update <code>.text</code> or <code>.style</code> and the painter is re-laid-out lazily on the next
-      <code>draw()</code> call.</p>
+      <code>draw()</code> call.
+    </p>
     <pre><span class="lang-tag">Dart</span><span class="kw">final</span> scoreText = <span class="ty">CanvasText</span>(
   text: <span class="str">'Score: 0'</span>,
   style: <span class="kw">const</span> <span class="ty">TextStyle</span>(
@@ -648,6 +656,47 @@ scoreText.text = <span class="str">'Score: 100'</span>;
 <span class="fn">scoreText.draw</span>(canvas, <span class="kw">const</span> <span class="ty">Offset</span>(<span class="nu">20</span>, <span class="nu">20</span>));</pre>
     <p>Supports <code>TextDirection</code>, <code>TextAlign</code>, and <code>style</code> setter — all trigger a lazy
       re-layout before the next paint.</p>
+
+    <h3 id="grid">Grid</h3>
+    <p>A 2D tile grid backed by a flat <code>List&lt;int&gt;</code>. Each cell stores a tile ID (<code>-1</code> =
+      empty). Supports construction from 1D/2D data and tile coordinate conversion.</p>
+    <pre><span class="lang-tag">Dart</span><span class="kw">final</span> grid = <span class="ty">Grid</span>(cellSize: <span class="nu">16</span>, width: <span class="nu">20</span>, height: <span class="nu">15</span>, data: myData);
+<span class="kw">final</span> grid2 = <span class="ty">Grid</span>.empty(cellSize: <span class="nu">16</span>, width: <span class="nu">20</span>, height: <span class="nu">15</span>);
+<span class="kw">final</span> grid3 = <span class="ty">Grid</span>.from2d(cellSize: <span class="nu">16</span>, data: [
+  [<span class="nu">0</span>, <span class="nu">0</span>, <span class="nu">1</span>],
+  [<span class="nu">0</span>, <span class="nu">2</span>, <span class="nu">1</span>],
+]);
+
+grid.cellSize;   <span class="cm">// pixels per cell</span>
+grid.width;      <span class="cm">// cells horizontally</span>
+grid.height;     <span class="cm">// cells vertically</span>
+
+<span class="fn">grid.tileAt2d</span>(<span class="nu">1</span>, <span class="nu">2</span>);  <span class="cm">// tile ID at (x, y)</span>
+<span class="fn">grid.tileAt1d</span>(<span class="nu">5</span>);    <span class="cm">// tile ID at flat index</span>
+<span class="fn">grid.to1d</span>(<span class="nu">1</span>, <span class="nu">2</span>);      <span class="cm">// → 2 * width + 1</span>
+<span class="fn">grid.to2d</span>(<span class="nu">5</span>);        <span class="cm">// → (x, y)</span>
+<span class="fn">grid.inBounds2d</span>(<span class="nu">1</span>, <span class="nu">2</span>); <span class="cm">// true if within grid</span>
+
+<span class="fn">grid.setTile2d</span>(<span class="nu">3</span>, x: <span class="nu">1</span>, y: <span class="nu">2</span>);
+<span class="fn">grid.setTile1d</span>(<span class="nu">3</span>, idx: <span class="nu">5</span>);</pre>
+
+    <h3 id="tilemap">TileMap</h3>
+    <p>Renders <code>Grid</code> layers efficiently using <code>drawRawAtlas</code>. Culls tiles outside a viewport
+      <code>AABB</code> and supports multi-layer rendering (e.g. base + detail). Reusable buffers avoid per-frame
+      allocations.</p>
+    <pre><span class="lang-tag">Dart</span><span class="kw">final</span> tilemap = <span class="ty">TileMap</span>(
+  tileAreas: <span class="fn">spriteSheet.split</span>(count: <span class="nu">100</span>, axis: <span class="ty">Axis</span>.horizontal),
+  image: sheetImage,
+);
+
+<span class="cm">// Single grid</span>
+<span class="fn">tilemap.drawGrid</span>(canvas, groundGrid, position: <span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">0</span>));
+
+<span class="cm">// Multiple layers at once</span>
+<span class="fn">tilemap.drawGrids</span>(canvas, [baseGrid, decorGrid],
+  position: <span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">0</span>),
+  cullArea: <span class="ty">AABB</span>(<span class="ty">Vec2</span>(<span class="nu">0</span>, <span class="nu">0</span>), width: <span class="nu">320</span>, height: <span class="nu">240</span>),
+);</pre>
 
     <hr>
 
@@ -677,7 +726,8 @@ scoreText.text = <span class="str">'Score: 100'</span>;
 
     <h3 id="signals">Signals</h3>
     <p>A lightweight pub-sub system (inspired by Godot signals). Callbacks return <code>true</code> to keep listening or
-      <code>false</code> to unsubscribe.</p>
+      <code>false</code> to unsubscribe.
+    </p>
     <pre><span class="lang-tag">Dart</span><span class="kw">final</span> sig = <span class="ty">Signal</span>&lt;<span class="kw">int</span>&gt;();
 
 <span class="fn">sig.listen</span>((v) { <span class="fn">print</span>(v); <span class="kw">return</span> <span class="bo">true</span>; });
@@ -788,11 +838,13 @@ fsm.onAfterStateChange  = (from, to) { };</pre>
     <h2>Physics</h2>
     <p>All shapes live under <code>lib/physics/</code> and are re-exported from the main library. <code>Shape</code> is
       the abstract base — <code>Circle</code>, <code>AABB</code>, and <code>Line</code> extend it.
-      <code>RigidBody</code> wraps a <code>Shape</code> with physics properties for dynamic simulation.</p>
+      <code>RigidBody</code> wraps a <code>Shape</code> with physics properties for dynamic simulation.
+    </p>
 
     <h3 id="shape">Shape</h3>
     <p>Abstract base class for all collision shapes. Each shape has a <code>position</code> and provides an
-      <code>aabb</code> getter for broad-phase queries.</p>
+      <code>aabb</code> getter for broad-phase queries.
+    </p>
     <pre><span class="lang-tag">Dart</span><span class="kw">abstract class</span> <span class="ty">Shape</span> {
   <span class="ty">Vec2</span> position;
   <span class="ty">AABB</span> <span class="fn">get aabb</span>;
@@ -938,7 +990,7 @@ ray.<span class="fn">pointAt</span>(<span class="nu">10</span>);  <span class="c
 
 <span class="ty">RaycastGridHit</span>? hit6 = <span class="ty">Raycaster</span>.<span class="fn">raycastGrid</span>(
   ray,
-  tileSize: <span class="nu">16</span>,
+  cellSize: <span class="nu">16</span>,
   maxDistance: <span class="nu">200</span>,
   isSolid: (tx, ty) <span class="op">=></span> grid.<span class="fn">isSolid</span>(tx, ty),
 );</pre>
@@ -1049,13 +1101,15 @@ s.velocity;       <span class="cm">// current velocity (Vec2)</span>
 
     <h3 id="extensions">Extensions</h3>
     <pre><span class="lang-tag">Dart</span><span class="fn">rect.split</span>(count: <span class="nu">4</span>, axis: <span class="ty">Axis</span>.vertical);
-<span class="fn">rect.grid</span>(<span class="nu">4</span>, <span class="nu">3</span>);
+<span class="fn">rect.gridByCount</span>(<span class="nu">4</span>, <span class="nu">3</span>);
+<span class="fn">rect.gridBySize</span>(<span class="nu">16</span>);
 rect.aabb;    <span class="cm">// → AABB</span>
 
 (<span class="nu">3.14</span>).fract;   <span class="cm">// 0.14</span></pre>
 
     <h3 id="helpers">Helpers</h3>
-    <pre><span class="lang-tag">Dart</span><span class="ty">Helpers</span>.<span class="fn">indexMapToList</span>(indexedMap); <span class="cm">// Map&lt;int, T&gt; → List&lt;T&gt;</span></pre>
+    <pre><span class="lang-tag">Dart</span><span class="ty">Helpers</span>.<span class="fn">indexMapToList</span>(indexedMap); <span class="cm">// Map&lt;int, T&gt; → List&lt;T&gt;</span>
+<span class="ty">Helpers</span>.<span class="fn">toCamelCase</span>(<span class="str">"Mario_Big_Run"</span>); <span class="cm">// → "marioBigRun"</span></pre>
 
     <h3 id="fixedupdate">FixedUpdate</h3>
     <p>Fixed time-step accumulator. Call <code>update(dt)</code> each frame with your variable delta — it runs your
@@ -1078,7 +1132,8 @@ fixed.fixedDeltaTime;  <span class="cm">// → 1/30</span></pre>
 
     <h3 id="ref-parametrics">Parametrics</h3>
     <p>All easing functions — type <code>ParametricFunc</code> = <code>double Function(double t)</code>, where
-      <code>t</code> is in <code>[0, 1]</code>.</p>
+      <code>t</code> is in <code>[0, 1]</code>.
+    </p>
 
     <h4>Linear</h4>
     <div class="ref-grid"><code>Parametrics.linear</code></div>

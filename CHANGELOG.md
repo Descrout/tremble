@@ -1,3 +1,19 @@
+## 1.2.3
+
+* ``[BREAKING]`` ``AssetName`` interface removed. Enums must override ``toString()`` instead of implementing ``AssetName``.
+* ``[BREAKING]`` ``SpriteBatch.draw`` signature changed: ``Paint?`` parameter removed, ``BlendMode`` is now a named param.
+* ``[BREAKING]`` ``Rect.grid`` renamed to ``Rect.gridByCount``.
+* ``SpriteBatch.fromOldGdxPacker`` removed — use ``fromGdxPacker`` instead.
+* ``SpriteBatch.getRect`` removed — use ``getTexture`` instead.
+* ``SpriteBatch.getEnum`` added — generates enum code from atlas for debugging.
+* ``SpriteBatch.paint`` made public.
+* ``Raycaster.raycastGrid`` param ``tileSize`` renamed to ``cellSize``.
+* ``Rect.gridBySize`` added — splits rect into cells of a fixed pixel size.
+* ``Helpers.toCamelCase`` added — converts snake/PascalCase strings to camelCase.
+* ``Helpers`` changed to ``abstract final class``.
+* ``Grid`` and ``TileMap`` classes have been introduced.
+* ``FixedUpdate`` and ``lifecycleChanged`` added (1.2.2 items, now released).
+
 ## 1.2.2
 
 * ``FixedUpdate`` implemented. You can have multiple of them and update them whenever.

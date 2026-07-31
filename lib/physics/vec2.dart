@@ -38,6 +38,8 @@ class Vec2 {
   Offset offset({double dx = 0, double dy = 0}) => Offset(x + dx, y + dy);
 
   // Instance methods
+  Vec2 clone() => Vec2(x, y);
+
   Vec2 normalized() {
     final mag = magnitude;
     if (mag == 0) return Vec2.zero();
@@ -262,8 +264,6 @@ class Vec2 {
       direction.y - d * normal.y,
     );
   }
-
-  Vec2 clone() => Vec2(x, y);
 
   void draw(Canvas canvas, Color color,
       {bool drawArrowHead = true,

@@ -4,6 +4,7 @@ import 'package:tremble/utils/signal_value.dart';
 import 'package:tremble_example/examples/bouncing_shapes_example.dart';
 import 'package:tremble_example/examples/input_example.dart';
 import 'package:tremble_example/examples/spritebatch_example.dart';
+import 'package:tremble_example/examples/tile_map_example.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum ExampleType { input, rendering, tooling, utility, physics, demo }
@@ -49,6 +50,14 @@ final examples = <ExampleItem>[
     codeUrl:
         "https://github.com/Descrout/tremble/blob/main/example/lib/examples/spritebatch_example.dart",
     screen: () => SpritebatchExample(),
+  ),
+  ExampleItem(
+    title: "Simple Level Editor",
+    description: "Simple in-game level editor using *TileMap* and *Grid*.",
+    type: ExampleType.demo,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/tilemap_example.dart",
+    screen: () => TileMapExample(),
   ),
 ];
 
@@ -146,7 +155,7 @@ class _MyAppState extends State<MyApp> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "v1.2.0",
+                  "v1.2.3",
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],

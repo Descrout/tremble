@@ -38,7 +38,7 @@ extension RectX on Rect {
     return textures;
   }
 
-  List<Rect> grid(int horizontalCount, int verticalCount) {
+  List<Rect> gridByCount(int horizontalCount, int verticalCount) {
     final textures = <Rect>[];
 
     final incrementW = width / horizontalCount;
@@ -51,6 +51,27 @@ extension RectX on Rect {
           top + j * incrementH,
           incrementW,
           incrementH,
+        );
+        textures.add(rect);
+      }
+    }
+
+    return textures;
+  }
+
+  List<Rect> gridBySize(int cellSize) {
+    final textures = <Rect>[];
+
+    final horizontalCount = width ~/ cellSize;
+    final verticalCount = height ~/ cellSize;
+
+    for (int i = 0; i < horizontalCount; i++) {
+      for (int j = 0; j < verticalCount; j++) {
+        final rect = Rect.fromLTWH(
+          left + i * cellSize,
+          top + j * cellSize,
+          cellSize.toDouble(),
+          cellSize.toDouble(),
         );
         textures.add(rect);
       }

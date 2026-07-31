@@ -24,7 +24,7 @@ class SpriteBatch {
   Map<String, TexArea> get textures => _textures;
   Map<String, List<TexArea>> get frames => _frames;
 
-  static final Paint _emptyPaint = Paint()
+  static final paint = Paint()
     ..filterQuality = FilterQuality.none
     ..isAntiAlias = false;
 
@@ -172,97 +172,18 @@ class SpriteBatch {
     );
   }
 
-  static Future<SpriteBatch> fromOldGdxPacker(String path,
-      {bool flippable = false, bool maskable = false}) async {
-    (int, int) getTupple(String data) {
-      final split = data.split(',');
-      return (int.parse(split[0]), int.parse(split[1]));
-    }
-
-    ({String name, TexArea texArea, int? index}) getInfo(
-        List<String> lines, int idx, int pageIndex) {
-      late Size size;
-      late Offset offset;
-      int? index;
-
-      for (int i = 1; i < 7; i++) {
-        final [tag, data] = lines[idx + i].trim().split(':');
-        switch (tag) {
-          case "xy":
-            final pos = getTupple(data);
-            offset = Offset(pos.$1.toDouble(), pos.$2.toDouble());
-            break;
-          case "size":
-            final wh = getTupple(data);
-            size = Size(wh.$1.toDouble(), wh.$2.toDouble());
-            break;
-          case "index":
-            if (data != "-1") {
-              index = int.parse(data);
-            }
-            break;
-        }
-      }
-
-      return (
-        name: lines[idx].trim(),
-        texArea: TexArea(rect: offset & size, pageIndex: pageIndex),
-        index: index,
-      );
-    }
-
-    final atlas = await rootBundle.loadString(path);
-
-    final textures = <String, TexArea>{};
-    final framesMap = <String, SplayTreeMap<int, TexArea>>{};
-    final lines = atlas.split(RegExp(r'\r?\n')).map((e) => e.trim()).toList();
-
-    for (int i = 6; i < lines.length - 1; i += 7) {
-      final info = getInfo(lines, i, 0);
-      if (info.index != null) {
-        if (!framesMap.containsKey(info.name)) framesMap[info.name] = SplayTreeMap<int, TexArea>();
-        framesMap[info.name]![info.index!] = info.texArea;
-      } else {
-        textures[info.name] = info.texArea;
-      }
-    }
-
-    final pathSplit = path.split("/");
-    pathSplit.removeLast();
-    pathSplit.add(lines[1]);
-
-    final image = await ImageUtils.loadImageFromAssets(pathSplit.join("/"));
-    assert(image != null, "Batch image could not be loaded !");
-    final newImage = await transformSheetImage(
-      image!,
-      flippable: flippable,
-      maskable: maskable,
-      disposeOriginal: true,
-    );
-
-    return SpriteBatch._(
-      pages: [newImage],
-      textures: textures,
-      frames: framesMap.map((key, value) => MapEntry(key, value.values.toList())),
-    );
-  }
-
-  AnimationData<T> getAnimation<T extends AssetName>(
+  AnimationData getAnimation<T extends Object>(
     T name, {
     required double speed,
   }) =>
       AnimationData(
         name: name,
-        frames: _frames[name.assetName] ?? [_textures[name.assetName]!],
+        frames: _frames[name.toString()] ?? [_textures[name.toString()]!],
         speed: speed,
       );
 
-  TexArea getTexture<T extends AssetName>(T name) {
-    return _textures[name.assetName]!;
-  }
-
-  Rect getRect(String key) {
-    return _textures[key]!.rect;
+  TexArea getTexture<T extends Object>(T name) {
+    return _textures[name.toString()]!;
   }
 
   Rect _spriteRect(Sprite sprite) {
@@ -299,8 +220,7 @@ class SpriteBatch {
     }
   }
 
-  void _drawBatch(
-      Canvas canvas, int start, int count, int pageIndex, Paint? paint, BlendMode blendMode) {
+  void _drawBatch(Canvas canvas, int start, int count, int pageIndex, BlendMode blendMode) {
     if (count == 0) return;
     canvas.drawRawAtlas(
       _pages[pageIndex],
@@ -309,12 +229,11 @@ class SpriteBatch {
       Int32List.sublistView(_colors, start, start + count),
       blendMode,
       null,
-      paint ?? _emptyPaint,
+      paint,
     );
   }
 
-  void draw(Canvas canvas, List<Sprite> sprites,
-      [Paint? paint, BlendMode blendMode = BlendMode.modulate]) {
+  void draw(Canvas canvas, List<Sprite> sprites, {BlendMode blendMode = BlendMode.modulate}) {
     final count = sprites.length;
     if (count == 0) return;
     _ensureCapacity(count);
@@ -327,7 +246,7 @@ class SpriteBatch {
       final sprite = sprites[j];
 
       if (j > 0 && sprite.texture.pageIndex != currentPage) {
-        _drawBatch(canvas, batchStart, bufIdx - batchStart, currentPage, paint, blendMode);
+        _drawBatch(canvas, batchStart, bufIdx - batchStart, currentPage, blendMode);
         currentPage = sprite.texture.pageIndex;
         batchStart = bufIdx;
       }
@@ -364,7 +283,50 @@ class SpriteBatch {
       bufIdx++;
     }
 
-    _drawBatch(canvas, batchStart, bufIdx - batchStart, currentPage, paint, blendMode);
+    _drawBatch(canvas, batchStart, bufIdx - batchStart, currentPage, blendMode);
+  }
+
+  /// For development and debugging purposes
+  String getEnum({String name = "Tex"}) {
+    int len = _frames.length + _textures.length;
+    if (len == 0) return "enum $name {}";
+
+    final buffer = StringBuffer();
+    buffer.writeln("enum $name {");
+
+    for (final key in _textures.keys) {
+      buffer.write('  ${Helpers.toCamelCase(key)}("$key", false)');
+      len--;
+      if (len == 0) {
+        buffer.writeln(";");
+      } else {
+        buffer.writeln(",");
+      }
+    }
+    buffer.writeln();
+
+    if (len != 0) buffer.writeln("  // Animations");
+
+    for (final key in _frames.keys) {
+      buffer.write('  ${Helpers.toCamelCase(key)}("$key", true)');
+      len--;
+      if (len == 0) {
+        buffer.writeln(";");
+      } else {
+        buffer.writeln(",");
+      }
+    }
+    buffer.writeln();
+
+    buffer.writeln('  final String assetName;');
+    buffer.writeln('  final bool isAnimation;');
+    buffer.writeln('  const $name(this.assetName, this.isAnimation);');
+    buffer.writeln();
+    buffer.writeln('  @override');
+    buffer.writeln('  String toString() => assetName;');
+    buffer.write('}');
+
+    return buffer.toString();
   }
 
   void dispose() {

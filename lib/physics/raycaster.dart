@@ -200,15 +200,15 @@ abstract final class Raycaster {
 
   static RaycastGridHit? raycastGrid(
     Ray ray, {
-    required double tileSize,
+    required double cellSize,
     required double maxDistance,
     required bool Function(int tx, int ty) isSolid,
   }) {
     final dirX = ray.direction.x;
     final dirY = ray.direction.y;
 
-    final startX = ray.origin.x / tileSize;
-    final startY = ray.origin.y / tileSize;
+    final startX = ray.origin.x / cellSize;
+    final startY = ray.origin.y / cellSize;
 
     final stepSizeX = dirX.abs() < 1e-10 ? double.infinity : 1 / dirX.abs();
     final stepSizeY = dirY.abs() < 1e-10 ? double.infinity : 1 / dirY.abs();
@@ -257,10 +257,10 @@ abstract final class Raycaster {
         return RaycastGridHit(
           tx: mapX,
           ty: mapY,
-          distance: distance * tileSize,
+          distance: distance * cellSize,
           point: Vec2(
-            ray.origin.x + dirX * distance * tileSize,
-            ray.origin.y + dirY * distance * tileSize,
+            ray.origin.x + dirX * distance * cellSize,
+            ray.origin.y + dirY * distance * cellSize,
           ),
           normalX: hitVertical ? -stepX : 0,
           normalY: hitVertical ? 0 : -stepY,
