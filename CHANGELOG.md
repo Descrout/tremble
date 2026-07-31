@@ -1,3 +1,7 @@
+## 1.2.4
+
+* Faster ``TileMap`` rendering.
+
 ## 1.2.3
 
 * ``[BREAKING]`` ``AssetName`` interface removed. Enums must override ``toString()`` instead of implementing ``AssetName``.

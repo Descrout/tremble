@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tremble/tremble.dart';
 import 'package:tremble/utils/signal_value.dart';
 import 'package:tremble_example/examples/bouncing_shapes_example.dart';
@@ -61,7 +63,13 @@ final examples = <ExampleItem>[
   ),
 ];
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (kIsWeb) {
+    await BrowserContextMenu.disableContextMenu();
+  }
+
   runApp(const MyApp());
 }
 

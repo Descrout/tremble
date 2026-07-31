@@ -16,7 +16,6 @@ class TileMap {
   //Reusable buffers
   Float32List _rects = Float32List(0);
   Float32List _transforms = Float32List(0);
-  Int32List _colors = Int32List(0);
 
   static final paint = Paint()
     ..filterQuality = FilterQuality.none
@@ -28,7 +27,6 @@ class TileMap {
       final newSize = max(needed, (_rects.length * 1.5).round());
       _rects = Float32List(newSize);
       _transforms = Float32List(newSize);
-      _colors = Int32List(newSize ~/ 4);
     }
   }
 
@@ -81,7 +79,6 @@ class TileMap {
         _transforms[ti + 2] = position.x + grid.cellSize * gx;
         _transforms[ti + 3] = position.y + grid.cellSize * gy;
 
-        _colors[i] = 0xFFFFFFFF;
         i++;
       }
     }
@@ -90,7 +87,7 @@ class TileMap {
       image,
       Float32List.sublistView(_transforms, 0, i * 4),
       Float32List.sublistView(_rects, 0, i * 4),
-      Int32List.sublistView(_colors, 0, i),
+      null,
       BlendMode.modulate,
       null,
       paint,
@@ -148,7 +145,6 @@ class TileMap {
           _transforms[ti + 2] = position.x + grid.cellSize * gx;
           _transforms[ti + 3] = position.y + grid.cellSize * gy;
 
-          _colors[i] = 0xFFFFFFFF;
           i++;
         }
       }
@@ -158,8 +154,8 @@ class TileMap {
       image,
       Float32List.sublistView(_transforms, 0, i * 4),
       Float32List.sublistView(_rects, 0, i * 4),
-      Int32List.sublistView(_colors, 0, i),
-      BlendMode.modulate,
+      null,
+      null,
       null,
       paint,
     );
