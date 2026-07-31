@@ -7,9 +7,11 @@ import 'package:tremble_example/examples/bouncing_balls_example.dart';
 import 'package:tremble_example/examples/camera_tilemap.dart';
 import 'package:tremble_example/examples/collision_detection_example.dart';
 import 'package:tremble_example/examples/falling_sand_example.dart';
+import 'package:tremble_example/examples/grid_raycaster_example.dart';
 import 'package:tremble_example/examples/input_example.dart';
 import 'package:tremble_example/examples/mario_movement_example.dart';
 import 'package:tremble_example/examples/rigidbody_example.dart';
+import 'package:tremble_example/examples/shape_raycaster_example.dart';
 import 'package:tremble_example/examples/spritebatch_example.dart';
 import 'package:tremble_example/examples/tile_map_example.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -106,6 +108,22 @@ final examples = <ExampleItem>[
     codeUrl:
         "https://github.com/Descrout/tremble/blob/main/example/lib/examples/falling_sand_example.dart",
     screen: () => FallingSandExample(),
+  ),
+  ExampleItem(
+    title: "Shape Raycaster",
+    description: "Use *Raycaster* to cast rays towards 2D shapes.",
+    type: ExampleType.physics,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/shape_raycaster_example.dart",
+    screen: () => ShapeRaycasterExample(),
+  ),
+  ExampleItem(
+    title: "Grid Raycaster",
+    description: "*Grid* (DDA) raycasting.",
+    type: ExampleType.physics,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/grid_raycaster_example.dart",
+    screen: () => GridRaycasterExample(),
   ),
 ];
 

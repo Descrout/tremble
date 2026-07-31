@@ -200,7 +200,7 @@ abstract final class Raycaster {
 
   static RaycastGridHit? raycastGrid(
     Ray ray, {
-    required double cellSize,
+    required int cellSize,
     required double maxDistance,
     required bool Function(int tx, int ty) isSolid,
   }) {
