@@ -1,3 +1,7 @@
+## 1.2.5
+
+* Modulate bug fixed.
+
 ## 1.2.4
 
 * Faster ``TileMap`` rendering.

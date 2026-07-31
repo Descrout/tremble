@@ -88,7 +88,7 @@ class TileMap {
       Float32List.sublistView(_transforms, 0, i * 4),
       Float32List.sublistView(_rects, 0, i * 4),
       null,
-      BlendMode.modulate,
+      null,
       null,
       paint,
     );
