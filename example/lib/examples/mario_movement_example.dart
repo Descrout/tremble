@@ -67,7 +67,7 @@ class MarioMovementExample extends ScreenController {
           }
 
           mario.flip = acc.x < 0;
-        } else if (vel.x.abs() < 9) {
+        } else if (vel.x.abs() < 20) {
           state.value = MarioState.idle;
         }
       },
@@ -116,7 +116,7 @@ class MarioMovementExample extends ScreenController {
       vel.y = 0;
 
       if (state.value == MarioState.jump) {
-        if (vel.x.abs() < 9) {
+        if (vel.x.abs() < 20) {
           state.value = MarioState.idle;
         } else {
           state.value = MarioState.run;

@@ -22,7 +22,7 @@ class RigidBodyExample extends ScreenController {
     ]);
 
     // Spawn rigidbodies
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 40; i++) {
       final circle = Circle(center.clone(), radius: MathUtils.randDouble(10, 26));
       final velocity = Vec2(MathUtils.randDouble(-1, 1), MathUtils.randDouble(-1, 1));
       velocity.setMag(100);
@@ -33,6 +33,7 @@ class RigidBodyExample extends ScreenController {
     bodies[0].velocity.scale(0);
     bodies[0].elasticity = 0;
     bodies[0].mass = 5;
+    (bodies[0].shape as Circle).radius = 16;
 
     // Static body
     (bodies[1].shape as Circle).radius = 50;
@@ -45,14 +46,10 @@ class RigidBodyExample extends ScreenController {
     bodyToMouse.setMag(80);
     bodies[0].applyImpulse(bodyToMouse);
 
+    if (bodies[0].velocity.magnitude > 500) bodies[0].velocity.setMag(500);
+
     for (final b in bodies) {
       b.update(fixedDeltaTime);
-    }
-
-    for (final body in bodies) {
-      for (final line in lines) {
-        CollisionResolver.circleToStaticLine(body, line);
-      }
     }
 
     for (int i = 0; i < bodies.length; i++) {
@@ -60,6 +57,12 @@ class RigidBodyExample extends ScreenController {
         final b1 = bodies[i];
         final b2 = bodies[j];
         CollisionResolver.circleToCircle(b1, b2);
+      }
+    }
+
+    for (final body in bodies) {
+      for (final line in lines) {
+        CollisionResolver.circleToStaticLine(body, line);
       }
     }
   }

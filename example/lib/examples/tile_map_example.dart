@@ -43,6 +43,7 @@ class TileMapExample extends ScreenController {
       image: batch.image,
       tileScale: 2,
     );
+    TileMap.paint.color = Colors.white;
   }
 
   @override
@@ -90,12 +91,11 @@ class TileMapExample extends ScreenController {
   void drawMouseTile(Canvas canvas) {
     if (!grid.inBounds2dScreen(mouse.x, mouse.y)) return;
     final (gx, gy) = grid.screenToGrid(mouse.x, mouse.y);
-    final rect = tileMap.tileAreas[selectedTile];
     final cellSize = grid.cellSize.toDouble();
 
-    canvas.drawImageRect(
-      tileMap.image,
-      rect,
+    TileMap.paint.style = PaintingStyle.stroke;
+    TileMap.paint.strokeWidth = 2;
+    canvas.drawRect(
       Rect.fromLTWH(
         gx * cellSize,
         gy * cellSize,
@@ -104,6 +104,7 @@ class TileMapExample extends ScreenController {
       ),
       TileMap.paint,
     );
+    TileMap.paint.style = PaintingStyle.fill;
   }
 
   void drawBottomPanel(Canvas canvas, Size size) {
@@ -124,7 +125,7 @@ class TileMapExample extends ScreenController {
       Paint()
         ..color = Colors.white
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 4,
+        ..strokeWidth = 3,
     );
 
     infoText.draw(canvas, Vec2(size.width / 2 + 20, size.height - 45));
