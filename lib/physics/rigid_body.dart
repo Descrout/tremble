@@ -25,10 +25,10 @@ class RigidBody {
     velocity.y += impulse.y * invMass;
   }
 
-  void update(double dt) {
+  void update(double deltaTime) {
     if (isStatic) return;
-    shape.position.x += velocity.x * dt;
-    shape.position.y += velocity.y * dt;
+    shape.position.x += velocity.x * deltaTime;
+    shape.position.y += velocity.y * deltaTime;
   }
 
   RigidBody copyWith({

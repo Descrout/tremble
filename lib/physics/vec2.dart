@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:tremble/physics/shape.dart';
+import 'package:tremble/tremble.dart';
 
 class Vec2 {
   double x;
@@ -122,6 +122,16 @@ class Vec2 {
     final d = 2 * dot(normal);
     x -= d * normal.x;
     y -= d * normal.y;
+  }
+
+  void damp(Vec2 other, double lambda, double deltaTime) {
+    x = MathUtils.damp(x, other.x, lambda, deltaTime);
+    y = MathUtils.damp(y, other.y, lambda, deltaTime);
+  }
+
+  void moveTowards(Vec2 other, double maxDelta) {
+    x = MathUtils.moveTowards(x, other.x, maxDelta);
+    y = MathUtils.moveTowards(y, other.y, maxDelta);
   }
 
   // Operator overloading

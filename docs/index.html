@@ -307,7 +307,7 @@
       <img src="tremble_logo.jpeg" alt="Tremble Logo" style="width:64px;border-radius:12px;flex-shrink:0">
       <div>
         <h1 style="margin:0;font-size:1.3rem">Tremble</h1>
-        <div class="version" style="margin:0">v1.2.3</div>
+        <div class="version" style="margin:0">v1.2.6</div>
       </div>
     </div>
 
@@ -678,7 +678,47 @@ grid.height;     <span class="cm">// cells vertically</span>
 <span class="fn">grid.inBounds2d</span>(<span class="nu">1</span>, <span class="nu">2</span>); <span class="cm">// true if within grid</span>
 
 <span class="fn">grid.setTile2d</span>(<span class="nu">3</span>, x: <span class="nu">1</span>, y: <span class="nu">2</span>);
-<span class="fn">grid.setTile1d</span>(<span class="nu">3</span>, idx: <span class="nu">5</span>);</pre>
+<span class="fn">grid.setTile1d</span>(<span class="nu">3</span>, idx: <span class="nu">5</span>);
+<span class="fn">grid.setTile2dScreen</span>(<span class="nu">3</span>, x: <span class="nu">50.0</span>, y: <span class="nu">30.0</span>); <span class="cm">// set by pixel coords</span>
+
+<span class="kw">final</span> copy = <span class="fn">grid.clone</span>();           <span class="cm">// deep copy of the data</span>
+<span class="kw">final</span> (gx, gy) = <span class="fn">grid.screenToGrid</span>(<span class="nu">50.0</span>, <span class="nu">30.0</span>); <span class="cm">// pixel → grid coords</span></pre>
+
+    <h4>Neighbors</h4>
+    <p>Bounds-safe neighbor access by flat index. <code>hasNeighbor*</code> returns whether that neighbor exists;
+      <code>*NeighborTile</code> returns the neighbor tile value or <code>null</code> when out of bounds.</p>
+    <pre><span class="lang-tag">Dart</span><span class="fn">grid.hasNeighborLeft</span>(idx);  <span class="fn">grid.hasNeighborRight</span>(idx);
+<span class="fn">grid.hasNeighborUp</span>(idx);    <span class="fn">grid.hasNeighborDown</span>(idx);
+
+<span class="fn">grid.leftNeighborTile</span>(idx);  <span class="cm">// int? — null when out of bounds</span>
+<span class="fn">grid.rightNeighborTile</span>(idx);
+<span class="fn">grid.upNeighborTile</span>(idx);    <span class="fn">grid.downNeighborTile</span>(idx);
+<span class="fn">grid.upLeftNeighborTile</span>(idx);   <span class="fn">grid.upRightNeighborTile</span>(idx);
+<span class="fn">grid.downLeftNeighborTile</span>(idx); <span class="fn">grid.downRightNeighborTile</span>(idx);
+
+<span class="cm">// Iterate neighbor indices without allocating (4 or 8 connected)</span>
+<span class="fn">grid.forEachNeighbor4</span>(idx, (n) { });
+<span class="fn">grid.forEachNeighbor8</span>(idx, (n) { });
+
+<span class="cm">// Collect neighbor tile values (1 allocation)</span>
+<span class="kw">final</span> n4 = <span class="fn">grid.neighborTiles4</span>(idx);
+<span class="kw">final</span> n8 = <span class="fn">grid.neighborTiles8</span>(idx);</pre>
+
+    <h4>Drawing</h4>
+    <p>Draw the grid through a <code>TileMap</code> or as flat debug rects. Tiles with a value smaller than
+      <code>0</code> are skipped. <code>position</code> offsets the grid in world space and <code>cullArea</code> limits
+      drawing to a viewport <code>AABB</code>.</p>
+    <pre><span class="lang-tag">Dart</span><span class="cm">// Render through a TileMap</span>
+<span class="fn">grid.draw</span>(canvas, tilemap, position: <span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">0</span>));
+
+<span class="cm">// Debug render — colored rects per tile (Grid.debugPalette)</span>
+<span class="fn">grid.debugDraw</span>(canvas, cullArea: <span class="ty">AABB</span>(<span class="ty">Vec2</span>.<span class="fn">zero</span>(), width: <span class="nu">320</span>, height: <span class="nu">240</span>));
+
+<span class="cm">// Iterate visible tiles yourself</span>
+<span class="fn">grid.forEachDrawArea</span>(
+  position: <span class="ty">Vec2</span>.<span class="fn">zero</span>(),
+  visit: (screenX, screenY, tile) { <span class="cm">/* custom render */</span> },
+);</pre>
 
     <h3 id="tilemap">TileMap</h3>
     <p>Renders <code>Grid</code> layers efficiently using <code>drawRawAtlas</code>. Culls tiles outside a viewport
@@ -915,7 +955,10 @@ body.invMass;       <span class="cm">// 0 if isStatic</span>
 <span class="ty">CollisionDetector</span>.<span class="fn">pointToLine</span>(point, line);
 <span class="ty">CollisionDetector</span>.<span class="fn">lineToLine</span>(lineA, lineB);
 <span class="ty">CollisionDetector</span>.<span class="fn">lineToRect</span>(line, box);
-<span class="ty">CollisionDetector</span>.<span class="fn">lineToCircle</span>(line, circle);</pre>
+<span class="ty">CollisionDetector</span>.<span class="fn">lineToCircle</span>(line, circle);
+
+<span class="cm">// Dispatch on any two shapes automatically</span>
+<span class="ty">CollisionDetector</span>.<span class="fn">shapeToShape</span>(shapeA, shapeB); <span class="cm">// works for AABB, Circle, Line</span></pre>
 
     <h3 id="collisionresolver">CollisionResolver</h3>
     <p>Static resolution methods. Penetration correction + impulse-based response for <code>RigidBody</code> collisions.
@@ -1015,7 +1058,10 @@ v <span class="op">*</span> other;   v <span class="op">/</span> other;    <span
 
 v[<span class="nu">0</span>]; v[<span class="nu">1</span>];             <span class="cm">// index access</span>
 v.<span class="fn">add</span>(other); v.<span class="fn">sub</span>(other);
-v.<span class="fn">scale</span>(<span class="nu">2</span>);  v.<span class="fn">setMag</span>(<span class="nu">10</span>);</pre>
+v.<span class="fn">scale</span>(<span class="nu">2</span>);  v.<span class="fn">setMag</span>(<span class="nu">10</span>);
+
+<span class="fn">v.damp</span>(target, lambda, deltaTime); <span class="cm">// frame-rate independent smoothing</span>
+<span class="fn">v.moveTowards</span>(target, maxDelta);    <span class="cm">// move toward target by at most maxDelta</span></pre>
 
     <h3 id="tween">Tween</h3>
     <p>Interpolates a <code>double</code> with a parametric curve.</p>
@@ -1216,6 +1262,7 @@ fixed.fixedDeltaTime;  <span class="cm">// → 1/30</span></pre>
       <code>set(x, y)</code> <code>setFrom(v)</code>
       <code>add(v)</code> <code>sub(v)</code> <code>mult(v)</code> <code>divide(v)</code>
       <code>scale(s)</code> <code>setMag(mag)</code>
+      <code>damp(other, lambda, dt)</code> <code>moveTowards(other, maxDelta)</code>
       <code>toJson()</code>
     </div>
 

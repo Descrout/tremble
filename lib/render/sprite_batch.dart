@@ -172,11 +172,11 @@ class SpriteBatch {
     );
   }
 
-  AnimationData getAnimation<T extends Object>(
+  AnimationData<T> getAnimation<T extends Object>(
     T name, {
     required double speed,
   }) =>
-      AnimationData(
+      AnimationData<T>(
         name: name,
         frames: _frames[name.toString()] ?? [_textures[name.toString()]!],
         speed: speed,

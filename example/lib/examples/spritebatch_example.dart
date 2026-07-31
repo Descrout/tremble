@@ -5,7 +5,7 @@ import 'package:tremble/tremble.dart';
 import 'package:tremble_example/tex_enum.dart';
 
 class SpritebatchExample extends ScreenController {
-  late SpriteBatch batch;
+  late final SpriteBatch batch;
   final sprites = <Sprite>[];
   double timer = 0;
 

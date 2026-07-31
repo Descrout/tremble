@@ -11,7 +11,8 @@ class TileMap {
   final Image image;
   double tileScale;
 
-  TileMap({required this.tileAreas, required this.image, this.tileScale = 1.0});
+  TileMap({required this.tileAreas, required this.image, this.tileScale = 1.0})
+      : assert(tileAreas.isNotEmpty, "tileAreas cannot be empty");
 
   //Reusable buffers
   Float32List _rects = Float32List(0);
@@ -36,11 +37,13 @@ class TileMap {
     Vec2? position,
     AABB? cullArea,
   }) {
+    final cellSize = grid.cellSize;
+
     position ??= Vec2.zero();
     cullArea ??= AABB(
       Vec2.zero(),
-      width: (grid.width * grid.cellSize).toDouble(),
-      height: (grid.height * grid.cellSize).toDouble(),
+      width: (grid.width * cellSize).toDouble(),
+      height: (grid.height * cellSize).toDouble(),
     );
 
     final cullLeft = cullArea.left - position.x;
@@ -48,17 +51,16 @@ class TileMap {
     final cullTop = cullArea.top - position.y;
     final cullBottom = cullArea.bottom - position.y;
 
-    int minX = cullLeft ~/ grid.cellSize;
-    int maxX = cullRight ~/ grid.cellSize + 1;
-
-    int minY = cullTop ~/ grid.cellSize;
-    int maxY = cullBottom ~/ grid.cellSize + 1;
+    final minX = (cullLeft / cellSize).floor();
+    final maxX = (cullRight / cellSize).ceil();
+    final minY = (cullTop / cellSize).floor();
+    final maxY = (cullBottom / cellSize).ceil();
 
     _ensureCapacity((maxX - minX) * (maxY - minY));
 
     int i = 0;
 
-    for (int gy = minY; gy <= maxY; gy++) {
+    for (int gy = minY; gy < maxY; gy++) {
       for (int gx = minX; gx < maxX; gx++) {
         if (!grid.inBounds2d(gx, gy)) continue;
         final idx = gy * grid.width + gx;
@@ -76,8 +78,8 @@ class TileMap {
         final ti = i * 4;
         _transforms[ti + 0] = tileScale;
         _transforms[ti + 1] = 0;
-        _transforms[ti + 2] = position.x + grid.cellSize * gx;
-        _transforms[ti + 3] = position.y + grid.cellSize * gy;
+        _transforms[ti + 2] = position.x + cellSize * gx;
+        _transforms[ti + 3] = position.y + cellSize * gy;
 
         i++;
       }
@@ -101,11 +103,12 @@ class TileMap {
     AABB? cullArea,
   }) {
     if (grids.isEmpty) return;
+    final cellSize = grids[0].cellSize;
     position ??= Vec2.zero();
     cullArea ??= AABB(
       Vec2.zero(),
-      width: (grids[0].width * grids[0].cellSize).toDouble(),
-      height: (grids[0].height * grids[0].cellSize).toDouble(),
+      width: (grids[0].width * cellSize).toDouble(),
+      height: (grids[0].height * cellSize).toDouble(),
     );
 
     final cullLeft = cullArea.left - position.x;
@@ -113,17 +116,16 @@ class TileMap {
     final cullTop = cullArea.top - position.y;
     final cullBottom = cullArea.bottom - position.y;
 
-    int minX = cullLeft ~/ grids[0].cellSize;
-    int maxX = cullRight ~/ grids[0].cellSize + 1;
-
-    int minY = cullTop ~/ grids[0].cellSize;
-    int maxY = cullBottom ~/ grids[0].cellSize + 1;
+    final minX = (cullLeft / cellSize).floor();
+    final maxX = (cullRight / cellSize).ceil();
+    final minY = (cullTop / cellSize).floor();
+    final maxY = (cullBottom / cellSize).ceil();
 
     _ensureCapacity((maxX - minX) * (maxY - minY) * grids.length);
 
     int i = 0;
 
-    for (int gy = minY; gy <= maxY; gy++) {
+    for (int gy = minY; gy < maxY; gy++) {
       for (int gx = minX; gx < maxX; gx++) {
         for (final grid in grids) {
           if (!grid.inBounds2d(gx, gy)) continue;

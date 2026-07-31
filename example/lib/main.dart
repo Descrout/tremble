@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tremble/tremble.dart';
 import 'package:tremble/utils/signal_value.dart';
-import 'package:tremble_example/examples/bouncing_shapes_example.dart';
+import 'package:tremble_example/examples/bouncing_balls_example.dart';
+import 'package:tremble_example/examples/camera_tilemap.dart';
+import 'package:tremble_example/examples/collision_detection_example.dart';
+import 'package:tremble_example/examples/falling_sand_example.dart';
 import 'package:tremble_example/examples/input_example.dart';
+import 'package:tremble_example/examples/mario_movement_example.dart';
+import 'package:tremble_example/examples/rigidbody_example.dart';
 import 'package:tremble_example/examples/spritebatch_example.dart';
 import 'package:tremble_example/examples/tile_map_example.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -30,12 +35,28 @@ class ExampleItem {
 
 final examples = <ExampleItem>[
   ExampleItem(
-    title: "Bouncing Shapes",
-    description: "Bunch of random shapes bouncing around.",
+    title: "Bouncing Balls",
+    description: "A classic bouncing balls example.",
     type: ExampleType.demo,
     codeUrl:
-        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/bouncing_shapes_example.dart",
-    screen: () => BouncingShapesExample(),
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/bouncing_balls_example.dart",
+    screen: () => BouncingBallsExample(),
+  ),
+  ExampleItem(
+    title: "Basic Collision Detection",
+    description: "*Left Click* to change mouse shape, *Right Click* to change middle shape.",
+    type: ExampleType.physics,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/collision_detection_example.dart",
+    screen: () => CollisionDetectionExample(),
+  ),
+  ExampleItem(
+    title: "Rigidbody",
+    description: "Move your mouse to guide one circle along other circle rigidbodies.",
+    type: ExampleType.physics,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/rigidbody_example.dart",
+    screen: () => RigidBodyExample(),
   ),
   ExampleItem(
     title: "Input Handling",
@@ -54,12 +75,37 @@ final examples = <ExampleItem>[
     screen: () => SpritebatchExample(),
   ),
   ExampleItem(
+    title: "Mario Movement",
+    description:
+        "Platformer movement using *Animation* and *StateMachine*, Use arrow keys to move.",
+    type: ExampleType.utility,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/mario_movement_example.dart",
+    screen: () => MarioMovementExample(),
+  ),
+  ExampleItem(
     title: "Simple Level Editor",
     description: "Simple in-game level editor using *TileMap* and *Grid*.",
     type: ExampleType.demo,
     codeUrl:
         "https://github.com/Descrout/tremble/blob/main/example/lib/examples/tile_map_example.dart",
     screen: () => TileMapExample(),
+  ),
+  ExampleItem(
+    title: "Camera and TileMap",
+    description: "Efficient *TileMap* rendering using *Camera* as cull area.",
+    type: ExampleType.rendering,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/camera_tilemap.dart",
+    screen: () => CameraTilemap(),
+  ),
+  ExampleItem(
+    title: "Falling Sand Simulation",
+    description: "Click on screen to put sands in this *cellular automata* example.",
+    type: ExampleType.demo,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/falling_sand_example.dart",
+    screen: () => FallingSandExample(),
   ),
 ];
 
@@ -163,7 +209,7 @@ class _MyAppState extends State<MyApp> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "v1.2.3",
+                  "v1.2.6",
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],

@@ -33,7 +33,7 @@ class Camera {
       throw "Another camera already started, please stop that camera before starting this one";
     }
     canvas.save();
-    canvas.translate(position.x, position.y);
+    canvas.translate(-position.x, -position.y);
     canvas.scale(zoom);
     _lastCameraStarted = id;
   }

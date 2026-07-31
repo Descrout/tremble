@@ -1,30 +1,51 @@
 import 'package:tremble/physics/aabb.dart';
 import 'package:tremble/physics/circle.dart';
 import 'package:tremble/physics/line.dart';
+import 'package:tremble/physics/shape.dart';
 import 'package:tremble/physics/vec2.dart';
 
 abstract final class CollisionDetector {
+  static bool shapeToShape(Shape a, Shape b) {
+    return switch ((a, b)) {
+      (AABB aabbA, AABB aabbB) => rectToRect(aabbA, aabbB),
+      (Circle circleA, Circle circleB) => circleToCircle(circleA, circleB),
+      (AABB aabb, Circle circle) => circleToRect(circle, aabb),
+      (Circle circle, AABB aabb) => circleToRect(circle, aabb),
+      (Line lineA, Line lineB) => lineToLine(lineA, lineB),
+      (Line line, AABB rect) => lineToRect(line, rect),
+      (Line line, Circle circle) => lineToCircle(line, circle),
+      (AABB rect, Line line) => lineToRect(line, rect),
+      (Circle circle, Line line) => lineToCircle(line, circle),
+      _ => throw UnimplementedError(
+          '${a.runtimeType} and ${b.runtimeType} is not defined for CollisionDetector.',
+        ),
+    };
+  }
+
   static bool circleToCircle(Circle a, Circle b) {
     final dist = a.position - b.position;
     final sumRadius = a.radius + b.radius;
     return sumRadius * sumRadius >= dist.magnitudeSquared;
   }
 
+  static bool rectToRect(AABB a, AABB b) =>
+      a.right >= b.left && a.left <= b.right && a.bottom >= b.top && a.top <= b.bottom;
+
   static bool pointToCircle(Vec2 p, Circle b) {
     final dist = p - b.position;
     return b.radSq >= dist.magnitudeSquared;
   }
 
-  static bool rectToRect(AABB a, AABB b) =>
-      a.right >= b.left && a.left <= b.right && a.bottom >= b.top && a.top <= b.bottom;
-
   static bool circleToRect(Circle circle, AABB rect) {
-    final closestPoint = Vec2(
+    final closest = Vec2(
       circle.x.clamp(rect.left, rect.right),
       circle.y.clamp(rect.top, rect.bottom),
     );
 
-    return pointToCircle(circle.position - closestPoint, circle);
+    final dx = circle.x - closest.x;
+    final dy = circle.y - closest.y;
+
+    return dx * dx + dy * dy <= circle.radSq;
   }
 
   static bool pointToRect(Vec2 p, AABB rect) =>

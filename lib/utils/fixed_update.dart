@@ -5,9 +5,10 @@ class FixedUpdate {
 
   final Function(double) _onUpdate;
 
-  FixedUpdate(this._fps, {required Function(double fixedDeltaTime) onUpdate})
-      : assert(_fps > 0, "fps must be positive"),
-        _fixedDeltaTime = 1 / _fps,
+  FixedUpdate(int fps, {required void Function(double fixedDeltaTime) onUpdate})
+      : assert(fps > 0, "fps must be positive"),
+        _fps = fps,
+        _fixedDeltaTime = 1 / fps,
         _onUpdate = onUpdate;
 
   int get fps => _fps;

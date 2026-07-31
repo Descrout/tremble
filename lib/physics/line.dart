@@ -8,7 +8,7 @@ import 'package:tremble/physics/vec2.dart';
 class Line extends Shape {
   Vec2 p2;
 
-  Line(super.position, this.p2);
+  Line(Vec2 p1, this.p2) : super(p1);
 
   @pragma('vm:prefer-inline')
   Vec2 get p1 => position;

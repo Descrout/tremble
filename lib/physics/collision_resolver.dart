@@ -95,7 +95,7 @@ abstract final class CollisionResolver {
 
     if (sepVel > 0) return true;
 
-    final impulse = -sepVel * body.elasticity + sepVel;
+    final impulse = -sepVel * (1 + body.elasticity);
 
     body.velocity.x += _temp.x * impulse;
     body.velocity.y += _temp.y * impulse;

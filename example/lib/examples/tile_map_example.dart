@@ -8,6 +8,7 @@ import 'package:tremble_example/tex_enum.dart';
 class TileMapExample extends ScreenController {
   late SpriteBatch batch;
   late final TileMap tileMap;
+  final mouse = Vec2.zero();
 
   final grid = Grid.empty(cellSize: 32, width: 25, height: 17);
 
@@ -49,6 +50,8 @@ class TileMapExample extends ScreenController {
 
   @override
   void mousePressed(int pointerID, int button, double mouseX, double mouseY) {
+    mouse.set(mouseX, mouseY);
+
     lastButton = button;
 
     if (mouseY >= _height - 48) {
@@ -69,6 +72,7 @@ class TileMapExample extends ScreenController {
 
   @override
   void mouseMove(int pointerID, double mouseX, double mouseY) {
+    mouse.set(mouseX, mouseY);
     if (lastButton == -1 || !grid.inBounds2dScreen(mouseX, mouseY)) return;
 
     if (lastButton == 1) grid.setTile2dScreen(selectedTile, x: mouseX, y: mouseY);
@@ -77,15 +81,33 @@ class TileMapExample extends ScreenController {
 
   @override
   void draw(Canvas canvas, Size size) {
+    canvas.drawColor(const Color(0xFF5C94FC), BlendMode.src);
     tileMap.drawGrid(canvas, grid);
+    drawMouseTile(canvas);
+    drawBottomPanel(canvas, size);
+  }
 
-    canvas.drawLine(
-      Offset(0, size.height - 48),
-      Offset(size.width, size.height - 48),
-      Paint()
-        ..color = Colors.green
-        ..strokeWidth = 4,
+  void drawMouseTile(Canvas canvas) {
+    if (!grid.inBounds2dScreen(mouse.x, mouse.y)) return;
+    final (gx, gy) = grid.screenToGrid(mouse.x, mouse.y);
+    final rect = tileMap.tileAreas[selectedTile];
+    final cellSize = grid.cellSize.toDouble();
+
+    canvas.drawImageRect(
+      tileMap.image,
+      rect,
+      Rect.fromLTWH(
+        gx * cellSize,
+        gy * cellSize,
+        cellSize,
+        cellSize,
+      ),
+      TileMap.paint,
     );
+  }
+
+  void drawBottomPanel(Canvas canvas, Size size) {
+    canvas.drawRect(Rect.fromLTWH(0, size.height - 48, size.width, 48), Paint());
 
     for (int i = 0; i < tileMap.tileAreas.length; i++) {
       final rect = tileMap.tileAreas[i];
@@ -100,7 +122,7 @@ class TileMapExample extends ScreenController {
     canvas.drawRect(
       Rect.fromLTWH(selectedTile * 48, size.height - 48, 48, 48),
       Paint()
-        ..color = Colors.green
+        ..color = Colors.white
         ..style = PaintingStyle.stroke
         ..strokeWidth = 4,
     );

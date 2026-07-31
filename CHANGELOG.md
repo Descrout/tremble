@@ -1,3 +1,14 @@
+## 1.2.6
+
+* ``CollisionDetector.shapeToShape`` added — detects collisions between any two ``Shape``s.
+* ``Vec2.damp`` and ``Vec2.moveTowards`` added.
+* ``Grid`` extended: ``clone``, ``screenToGrid``, neighbor helpers (``hasNeighbor*``, ``*NeighborTile``), ``forEachNeighbor4`` / ``forEachNeighbor8``, ``neighborTiles4`` / ``neighborTiles8``.
+* ``Grid.draw`` and ``Grid.debugDraw`` added for easy tile map rendering.
+* ``Grid.setTile2dScreen`` now floors coordinates correctly for negative values.
+* ``TileMap`` culling fixed for negative positions and ``assert`` added for empty ``tileAreas``.
+* ``Camera`` translate sign fixed.
+* ``SpriteBatch.getAnimation`` now returns a typed ``AnimationData<T>``.
+
 ## 1.2.5
 
 * Modulate bug fixed.
