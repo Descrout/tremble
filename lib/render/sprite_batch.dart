@@ -182,9 +182,8 @@ class SpriteBatch {
         speed: speed,
       );
 
-  TexArea getTexture<T extends Object>(T name) {
-    return _textures[name.toString()]!;
-  }
+  TexArea getTexture<T extends Object>(T name) =>
+      _textures[name.toString()] ?? _frames[name.toString()]![0];
 
   Rect _spriteRect(Sprite sprite) {
     final rect = sprite.texture.rect;
@@ -220,7 +219,14 @@ class SpriteBatch {
     }
   }
 
-  void _drawBatch(Canvas canvas, int start, int count, int pageIndex, BlendMode blendMode) {
+  void _drawBatch(
+    Canvas canvas,
+    int start,
+    int count,
+    int pageIndex,
+    BlendMode blendMode,
+    Rect? cullRect,
+  ) {
     if (count == 0) return;
     canvas.drawRawAtlas(
       _pages[pageIndex],
@@ -228,12 +234,17 @@ class SpriteBatch {
       Float32List.sublistView(_rects, start * 4, (start + count) * 4),
       Int32List.sublistView(_colors, start, start + count),
       blendMode,
-      null,
+      cullRect,
       paint,
     );
   }
 
-  void draw(Canvas canvas, List<Sprite> sprites, {BlendMode blendMode = BlendMode.modulate}) {
+  void draw(
+    Canvas canvas,
+    List<Sprite> sprites, {
+    BlendMode blendMode = BlendMode.modulate,
+    AABB? cullArea,
+  }) {
     final count = sprites.length;
     if (count == 0) return;
     _ensureCapacity(count);
@@ -246,7 +257,7 @@ class SpriteBatch {
       final sprite = sprites[j];
 
       if (j > 0 && sprite.texture.pageIndex != currentPage) {
-        _drawBatch(canvas, batchStart, bufIdx - batchStart, currentPage, blendMode);
+        _drawBatch(canvas, batchStart, bufIdx - batchStart, currentPage, blendMode, cullArea?.rect);
         currentPage = sprite.texture.pageIndex;
         batchStart = bufIdx;
       }
@@ -283,7 +294,7 @@ class SpriteBatch {
       bufIdx++;
     }
 
-    _drawBatch(canvas, batchStart, bufIdx - batchStart, currentPage, blendMode);
+    _drawBatch(canvas, batchStart, bufIdx - batchStart, currentPage, blendMode, cullArea?.rect);
   }
 
   /// For development and debugging purposes
@@ -295,7 +306,7 @@ class SpriteBatch {
     buffer.writeln("enum $name {");
 
     for (final key in _textures.keys) {
-      buffer.write('  ${Helpers.toCamelCase(key)}("$key", false)');
+      buffer.write('  ${Helpers.toCamelCase(key)}("$key", 1)');
       len--;
       if (len == 0) {
         buffer.writeln(";");
@@ -308,7 +319,7 @@ class SpriteBatch {
     if (len != 0) buffer.writeln("  // Animations");
 
     for (final key in _frames.keys) {
-      buffer.write('  ${Helpers.toCamelCase(key)}("$key", true)');
+      buffer.write('  ${Helpers.toCamelCase(key)}("$key", ${_frames[key]!.length})');
       len--;
       if (len == 0) {
         buffer.writeln(";");
@@ -319,8 +330,8 @@ class SpriteBatch {
     buffer.writeln();
 
     buffer.writeln('  final String assetName;');
-    buffer.writeln('  final bool isAnimation;');
-    buffer.writeln('  const $name(this.assetName, this.isAnimation);');
+    buffer.writeln('  final int frameCount;');
+    buffer.writeln('  const $name(this.assetName, this.frameCount);');
     buffer.writeln();
     buffer.writeln('  @override');
     buffer.writeln('  String toString() => assetName;');

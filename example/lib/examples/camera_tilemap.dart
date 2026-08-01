@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flutter/material.dart' show BuildContext;
+import 'package:flutter/material.dart' show BuildContext, TextStyle, Colors;
 import 'package:tremble/tremble.dart';
 import 'package:tremble_example/tex_enum.dart';
 
@@ -45,6 +45,8 @@ class CameraTilemap extends ScreenController {
         grid.setTile1d(MathUtils.randInt(0, tileMap.tileAreas.length), idx: i);
       }
     }
+
+    infoText.style = const TextStyle(color: Colors.white, fontSize: 12);
   }
 
   double _timer = 0;
@@ -57,7 +59,9 @@ class CameraTilemap extends ScreenController {
     grid.forEachDrawArea(
         visit: (screenX, screenY, tile) => drawingCount++,
         cullArea: camera.aabb(width: 800, height: 600 - 48));
-    infoText.text = "Actual Count: $actualCount\nDraw Count: $drawingCount";
+    final renderCall = drawingCount == 0 ? 0 : 1;
+    infoText.text =
+        "Actual Count: $actualCount\nDraw Count: $drawingCount\nRender Call: $renderCall";
   }
 
   @override
@@ -74,7 +78,7 @@ class CameraTilemap extends ScreenController {
 
   void drawBottomPanel(Canvas canvas, Size size) {
     canvas.drawRect(Rect.fromLTWH(0, size.height - 48, size.width, 48), Paint());
-    infoText.draw(canvas, Vec2(24, size.height - 45));
+    infoText.draw(canvas, Vec2(24, size.height - 48));
   }
 
   @override

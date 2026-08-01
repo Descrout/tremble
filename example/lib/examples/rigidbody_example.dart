@@ -52,17 +52,22 @@ class RigidBodyExample extends ScreenController {
       b.update(fixedDeltaTime);
     }
 
-    for (int i = 0; i < bodies.length; i++) {
-      for (int j = i + 1; j < bodies.length; j++) {
-        final b1 = bodies[i];
-        final b2 = bodies[j];
-        CollisionResolver.circleToCircle(b1, b2);
+    const stepCount = 3;
+    for (int k = 0; k < stepCount; k++) {
+      // Resolve between rigidbodies
+      for (int i = 0; i < bodies.length; i++) {
+        for (int j = i + 1; j < bodies.length; j++) {
+          final b1 = bodies[i];
+          final b2 = bodies[j];
+          CollisionResolver.circleToCircle(b1, b2);
+        }
       }
-    }
 
-    for (final body in bodies) {
-      for (final line in lines) {
-        CollisionResolver.circleToStaticLine(body, line);
+      // Resolve between rigidbodies and lines
+      for (final body in bodies) {
+        for (final line in lines) {
+          CollisionResolver.circleToStaticLine(body, line);
+        }
       }
     }
   }

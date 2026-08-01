@@ -227,7 +227,7 @@ class _MyAppState extends State<MyApp> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "v1.2.6",
+                  "v1.2.7",
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],

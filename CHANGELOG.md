@@ -1,3 +1,8 @@
+## 1.2.7
+
+* ``SpriteBatch.draw`` now accepts ``AABB? cullArea``.
+* ``SpriteBatch.getEnum`` updated.
+
 ## 1.2.6
 
 * ``CollisionDetector.shapeToShape`` added — detects collisions between any two ``Shape``s.
