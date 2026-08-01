@@ -19,7 +19,7 @@ abstract final class ImageUtils {
   static Future<Image?> loadImageFromAssets(String imageAssetPath) async {
     try {
       final ByteData data = await rootBundle.load(imageAssetPath);
-      return loadImageFromBytes(data.buffer.asUint8List());
+      return await loadImageFromBytes(data.buffer.asUint8List());
     } catch (err) {
       debugPrint("loadImageFromAssets error : $err");
       return null;
@@ -29,7 +29,7 @@ abstract final class ImageUtils {
   static Future<Image?> loadImageFromPath(String path) async {
     try {
       final file = File(path);
-      return loadImageFromBytes(await file.readAsBytes());
+      return await loadImageFromBytes(await file.readAsBytes());
     } catch (err) {
       debugPrint("loadImageFromPath error : $err");
       return null;
