@@ -20,17 +20,8 @@ class AABB extends Shape {
 
   Rect get rect => Rect.fromLTWH(position.x, position.y, width, height);
 
-  AABB copyWith({
-    Vec2? position,
-    double? width,
-    double? height,
-  }) {
-    return AABB(
-      position ?? this.position,
-      width: width ?? this.width,
-      height: height ?? this.height,
-    );
-  }
+  @override
+  AABB clone() => AABB(position.clone(), width: width, height: height);
 
   AABB inflated(double amount) {
     return AABB(

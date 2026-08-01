@@ -264,7 +264,6 @@ class ShapeRaycasterExample extends ScreenController {
 
     if (_nearestIndex >= 0) {
       final hit = _rays[_nearestIndex].hit!;
-      sb.writeln("nearest: ${hit.object.runtimeType}");
       sb.writeln("dist   : ${hit.distance.toStringAsFixed(1)}px");
       sb.writeln(
           "normal : (${hit.normal.x.toStringAsFixed(2)}, ${hit.normal.y.toStringAsFixed(2)})");
@@ -295,5 +294,7 @@ class ShapeRaycasterExample extends ScreenController {
   }
 
   @override
-  void dispose() {}
+  void dispose() {
+    Shape.paint.strokeWidth = 1;
+  }
 }

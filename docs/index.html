@@ -307,7 +307,7 @@
       <img src="tremble_logo.jpeg" alt="Tremble Logo" style="width:64px;border-radius:12px;flex-shrink:0">
       <div>
         <h1 style="margin:0;font-size:1.3rem">Tremble</h1>
-        <div class="version" style="margin:0">v1.2.7</div>
+        <div class="version" style="margin:0">v1.2.8</div>
       </div>
     </div>
 
@@ -351,6 +351,7 @@
     <a href="#collisionresolver">CollisionResolver</a>
     <a href="#spatialhash">SpatialHash</a>
     <a href="#minkowski">Minkowski</a>
+    <a href="#sweep">Sweep</a>
     <a href="#ray">Ray &amp; Raycaster</a>
     <a class="sub" href="#ray">Ray</a>
     <a class="sub" href="#raycaster">Raycaster</a>
@@ -658,11 +659,12 @@ scoreText.text = <span class="str">'Score: 100'</span>;
       re-layout before the next paint.</p>
 
     <h3 id="grid">Grid</h3>
-    <p>A 2D tile grid backed by a flat <code>List&lt;int&gt;</code>. Each cell stores a tile ID (<code>-1</code> =
-      empty). Supports construction from 1D/2D data and tile coordinate conversion.</p>
-    <pre><span class="lang-tag">Dart</span><span class="kw">final</span> grid = <span class="ty">Grid</span>(cellSize: <span class="nu">16</span>, width: <span class="nu">20</span>, height: <span class="nu">15</span>, data: myData);
-<span class="kw">final</span> grid2 = <span class="ty">Grid</span>.empty(cellSize: <span class="nu">16</span>, width: <span class="nu">20</span>, height: <span class="nu">15</span>);
-<span class="kw">final</span> grid3 = <span class="ty">Grid</span>.from2d(cellSize: <span class="nu">16</span>, data: [
+    <p>A 2D grid backed by a flat <code>List&lt;T&gt;</code>. Generic — typically <code>Grid&lt;int&gt;</code> where each
+      cell stores a tile ID (<code>-1</code> = empty). Supports construction from 1D/2D data and tile coordinate
+      conversion.</p>
+    <pre><span class="lang-tag">Dart</span><span class="kw">final</span> grid = <span class="ty">Grid</span>&lt;<span class="kw">int</span>&gt;(cellSize: <span class="nu">16</span>, width: <span class="nu">20</span>, height: <span class="nu">15</span>, data: myData);
+<span class="kw">final</span> grid2 = <span class="ty">Grid</span>&lt;<span class="kw">int</span>&gt;.filled(cellSize: <span class="nu">16</span>, width: <span class="nu">20</span>, height: <span class="nu">15</span>, value: <span class="op">-</span><span class="nu">1</span>);
+<span class="kw">final</span> grid3 = <span class="ty">Grid</span>&lt;<span class="kw">int</span>&gt;.from2d(cellSize: <span class="nu">16</span>, data: [
   [<span class="nu">0</span>, <span class="nu">0</span>, <span class="nu">1</span>],
   [<span class="nu">0</span>, <span class="nu">2</span>, <span class="nu">1</span>],
 ]);
@@ -705,14 +707,16 @@ grid.height;     <span class="cm">// cells vertically</span>
 <span class="kw">final</span> n8 = <span class="fn">grid.neighborTiles8</span>(idx);</pre>
 
     <h4>Drawing</h4>
-    <p>Draw the grid through a <code>TileMap</code> or as flat debug rects. Tiles with a value smaller than
-      <code>0</code> are skipped. <code>position</code> offsets the grid in world space and <code>cullArea</code> limits
-      drawing to a viewport <code>AABB</code>.</p>
+    <p>Drawing helpers live on the <code>IntGridX</code> extension for <code>Grid&lt;int&gt;</code>. Draw the grid
+      through a <code>TileMap</code> or as flat debug rects. Tiles with a value smaller than <code>0</code> are skipped.
+      <code>position</code> offsets the grid in world space and <code>cullArea</code> limits drawing to a viewport
+      <code>AABB</code>.</p>
     <pre><span class="lang-tag">Dart</span><span class="cm">// Render through a TileMap</span>
 <span class="fn">grid.draw</span>(canvas, tilemap, position: <span class="ty">Vec2</span>(<span class="nu">100</span>, <span class="nu">0</span>));
 
-<span class="cm">// Debug render — colored rects per tile (Grid.debugPalette)</span>
-<span class="fn">grid.debugDraw</span>(canvas, cullArea: <span class="ty">AABB</span>(<span class="ty">Vec2</span>.<span class="fn">zero</span>(), width: <span class="nu">320</span>, height: <span class="nu">240</span>));
+<span class="cm">// Debug render — colored rects per tile (default debug palette, or pass one)</span>
+<span class="fn">grid.debugDraw</span>(canvas, cullArea: <span class="ty">AABB</span>(<span class="ty">Vec2</span>.<span class="fn">zero</span>(), width: <span class="nu">320</span>, height: <span class="nu">240</span>),
+  palette: myPalette);
 
 <span class="cm">// Iterate visible tiles yourself</span>
 <span class="fn">grid.forEachDrawArea</span>(
@@ -887,6 +891,7 @@ fsm.onAfterStateChange  = (from, to) { };</pre>
     </p>
     <pre><span class="lang-tag">Dart</span><span class="kw">abstract class</span> <span class="ty">Shape</span> {
   <span class="ty">Vec2</span> position;
+  <span class="ty">Shape</span> <span class="fn">clone</span>();       <span class="cm">// deep copy of the shape</span>
   <span class="ty">AABB</span> <span class="fn">get aabb</span>;
   <span class="kw">void</span> <span class="fn">draw</span>(<span class="ty">Canvas</span>, <span class="ty">Color</span>);
 }</pre>
@@ -900,7 +905,7 @@ fsm.onAfterStateChange  = (from, to) { };</pre>
 
 circle.x; circle.y; circle.radius; circle.radSq;
 circle.aabb;  <span class="cm">// → AABB</span>
-<span class="fn">circle.copyWith</span>(radius: <span class="nu">40</span>);
+<span class="fn">circle.clone</span>();      <span class="cm">// deep copy</span>
 <span class="fn">circle.draw</span>(canvas, color); <span class="cm">// debug draw</span></pre>
 
     <h3 id="aabb">AABB</h3>
@@ -915,7 +920,7 @@ box.x; box.y; box.left; box.top; box.right; box.bottom;
 box.rect;  <span class="cm">// → Rect</span>
 <span class="fn">box.inflated</span>(<span class="nu">5</span>); <span class="fn">box.deflated</span>(<span class="nu">5</span>);
 <span class="fn">box.inflate</span>(<span class="nu">5</span>); <span class="fn">box.deflate</span>(<span class="nu">5</span>);
-<span class="fn">box.copyWith</span>(width: <span class="nu">100</span>);</pre>
+<span class="fn">box.clone</span>();      <span class="cm">// deep copy</span></pre>
 
     <h3 id="physics-line">Line</h3>
     <p>Extends <code>Shape</code>. <code>p1</code> is an alias for <code>position</code>, <code>p2</code> is the other
@@ -1012,6 +1017,21 @@ hash.cellCount;  <span class="cm">// number of occupied cells</span></pre>
 <span class="ty">Minkowski</span>.<span class="fn">containsOriginCircle</span>(circle);
 <span class="ty">Minkowski</span>.<span class="fn">getPenetrationAABB</span>(aabb);
 <span class="ty">Minkowski</span>.<span class="fn">getPenetrationCircle</span>(circle);</pre>
+
+    <h3 id="sweep">Sweep</h3>
+    <p>Static helpers for swept collision detection. Expands a moving shape against a target shape, producing a volume
+      you can raycast along the motion to find the time of impact. <code>expand</code> dispatches on the shape types
+      automatically.</p>
+    <pre><span class="lang-tag">Dart</span><span class="cm">// Dispatch on any shape pair (AABB + AABB / Circle + Circle / mixed)</span>
+<span class="kw">final</span> expanded = <span class="ty">Sweep</span>.<span class="fn">expand</span>(movingShape, targetShape);
+
+<span class="cm">// Typed variants</span>
+<span class="ty">Sweep</span>.<span class="fn">expandAABB</span>(movingAABB, targetAABB);          <span class="cm">// → AABB</span>
+<span class="ty">Sweep</span>.<span class="fn">expandCircle</span>(movingCircle, targetCircle);      <span class="cm">// → Circle</span>
+<span class="ty">Sweep</span>.<span class="fn">expandAABBAndCircle</span>(movingAABB, targetCircle);  <span class="cm">// → AABB</span>
+<span class="ty">Sweep</span>.<span class="fn">expandCircleAndAABB</span>(movingCircle, targetAABB);  <span class="cm">// → AABB</span></pre>
+    <p><code>expand</code> throws <code>UnimplementedError</code> for unsupported pairs (e.g. anything involving a
+      <code>Line</code>).</p>
 
     <h3 id="ray">Ray</h3>
     <p>A ray with an <code>origin</code> and unit-length <code>direction</code>. Direction is normalized on
@@ -1151,7 +1171,13 @@ s.velocity;       <span class="cm">// current velocity (Vec2)</span>
 <span class="fn">rect.gridBySize</span>(<span class="nu">16</span>);
 rect.aabb;    <span class="cm">// → AABB</span>
 
-(<span class="nu">3.14</span>).fract;   <span class="cm">// 0.14</span></pre>
+(<span class="nu">3.14</span>).fract;   <span class="cm">// 0.14</span>
+
+<span class="cm">// IntGridX — drawing/serialization for Grid&lt;int&gt;</span>
+<span class="fn">grid.draw</span>(canvas, tilemap);
+<span class="fn">grid.debugDraw</span>(canvas);
+<span class="fn">grid.forEachDrawArea</span>(position: <span class="ty">Vec2</span>.<span class="fn">zero</span>(), visit: (x, y, tile) { });
+<span class="fn">grid.toJson1d</span>();  <span class="fn">grid.toJson2d</span>();</pre>
 
     <h3 id="helpers">Helpers</h3>
     <pre><span class="lang-tag">Dart</span><span class="ty">Helpers</span>.<span class="fn">indexMapToList</span>(indexedMap); <span class="cm">// Map&lt;int, T&gt; → List&lt;T&gt;</span>

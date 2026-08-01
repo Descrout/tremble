@@ -11,7 +11,7 @@ class Ray {
   Ray({
     required this.origin,
     required Vec2 direction,
-  }) : direction = direction..normalize();
+  }) : direction = direction.normalized();
 
   Vec2 pointAt(double distance) {
     return Vec2(

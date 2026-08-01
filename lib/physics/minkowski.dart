@@ -89,21 +89,21 @@ abstract final class Minkowski {
     final overlapBottom = aabb.bottom;
 
     double minOverlap = overlapLeft;
-    Vec2 penetration = Vec2(-overlapLeft, 0);
+    Vec2 penetration = Vec2(overlapLeft, 0);
 
     if (overlapRight < minOverlap) {
       minOverlap = overlapRight;
-      penetration = Vec2(overlapRight, 0);
+      penetration = Vec2(-overlapRight, 0);
     }
 
     if (overlapTop < minOverlap) {
       minOverlap = overlapTop;
-      penetration = Vec2(0, -overlapTop);
+      penetration = Vec2(0, overlapTop);
     }
 
     if (overlapBottom < minOverlap) {
       minOverlap = overlapBottom;
-      penetration = Vec2(0, overlapBottom);
+      penetration = Vec2(0, -overlapBottom);
     }
 
     return penetration;

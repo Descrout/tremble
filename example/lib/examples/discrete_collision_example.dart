@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tremble/tremble.dart';
 
-class CollisionDetectionExample extends ScreenController {
-  static const int _shapeCount = 3;
+class DiscreteCollisionExample extends ScreenController {
+  static const int _shapeCount = 2;
 
   final mid = Vec2(400, 300);
 
@@ -14,14 +14,12 @@ class CollisionDetectionExample extends ScreenController {
 
   Shape _makeMiddle() => switch (_middleIndex) {
         0 => AABB(mid - Vec2(45, 30), width: 90, height: 60),
-        1 => Circle(mid, radius: 35),
-        _ => Line(mid - Vec2(90, 30), mid + Vec2(90, 30)),
+        _ => Circle(mid, radius: 35),
       };
 
   Shape _makeMouse() => switch (_mouseIndex) {
         0 => AABB(Vec2.zero(), width: 60, height: 90),
-        1 => Circle(Vec2.zero(), radius: 30),
-        _ => Line(Vec2.zero(), Vec2.zero()),
+        _ => Circle(Vec2.zero(), radius: 30),
       };
 
   @override
@@ -35,9 +33,15 @@ class CollisionDetectionExample extends ScreenController {
 
   @override
   void draw(Canvas canvas, Size size) {
-    final colliding = CollisionDetector.shapeToShape(middle, mouseShape);
     middle.draw(canvas, Colors.white);
-    mouseShape.draw(canvas, colliding ? Colors.red.withAlpha(180) : Colors.blue.withAlpha(180));
+    mouseShape.draw(canvas, Colors.blue.withAlpha(180));
+
+    final pen = Minkowski.getPenetration(Minkowski.difference(mouseShape, middle));
+    if (pen != null) {
+      final shape = mouseShape.clone();
+      shape.position.add(pen);
+      shape.draw(canvas, Colors.red);
+    }
   }
 
   @override

@@ -15,7 +15,7 @@ class GridRaycasterExample extends ScreenController {
   final Vec2 _light = Vec2.zero();
   final Vec2 _target = Vec2.zero();
 
-  late Grid _grid;
+  late Grid<int> _grid;
 
   final CanvasText _infoText = CanvasText();
   final CanvasText _hintText = CanvasText();
@@ -35,7 +35,7 @@ class GridRaycasterExample extends ScreenController {
     _light.set(width * 0.5, height * 0.5);
     _target.setFrom(_light);
 
-    _grid = Grid.empty(cellSize: 20, width: 40, height: 30);
+    _grid = Grid.filled(cellSize: 20, width: 40, height: 30, value: -1);
     for (int x = 0; x < _grid.width; x++) {
       _grid.setTile2d(0, x: x, y: 0);
       _grid.setTile2d(0, x: x, y: _grid.height - 1);
@@ -262,5 +262,7 @@ class GridRaycasterExample extends ScreenController {
   }
 
   @override
-  void dispose() {}
+  void dispose() {
+    Shape.paint.strokeWidth = 1;
+  }
 }

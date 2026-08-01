@@ -33,7 +33,7 @@ class TileMap {
 
   void drawGrid(
     Canvas canvas,
-    Grid grid, {
+    Grid<int> grid, {
     Vec2? position,
     AABB? cullArea,
   }) {
@@ -98,7 +98,7 @@ class TileMap {
 
   void drawGrids(
     Canvas canvas,
-    List<Grid> grids, {
+    List<Grid<int>> grids, {
     Vec2? position,
     AABB? cullArea,
   }) {

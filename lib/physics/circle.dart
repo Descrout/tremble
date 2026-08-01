@@ -15,6 +15,9 @@ class Circle extends Shape {
   double get radSq => radius * radius;
 
   @override
+  Circle clone() => Circle(position.clone(), radius: radius);
+
+  @override
   AABB get aabb => AABB(
         Vec2(
           position.x - radius,
@@ -30,15 +33,5 @@ class Circle extends Shape {
     Shape.paint.color = color;
     canvas.drawCircle(Offset(position.x, position.y), radius, Shape.paint);
     if (drawBoundingBox) super.draw(canvas, const Color(0xFFFFFFFF));
-  }
-
-  Circle copyWith({
-    Vec2? position,
-    double? radius,
-  }) {
-    return Circle(
-      position ?? this.position,
-      radius: radius ?? this.radius,
-    );
   }
 }

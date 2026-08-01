@@ -10,7 +10,7 @@ class TileMapExample extends ScreenController {
   late final TileMap tileMap;
   final mouse = Vec2.zero();
 
-  final grid = Grid.empty(cellSize: 32, width: 25, height: 17);
+  final grid = Grid.filled(cellSize: 32, width: 25, height: 17, value: -1);
 
   int selectedTile = 0;
   int lastButton = -1;
@@ -141,5 +141,6 @@ class TileMapExample extends ScreenController {
   @override
   void dispose() {
     batch.dispose();
+    TileMap.paint.strokeWidth = 1;
   }
 }

@@ -14,6 +14,7 @@ export 'package:tremble/physics/second_order_dynamics.dart';
 export 'package:tremble/physics/shape.dart';
 export 'package:tremble/physics/spatial_hash.dart';
 export 'package:tremble/physics/spring.dart';
+export 'package:tremble/physics/sweep.dart';
 export 'package:tremble/physics/vec2.dart';
 export 'package:tremble/render/animation.dart';
 export 'package:tremble/render/camera.dart';

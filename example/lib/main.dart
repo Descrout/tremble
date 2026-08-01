@@ -6,6 +6,7 @@ import 'package:tremble/utils/signal_value.dart';
 import 'package:tremble_example/examples/bouncing_balls_example.dart';
 import 'package:tremble_example/examples/camera_tilemap.dart';
 import 'package:tremble_example/examples/collision_detection_example.dart';
+import 'package:tremble_example/examples/discrete_collision_example.dart';
 import 'package:tremble_example/examples/falling_sand_example.dart';
 import 'package:tremble_example/examples/grid_raycaster_example.dart';
 import 'package:tremble_example/examples/input_example.dart';
@@ -13,6 +14,7 @@ import 'package:tremble_example/examples/mario_movement_example.dart';
 import 'package:tremble_example/examples/rigidbody_example.dart';
 import 'package:tremble_example/examples/shape_raycaster_example.dart';
 import 'package:tremble_example/examples/spritebatch_example.dart';
+import 'package:tremble_example/examples/swept_collision_example.dart';
 import 'package:tremble_example/examples/tile_map_example.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -46,11 +48,27 @@ final examples = <ExampleItem>[
   ),
   ExampleItem(
     title: "Basic Collision Detection",
-    description: "*Left Click* to change mouse shape, *Right Click* to change middle shape.",
+    description: "Left and Right click to change shapes.",
     type: ExampleType.physics,
     codeUrl:
         "https://github.com/Descrout/tremble/blob/main/example/lib/examples/collision_detection_example.dart",
     screen: () => CollisionDetectionExample(),
+  ),
+  ExampleItem(
+    title: "Discrete Collision Response",
+    description: "*Minkowski* difference resolution. Left and Right click to change shapes.",
+    type: ExampleType.physics,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/discrete_collision_example.dart",
+    screen: () => DiscreteCollisionExample(),
+  ),
+  ExampleItem(
+    title: "Swept Collision Response",
+    description: "Swept collision resolution using *Sweep* and *Ray* classes. Fixes tunneling.",
+    type: ExampleType.physics,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/swept_collision_example.dart",
+    screen: () => SweptCollisionExample(),
   ),
   ExampleItem(
     title: "Rigidbody",
@@ -227,7 +245,7 @@ class _MyAppState extends State<MyApp> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "v1.2.7",
+                  "v1.2.8",
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],

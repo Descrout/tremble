@@ -39,6 +39,8 @@ class RigidBodyExample extends ScreenController {
     (bodies[1].shape as Circle).radius = 50;
     bodies[1].velocity.scale(0);
     bodies[1].isStatic = true;
+
+    Shape.paint.strokeWidth = 2;
   }
 
   void updateRigidBodies(double fixedDeltaTime) {
@@ -85,12 +87,15 @@ class RigidBodyExample extends ScreenController {
   void draw(Canvas canvas, Size size) {
     for (final b in bodies) {
       b.shape.draw(canvas, getBodyColor(b));
+    }
+
+    for (final b in bodies) {
       b.velocity.draw(
         canvas,
         Colors.white,
         origin: b.shape.position.offset(),
         drawOrigin: true,
-        drawArrowHead: true,
+        drawArrowHead: false,
         scale: 0.2,
       );
     }
@@ -108,5 +113,7 @@ class RigidBodyExample extends ScreenController {
   void mouseMove(int pointerID, double mouseX, double mouseY) => mouse.set(mouseX, mouseY);
 
   @override
-  void dispose() {}
+  void dispose() {
+    Shape.paint.strokeWidth = 1;
+  }
 }

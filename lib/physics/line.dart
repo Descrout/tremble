@@ -19,6 +19,9 @@ class Line extends Shape {
   double get bottom => max(p1.y, p2.y);
 
   @override
+  Line clone() => Line(position.clone(), p2.clone());
+
+  @override
   AABB get aabb => AABB(Vec2(left, top), width: right - left, height: bottom - top);
 
   @override

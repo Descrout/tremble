@@ -1,3 +1,13 @@
+## 1.2.8
+
+* ``[BREAKING]`` ``Grid`` is now generic — ``Grid<T>``. ``Grid.empty`` renamed to ``Grid.filled`` and now requires a ``value``.
+* ``[BREAKING]`` ``Grid`` no longer imports Flutter. ``Grid.draw``, ``Grid.forEachDrawArea``, ``Grid.debugDraw``, ``Grid.debugPalette``, ``Grid.toJson1d`` and ``Grid.toJson2d`` moved to the ``IntGridX`` extension on ``Grid<int>``. ``debugDraw`` now accepts a ``palette`` parameter.
+* ``[BREAKING]`` ``AABB.copyWith`` and ``Circle.copyWith`` removed. Replaced by ``Shape.clone()`` — ``AABB.clone()``, ``Circle.clone()`` and ``Line.clone()`` added.
+* ``Sweep`` introduced — ``expand``, ``expandAABB``, ``expandCircle``, ``expandAABBAndCircle``, ``expandCircleAndAABB`` for swept collision (Minkowski-style expansion of a moving shape against a target).
+* ``Minkowski.getPenetration`` sign convention flipped so the penetration vector points outward from the overlapping AABB.
+* ``Ray`` direction now uses ``normalized()`` instead of normalizing the passed vector in place.
+* ``analysis_options.yaml`` now excludes platform and build directories from analysis.
+
 ## 1.2.7
 
 * ``SpriteBatch.draw`` now accepts ``AABB? cullArea``.

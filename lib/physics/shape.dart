@@ -9,6 +9,8 @@ abstract class Shape {
   Vec2 position;
   Shape(this.position);
 
+  Shape clone();
+
   double get x => position.x;
   double get y => position.y;
 

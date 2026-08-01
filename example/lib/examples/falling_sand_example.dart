@@ -5,7 +5,7 @@ class FallingSandExample extends ScreenController {
   static const int emptyTile = -1;
   static const int sandTile = 0;
 
-  final grid = Grid.empty(cellSize: 8, width: 100, height: 75);
+  final grid = Grid.filled(cellSize: 8, width: 100, height: 75, value: -1);
 
   final mouse = Vec2.zero();
   bool _pressed = false;

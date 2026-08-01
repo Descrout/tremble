@@ -12,7 +12,7 @@ class CameraTilemap extends ScreenController {
   final infoText = CanvasText();
   int actualCount = 0;
 
-  final grid = Grid.empty(cellSize: 32, width: 75, height: 17);
+  final grid = Grid.filled(cellSize: 32, width: 75, height: 17, value: -1);
   final camera = Camera();
 
   @override
