@@ -18,7 +18,15 @@ import 'package:tremble_example/examples/swept_collision_example.dart';
 import 'package:tremble_example/examples/tile_map_example.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-enum ExampleType { input, rendering, tooling, utility, physics, demo }
+enum ExampleType { rendering, tooling, utility, physics, demo }
+
+const exampleGroups = <ExampleType>[
+  ExampleType.physics,
+  ExampleType.demo,
+  ExampleType.rendering,
+  ExampleType.utility,
+  ExampleType.tooling,
+];
 
 class ExampleItem {
   final String title;
@@ -81,7 +89,7 @@ final examples = <ExampleItem>[
   ExampleItem(
     title: "Input Handling",
     description: "Handle *keyboard* and *mouse/touch* inputs.",
-    type: ExampleType.input,
+    type: ExampleType.utility,
     codeUrl:
         "https://github.com/Descrout/tremble/blob/main/example/lib/examples/input_example.dart",
     screen: () => InputExample(),
@@ -98,7 +106,7 @@ final examples = <ExampleItem>[
     title: "Mario Movement",
     description:
         "Platformer movement using *Animation* and *StateMachine*, Use arrow keys to move.",
-    type: ExampleType.utility,
+    type: ExampleType.demo,
     codeUrl:
         "https://github.com/Descrout/tremble/blob/main/example/lib/examples/mario_movement_example.dart",
     screen: () => MarioMovementExample(),
@@ -164,6 +172,31 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final exampleIndex = SignalValue<int>(0);
+  late final Set<ExampleType> _collapsedGroups;
+
+  @override
+  void initState() {
+    super.initState();
+    _collapsedGroups = {
+      for (final group in exampleGroups)
+        if (_groupCount(group) > 0 && group != examples[0].type) group,
+    };
+  }
+
+  int _groupCount(ExampleType group) => examples.where((e) => e.type == group).length;
+
+  void _toggleGroup(ExampleType group) {
+    setState(() {
+      if (!_collapsedGroups.remove(group)) {
+        _collapsedGroups.add(group);
+      }
+    });
+  }
+
+  void _selectExample(int index) {
+    exampleIndex.value = index;
+    setState(() => _collapsedGroups.remove(examples[index].type));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,17 +206,21 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: const Color(0xFF0f0f1a),
       ),
       home: Scaffold(
-        body: SignalValueBuilder(
-          value: exampleIndex,
-          builder: (context, child, index) {
-            return Row(
-              children: [
-                _buildSidebar(index),
-                const VerticalDivider(width: 1, color: Color(0xFF2a2a3e)),
-                Expanded(child: _buildGamePanel(index)),
-              ],
-            );
-          },
+        body: Focus(
+          canRequestFocus: false,
+          descendantsAreFocusable: false,
+          child: SignalValueBuilder(
+            value: exampleIndex,
+            builder: (context, child, index) {
+              return Row(
+                children: [
+                  _buildSidebar(index),
+                  const VerticalDivider(width: 1, color: Color(0xFF2a2a3e)),
+                  Expanded(child: _buildGamePanel(index)),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -199,17 +236,77 @@ class _MyAppState extends State<MyApp> {
             _buildSidebarHeader(),
             const Divider(height: 1, color: Color(0xFF2a2a3e)),
             Expanded(
-              child: ListView.builder(
+              child: ListView(
                 padding: const EdgeInsets.all(12),
-                itemCount: examples.length,
-                itemBuilder: (context, i) => _buildExampleItem(
-                  examples[i],
-                  i == selectedIndex,
-                  i,
-                ),
+                children: [
+                  for (final group in exampleGroups)
+                    if (_groupCount(group) > 0) ..._buildGroupItems(group, selectedIndex),
+                ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildGroupItems(ExampleType group, int selectedIndex) {
+    final widgets = <Widget>[_buildGroupHeader(group)];
+    if (!_collapsedGroups.contains(group)) {
+      for (var i = 0; i < examples.length; i++) {
+        if (examples[i].type == group) {
+          widgets.add(_buildExampleItem(examples[i], i == selectedIndex, i));
+        }
+      }
+    }
+    return widgets;
+  }
+
+  Widget _buildGroupHeader(ExampleType group) {
+    final collapsed = _collapsedGroups.contains(group);
+    final typeColor = _typeColor(group);
+    return Padding(
+      padding: const EdgeInsets.only(top: 14, bottom: 8, left: 4),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: () => _toggleGroup(group),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            children: [
+              Icon(
+                collapsed ? Icons.expand_more : Icons.expand_less,
+                size: 18,
+                color: typeColor,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                group.name.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.4,
+                  color: Colors.grey[300],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                decoration: BoxDecoration(
+                  color: typeColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '${_groupCount(group)}',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: typeColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -281,7 +378,7 @@ class _MyAppState extends State<MyApp> {
       padding: const EdgeInsets.only(bottom: 10),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => exampleIndex.value = index,
+        onTap: () => _selectExample(index),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.all(14),
@@ -428,7 +525,6 @@ class _MyAppState extends State<MyApp> {
 
   Color _typeColor(ExampleType type) {
     return switch (type) {
-      ExampleType.input => Colors.orange[400]!,
       ExampleType.rendering => Colors.purple[400]!,
       ExampleType.tooling => Colors.teal[400]!,
       ExampleType.utility => Colors.blue[400]!,
@@ -447,7 +543,6 @@ class _MyAppState extends State<MyApp> {
       ),
       child: Icon(
         switch (type) {
-          ExampleType.input => Icons.keyboard,
           ExampleType.rendering => Icons.image,
           ExampleType.tooling => Icons.build,
           ExampleType.utility => Icons.handyman,

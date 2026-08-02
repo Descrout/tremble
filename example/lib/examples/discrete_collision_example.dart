@@ -10,7 +10,7 @@ class DiscreteCollisionExample extends ScreenController {
   late Shape mouseShape;
 
   int _middleIndex = 0;
-  int _mouseIndex = 1;
+  int _mouseIndex = 0;
 
   Shape _makeMiddle() => switch (_middleIndex) {
         0 => AABB(mid - Vec2(45, 30), width: 90, height: 60),
@@ -36,11 +36,29 @@ class DiscreteCollisionExample extends ScreenController {
     middle.draw(canvas, Colors.white);
     mouseShape.draw(canvas, Colors.blue.withAlpha(180));
 
-    final pen = Minkowski.getPenetration(Minkowski.difference(mouseShape, middle));
-    if (pen != null) {
-      final shape = mouseShape.clone();
-      shape.position.add(pen);
-      shape.draw(canvas, Colors.red);
+    if (_middleIndex == _mouseIndex) {
+      final pen = Minkowski.getPenetration(Minkowski.difference(mouseShape, middle));
+      if (pen != null) {
+        final shape = mouseShape.clone();
+        shape.position.add(pen);
+        shape.draw(canvas, Colors.red);
+      }
+    } else {
+      final mouseIsCircle = mouseShape is Circle;
+      final circle = (mouseIsCircle ? mouseShape : middle) as Circle;
+      final aabb = (mouseIsCircle ? middle : mouseShape) as AABB;
+      Vec2 pen = Vec2.zero();
+      if (CollisionDetector.circleToRect(circle, aabb, out: pen)) {
+        if (pen.isZero) {
+          pen = Minkowski.getPenetration(Minkowski.difference(mouseShape, middle))!;
+        } else if (!mouseIsCircle) {
+          pen.scale(-1);
+        }
+        final shape = mouseShape.clone();
+        shape.position.add(pen);
+        shape.draw(canvas, Colors.red);
+        pen.draw(canvas, Colors.white, origin: circle.position.offset());
+      }
     }
   }
 

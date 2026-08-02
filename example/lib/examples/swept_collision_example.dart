@@ -16,10 +16,6 @@ class SweptCollisionExample extends ScreenController {
 
   @override
   void update(double deltaTime) {
-    // Optional (if started from inside)
-    final pen = Minkowski.getPenetration(Minkowski.difference(player, colliders[0]));
-    if (pen != null) player.position.add(pen * 1.01);
-
     final checkShape = Sweep.expand(player, colliders[0]);
 
     final diff = mouseAABB.position - player.position;
@@ -72,7 +68,14 @@ class SweptCollisionExample extends ScreenController {
   @override
   void mousePressed(int pointerID, int button, double mouseX, double mouseY) {
     mouseAABB.position.set(mouseX - 16, mouseY - 32);
-    player.position.setFrom(mouseAABB.position);
+
+    if (CollisionDetector.shapeToShape(mouseAABB, player)) {
+      // Change player shape, but only between Circle and AABB
+    } else if (CollisionDetector.shapeToShape(mouseAABB, colliders[0])) {
+      // Change colliders[0] shape, but only between Circle and AABB
+    } else {
+      player.position.setFrom(mouseAABB.position);
+    }
   }
 
   @override

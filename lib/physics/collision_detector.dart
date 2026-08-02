@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:tremble/physics/aabb.dart';
 import 'package:tremble/physics/circle.dart';
 import 'package:tremble/physics/line.dart';
@@ -36,7 +38,7 @@ abstract final class CollisionDetector {
     return b.radSq >= dist.magnitudeSquared;
   }
 
-  static bool circleToRect(Circle circle, AABB rect) {
+  static bool circleToRect(Circle circle, AABB rect, {Vec2? out}) {
     final closest = Vec2(
       circle.x.clamp(rect.left, rect.right),
       circle.y.clamp(rect.top, rect.bottom),
@@ -44,8 +46,20 @@ abstract final class CollisionDetector {
 
     final dx = circle.x - closest.x;
     final dy = circle.y - closest.y;
+    final magSq = dx * dx + dy * dy;
 
-    return dx * dx + dy * dy <= circle.radSq;
+    double diff = circle.radSq - magSq;
+    if (diff <= 0) return false;
+
+    if (out != null) {
+      final mag = sqrt(magSq);
+      if (mag == 0) return true;
+      diff = circle.radius - mag;
+      out.x = (dx / mag) * diff;
+      out.y = (dy / mag) * diff;
+    }
+
+    return true;
   }
 
   static bool pointToRect(Vec2 p, AABB rect) =>

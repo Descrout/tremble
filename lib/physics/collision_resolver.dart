@@ -91,7 +91,7 @@ abstract final class CollisionResolver {
     circle.position.x += _temp.x * penetration;
     circle.position.y += _temp.y * penetration;
 
-    final sepVel = body.velocity.x * _temp.x + body.velocity.y * _temp.y;
+    final sepVel = body.velocity.dot(_temp);
 
     if (sepVel > 0) return true;
 
