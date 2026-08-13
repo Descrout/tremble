@@ -172,6 +172,145 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final exampleIndex = SignalValue<int>(0);
+
+  void _selectExample(int index) {
+    exampleIndex.value = index;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Tremble Examples',
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF0f0f1a),
+      ),
+      home: Scaffold(
+        body: Focus(
+          canRequestFocus: false,
+          descendantsAreFocusable: false,
+          child: SignalValueBuilder(
+            value: exampleIndex,
+            builder: (context, child, index) {
+              return Row(
+                children: [
+                  _ExampleSidebar(
+                    selectedIndex: index,
+                    onSelect: _selectExample,
+                  ),
+                  const VerticalDivider(width: 1, color: Color(0xFF2a2a3e)),
+                  Expanded(child: _buildGamePanel(index)),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGamePanel(int index) {
+    final example = examples[index];
+    return Column(
+      children: [
+        _buildGameHeader(example),
+        const Divider(height: 1, color: Color(0xFF2a2a3e)),
+        Expanded(
+          child: FittedBox(
+            child: Container(
+              width: 800,
+              height: 600,
+              margin: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white,
+                  width: 2,
+                ),
+              ),
+              child: GameArea(controller: example.screen()),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGameHeader(ExampleItem example) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      color: const Color(0xFF14142a),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => launchUrl(Uri.parse(example.codeUrl)),
+            icon: Icon(Icons.code, color: Colors.cyan[400]),
+            tooltip: "View Code",
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  example.title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[400],
+                      height: 1.3,
+                    ),
+                    children: _parseDescription(
+                      example.description,
+                      highlightColor: Colors.cyan[400]!,
+                    ),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          TextButton.icon(
+            onPressed: () => launchUrl(Uri.parse(example.codeUrl)),
+            icon: Icon(Icons.code, size: 18, color: Colors.cyan[400]),
+            label: Text(
+              "View Code",
+              style: TextStyle(fontSize: 14, color: Colors.cyan[400]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    exampleIndex.dispose();
+    super.dispose();
+  }
+}
+
+class _ExampleSidebar extends StatefulWidget {
+  const _ExampleSidebar({
+    required this.selectedIndex,
+    required this.onSelect,
+  });
+
+  final int selectedIndex;
+  final ValueChanged<int> onSelect;
+
+  @override
+  State<_ExampleSidebar> createState() => _ExampleSidebarState();
+}
+
+class _ExampleSidebarState extends State<_ExampleSidebar> {
   late final Set<ExampleType> _collapsedGroups;
 
   @override
@@ -194,39 +333,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _selectExample(int index) {
-    exampleIndex.value = index;
     setState(() => _collapsedGroups.remove(examples[index].type));
+    widget.onSelect(index);
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Tremble Examples',
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF0f0f1a),
-      ),
-      home: Scaffold(
-        body: Focus(
-          canRequestFocus: false,
-          descendantsAreFocusable: false,
-          child: SignalValueBuilder(
-            value: exampleIndex,
-            builder: (context, child, index) {
-              return Row(
-                children: [
-                  _buildSidebar(index),
-                  const VerticalDivider(width: 1, color: Color(0xFF2a2a3e)),
-                  Expanded(child: _buildGamePanel(index)),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSidebar(int selectedIndex) {
     return SizedBox(
       width: 360,
       child: Container(
@@ -240,7 +352,7 @@ class _MyAppState extends State<MyApp> {
                 padding: const EdgeInsets.all(12),
                 children: [
                   for (final group in exampleGroups)
-                    if (_groupCount(group) > 0) ..._buildGroupItems(group, selectedIndex),
+                    if (_groupCount(group) > 0) ..._buildGroupItems(group),
                 ],
               ),
             ),
@@ -250,12 +362,12 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  List<Widget> _buildGroupItems(ExampleType group, int selectedIndex) {
+  List<Widget> _buildGroupItems(ExampleType group) {
     final widgets = <Widget>[_buildGroupHeader(group)];
     if (!_collapsedGroups.contains(group)) {
       for (var i = 0; i < examples.length; i++) {
         if (examples[i].type == group) {
-          widgets.add(_buildExampleItem(examples[i], i == selectedIndex, i));
+          widgets.add(_buildExampleItem(examples[i], i == widget.selectedIndex, i));
         }
       }
     }
@@ -441,88 +553,6 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Widget _buildGamePanel(int index) {
-    final example = examples[index];
-    return Column(
-      children: [
-        _buildGameHeader(example),
-        const Divider(height: 1, color: Color(0xFF2a2a3e)),
-        Expanded(
-          child: FittedBox(
-            child: Container(
-              width: 800,
-              height: 600,
-              margin: const EdgeInsets.all(32),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.white,
-                  width: 2,
-                ),
-              ),
-              child: GameArea(controller: example.screen()),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildGameHeader(ExampleItem example) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-      color: const Color(0xFF14142a),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () => launchUrl(Uri.parse(example.codeUrl)),
-            icon: Icon(Icons.code, color: Colors.cyan[400]),
-            tooltip: "View Code",
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  example.title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                RichText(
-                  text: TextSpan(
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey[400],
-                      height: 1.3,
-                    ),
-                    children: _parseDescription(
-                      example.description,
-                      highlightColor: Colors.cyan[400]!,
-                    ),
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          TextButton.icon(
-            onPressed: () => launchUrl(Uri.parse(example.codeUrl)),
-            icon: Icon(Icons.code, size: 18, color: Colors.cyan[400]),
-            label: Text(
-              "View Code",
-              style: TextStyle(fontSize: 14, color: Colors.cyan[400]),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Color _typeColor(ExampleType type) {
     return switch (type) {
       ExampleType.rendering => Colors.purple[400]!,
@@ -574,33 +604,27 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
+}
 
-  List<InlineSpan> _parseDescription(String text, {required Color highlightColor}) {
-    final spans = <InlineSpan>[];
-    final parts = text.split('*');
-    for (int i = 0; i < parts.length; i++) {
-      if (parts[i].isEmpty) continue;
-      if (i.isOdd) {
-        spans.add(TextSpan(
-          text: parts[i],
-          style: TextStyle(
-            color: highlightColor,
-            fontWeight: FontWeight.w600,
-          ),
-        ));
-      } else {
-        spans.add(TextSpan(
-          text: parts[i],
-          style: TextStyle(color: Colors.grey[400]),
-        ));
-      }
+List<InlineSpan> _parseDescription(String text, {required Color highlightColor}) {
+  final spans = <InlineSpan>[];
+  final parts = text.split('*');
+  for (int i = 0; i < parts.length; i++) {
+    if (parts[i].isEmpty) continue;
+    if (i.isOdd) {
+      spans.add(TextSpan(
+        text: parts[i],
+        style: TextStyle(
+          color: highlightColor,
+          fontWeight: FontWeight.w600,
+        ),
+      ));
+    } else {
+      spans.add(TextSpan(
+        text: parts[i],
+        style: TextStyle(color: Colors.grey[400]),
+      ));
     }
-    return spans;
   }
-
-  @override
-  void dispose() {
-    exampleIndex.dispose();
-    super.dispose();
-  }
+  return spans;
 }
