@@ -18,6 +18,7 @@ abstract class ScreenController {
 
   void keyDown(LogicalKeyboardKey key) {}
   void keyUp(LogicalKeyboardKey key) {}
+  void keyRepeat(LogicalKeyboardKey key) {}
 
   void update(double deltaTime);
   void draw(Canvas canvas, Size size);

@@ -26,27 +26,44 @@ class _GameAreaState extends State<GameArea> {
 
   @override
   void initState() {
-    preloadStream = StreamController<double>();
-    widget.controller.preload(preloadStream!.sink.add, onDone);
     super.initState();
+    ServicesBinding.instance.keyboard.addHandler(_onKey);
+    _preload();
   }
 
-  void onDone() {
-    ServicesBinding.instance.keyboard.addHandler(_onKey);
-    loaded = true;
+  int _preloadGeneration = 0;
+
+  void _preload() {
+    final generation = ++_preloadGeneration;
+
     preloadStream?.close();
-    preloadStream = null;
-    setState(() {});
+    preloadStream = StreamController<double>();
+
+    loaded = false;
+
+    widget.controller.preload(
+      (progress) {
+        if (generation == _preloadGeneration) {
+          preloadStream?.sink.add(progress);
+        }
+      },
+      () {
+        if (generation != _preloadGeneration || !mounted) return;
+
+        loaded = true;
+        preloadStream?.close();
+        preloadStream = null;
+
+        setState(() {});
+      },
+    );
   }
 
   @override
   void didUpdateWidget(covariant GameArea oldWidget) {
     if (oldWidget.controller != widget.controller) {
       oldWidget.controller.dispose();
-      loaded = false;
-      preloadStream?.close();
-      preloadStream = StreamController<double>();
-      widget.controller.preload(preloadStream!.sink.add, onDone);
+      _preload();
     }
 
     super.didUpdateWidget(oldWidget);
@@ -59,9 +76,11 @@ class _GameAreaState extends State<GameArea> {
       widget.controller.keyDown(key);
     } else if (event is KeyUpEvent) {
       widget.controller.keyUp(key);
+    } else if (event is KeyRepeatEvent) {
+      widget.controller.keyRepeat(key);
     }
 
-    return false;
+    return true;
   }
 
   @override
@@ -88,17 +107,18 @@ class _GameAreaState extends State<GameArea> {
               }),
             ),
           )
-        : StreamBuilder(
-            stream: preloadStream!.stream,
+        : StreamBuilder<double>(
+            stream: preloadStream?.stream,
             builder: (context, snapshot) {
               return widget.loadingBuilder?.call(context, snapshot.data ?? 0.0) ?? const SizedBox();
-            });
+            },
+          );
   }
 
   @override
   void dispose() {
-    widget.controller.dispose();
     ServicesBinding.instance.keyboard.removeHandler(_onKey);
+    widget.controller.dispose();
     preloadStream?.close();
     preloadStream = null;
     super.dispose();

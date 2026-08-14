@@ -13,7 +13,7 @@ class CameraTilemap extends ScreenController {
   int actualCount = 0;
 
   final grid = Grid.filled(cellSize: 32, width: 75, height: 17, value: -1);
-  final camera = Camera();
+  late final Camera camera;
 
   @override
   Future<void> preload(UpdateCallback progress, VoidCallback done) async {
@@ -25,6 +25,8 @@ class CameraTilemap extends ScreenController {
 
   @override
   void setup(BuildContext context, double width, double height) {
+    camera = Camera(viewportWidth: width, viewportHeight: height - 48);
+
     tileMap = TileMap(
       tileAreas: [
         batch.getTexture(Tex.groundBlock).rect,
@@ -53,12 +55,10 @@ class CameraTilemap extends ScreenController {
   @override
   void update(double deltaTime) {
     _timer += deltaTime * 0.35;
-    camera.position.x = MathUtils.remap(sin(_timer), -1, 1, -801, 2401);
+    camera.x = MathUtils.remap(sin(_timer), -1, 1, -801, 2401);
 
     int drawingCount = 0;
-    grid.forEachDrawArea(
-        visit: (screenX, screenY, tile) => drawingCount++,
-        cullArea: camera.aabb(width: 800, height: 600 - 48));
+    grid.forEachDrawArea(visit: (screenX, screenY, tile) => drawingCount++, cullArea: camera.aabb);
     final renderCall = drawingCount == 0 ? 0 : 1;
     infoText.text =
         "Actual Count: $actualCount\nDraw Count: $drawingCount\nRender Call: $renderCall";
@@ -69,8 +69,7 @@ class CameraTilemap extends ScreenController {
     canvas.drawColor(const Color(0xFF5C94FC), BlendMode.src);
 
     camera.start(canvas);
-    tileMap.drawGrid(canvas, grid,
-        cullArea: camera.aabb(width: size.width, height: size.height - 48));
+    tileMap.drawGrid(canvas, grid, cullArea: camera.aabb);
     camera.stop(canvas);
 
     drawBottomPanel(canvas, size);

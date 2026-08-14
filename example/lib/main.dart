@@ -13,9 +13,12 @@ import 'package:tremble_example/examples/input_example.dart';
 import 'package:tremble_example/examples/mario_movement_example.dart';
 import 'package:tremble_example/examples/rigidbody_example.dart';
 import 'package:tremble_example/examples/shape_raycaster_example.dart';
+import 'package:tremble_example/examples/signals_example.dart';
 import 'package:tremble_example/examples/spritebatch_example.dart';
+import 'package:tremble_example/examples/state_machine_example.dart';
 import 'package:tremble_example/examples/swept_collision_example.dart';
 import 'package:tremble_example/examples/tile_map_example.dart';
+import 'package:tremble_example/examples/wait_chain_example.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum ExampleType { rendering, tooling, utility, physics, demo }
@@ -93,6 +96,33 @@ final examples = <ExampleItem>[
     codeUrl:
         "https://github.com/Descrout/tremble/blob/main/example/lib/examples/input_example.dart",
     screen: () => InputExample(),
+  ),
+  ExampleItem(
+    title: "State Machine",
+    description:
+        "A *StateMachine* traffic light with enter/update/exit hooks. Cycles automatically.",
+    type: ExampleType.utility,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/state_machine_example.dart",
+    screen: () => StateMachineExample(),
+  ),
+  ExampleItem(
+    title: "Signals",
+    description:
+        "Pub-sub with *Signal* and *SignalValue*. Click or SPACE to dispatch, watch receivers light up.",
+    type: ExampleType.utility,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/signals_example.dart",
+    screen: () => SignalsExample(),
+  ),
+  ExampleItem(
+    title: "Wait Chain Cutscene",
+    description:
+        "A *WaitChain* cinematic - *Camera* zoom, pan and shake driven step by step, SPACE to replay.",
+    type: ExampleType.utility,
+    codeUrl:
+        "https://github.com/Descrout/tremble/blob/main/example/lib/examples/wait_chain_example.dart",
+    screen: () => WaitChainExample(),
   ),
   ExampleItem(
     title: "SpriteBatch",
@@ -173,8 +203,21 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final exampleIndex = SignalValue<int>(0);
 
+  int _screenIndex = -1;
+  ScreenController? _currentScreen;
+
   void _selectExample(int index) {
     exampleIndex.value = index;
+  }
+
+  /// The controller is created once per example and kept stable across
+  /// rebuilds. Only switching to a different example creates a new one.
+  ScreenController _screenFor(int index) {
+    if (_screenIndex != index) {
+      _currentScreen = examples[index].screen();
+      _screenIndex = index;
+    }
+    return _currentScreen!;
   }
 
   @override
@@ -226,7 +269,7 @@ class _MyAppState extends State<MyApp> {
                   width: 2,
                 ),
               ),
-              child: GameArea(controller: example.screen()),
+              child: GameArea(controller: _screenFor(index)),
             ),
           ),
         ),
@@ -454,7 +497,7 @@ class _ExampleSidebarState extends State<_ExampleSidebar> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "v1.2.8",
+                  "v1.2.9",
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],

@@ -1,9 +1,21 @@
+## 1.2.9
+
+* ``[BREAKING]`` ``Camera`` constructor now requires ``viewportWidth`` and ``viewportHeight``. The ``x`` / ``y`` constructor params and the ``position`` field were replaced by ``x`` / ``y`` getters and setters.
+* ``[BREAKING]`` ``Camera.aabb`` is now a getter instead of a method - it no longer takes ``width`` / ``height`` and is derived from the viewport and zoom.
+* ``Camera.centerX`` / ``centerY`` getters and setters added for anchoring the camera on a world point.
+* ``Camera.setViewport`` added. Changing the viewport or ``zoom`` now keeps the camera centered on the same world point.
+* ``Camera.start`` applies the scale before the translate (previously the translation was incorrectly scaled) and ``Camera.stop`` now only restores the canvas if the camera itself started it.
+* ``Camera.shake`` now shakes in world space (the offset is scaled by ``zoom``) and always restores exactly the pre-shake position.
+* ``ScreenController.keyRepeat`` added - ``GameArea`` now forwards ``KeyRepeatEvent``s to it.
+* ``GameArea`` keyboard handler now returns ``true`` to mark the event as handled.
+* ``GameArea`` preload reworked with a generation counter so restarting preload (e.g. when the controller is swapped) reliably cancels stale progress callbacks.
+
 ## 1.2.8
 
-* ``[BREAKING]`` ``Grid`` is now generic — ``Grid<T>``. ``Grid.empty`` renamed to ``Grid.filled`` and now requires a ``value``.
+* ``[BREAKING]`` ``Grid`` is now generic - ``Grid<T>``. ``Grid.empty`` renamed to ``Grid.filled`` and now requires a ``value``.
 * ``[BREAKING]`` ``Grid`` no longer imports Flutter. ``Grid.draw``, ``Grid.forEachDrawArea``, ``Grid.debugDraw``, ``Grid.debugPalette``, ``Grid.toJson1d`` and ``Grid.toJson2d`` moved to the ``IntGridX`` extension on ``Grid<int>``. ``debugDraw`` now accepts a ``palette`` parameter.
-* ``[BREAKING]`` ``AABB.copyWith`` and ``Circle.copyWith`` removed. Replaced by ``Shape.clone()`` — ``AABB.clone()``, ``Circle.clone()`` and ``Line.clone()`` added.
-* ``Sweep`` introduced — ``expand``, ``expandAABB``, ``expandCircle``, ``expandAABBAndCircle``, ``expandCircleAndAABB`` for swept collision (Minkowski-style expansion of a moving shape against a target).
+* ``[BREAKING]`` ``AABB.copyWith`` and ``Circle.copyWith`` removed. Replaced by ``Shape.clone()`` - ``AABB.clone()``, ``Circle.clone()`` and ``Line.clone()`` added.
+* ``Sweep`` introduced - ``expand``, ``expandAABB``, ``expandCircle``, ``expandAABBAndCircle``, ``expandCircleAndAABB`` for swept collision (Minkowski-style expansion of a moving shape against a target).
 * ``Minkowski.getPenetration`` sign convention flipped so the penetration vector points outward from the overlapping AABB.
 * ``Ray`` direction now uses ``normalized()`` instead of normalizing the passed vector in place.
 * ``analysis_options.yaml`` now excludes platform and build directories from analysis.
@@ -15,7 +27,7 @@
 
 ## 1.2.6
 
-* ``CollisionDetector.shapeToShape`` added — detects collisions between any two ``Shape``s.
+* ``CollisionDetector.shapeToShape`` added - detects collisions between any two ``Shape``s.
 * ``Vec2.damp`` and ``Vec2.moveTowards`` added.
 * ``Grid`` extended: ``clone``, ``screenToGrid``, neighbor helpers (``hasNeighbor*``, ``*NeighborTile``), ``forEachNeighbor4`` / ``forEachNeighbor8``, ``neighborTiles4`` / ``neighborTiles8``.
 * ``Grid.draw`` and ``Grid.debugDraw`` added for easy tile map rendering.
@@ -37,13 +49,13 @@
 * ``[BREAKING]`` ``AssetName`` interface removed. Enums must override ``toString()`` instead of implementing ``AssetName``.
 * ``[BREAKING]`` ``SpriteBatch.draw`` signature changed: ``Paint?`` parameter removed, ``BlendMode`` is now a named param.
 * ``[BREAKING]`` ``Rect.grid`` renamed to ``Rect.gridByCount``.
-* ``SpriteBatch.fromOldGdxPacker`` removed — use ``fromGdxPacker`` instead.
-* ``SpriteBatch.getRect`` removed — use ``getTexture`` instead.
-* ``SpriteBatch.getEnum`` added — generates enum code from atlas for debugging.
+* ``SpriteBatch.fromOldGdxPacker`` removed - use ``fromGdxPacker`` instead.
+* ``SpriteBatch.getRect`` removed - use ``getTexture`` instead.
+* ``SpriteBatch.getEnum`` added - generates enum code from atlas for debugging.
 * ``SpriteBatch.paint`` made public.
 * ``Raycaster.raycastGrid`` param ``tileSize`` renamed to ``cellSize``.
-* ``Rect.gridBySize`` added — splits rect into cells of a fixed pixel size.
-* ``Helpers.toCamelCase`` added — converts snake/PascalCase strings to camelCase.
+* ``Rect.gridBySize`` added - splits rect into cells of a fixed pixel size.
+* ``Helpers.toCamelCase`` added - converts snake/PascalCase strings to camelCase.
 * ``Helpers`` changed to ``abstract final class``.
 * ``Grid`` and ``TileMap`` classes have been introduced.
 * ``FixedUpdate`` and ``lifecycleChanged`` added (1.2.2 items, now released).
